@@ -38,6 +38,7 @@ def choose_ratio(expect, name_pdf):
                 group_results.append(matches)
             mat1.append(group_results)
 
+    print(mat1)
 
     above = 70
     for i in mat1:
@@ -65,7 +66,6 @@ def choose_ratio(expect, name_pdf):
     return mat2
 
 mat2 = choose_ratio(expecting, "output0.csv")
-
 if mat2:
     new_df = pd.read_csv("output0.csv", usecols=mat2)
     new_df = new_df[mat2]
@@ -73,4 +73,3 @@ if mat2:
     date_column = new_df[new_df.columns[0]]
     change_type(date_list, date_column, new_df)
     print(new_df.columns.values)
-    # print(new_df)
