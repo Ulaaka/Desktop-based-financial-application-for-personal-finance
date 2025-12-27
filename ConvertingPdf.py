@@ -83,16 +83,14 @@ def flavor_decision(name, idx):
 
         header_rects = [
         r for r in page.rects 
-        if r['height'] > 5  # Headers have specific height
-        and r['height'] < 100  # Not too tall
-        and r['width'] < 200   # Reasonable width for a header cell
+        if r['height'] > 5 
+        and r['height'] < 100 
+        and r['width'] < 200
         ]
         print(len(header_rects))
         im = page.to_image(resolution=150)
         im.draw_rects(header_rects, stroke="red", stroke_width=2)
         im.save('debug_rectangles.png')
-
-        
         
     if len(header_rects) > 10:
         return "lattice"

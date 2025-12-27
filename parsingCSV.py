@@ -5,8 +5,7 @@ import dateutil.parser
 from datetime import datetime
 # df = pd.read_csv("TransactionData.csv")
 # https://www.geeksforgeeks.org/python/how-to-do-fuzzy-matching-on-pandas-dataframe-column-using-python/
-mat1 = []
-mat2 = []
+
 expecting = ["Date", ["Type" , "Category"], ["Number", "Acc", "IBAN"],
              [ "Details", "Description", "Reference", "Narrative"], ["Credit Amount", "Withdrawal", "Out"], ["In", "Debit Amount", "Received", "Deposit"], "Balance"
              ]
@@ -25,8 +24,10 @@ def check_date_type(dateList):
     except ValueError:
         return False
 
-def choose_ratio(expect):
-    columns = list(pd.read_csv("output0.csv", nrows=0).columns.tolist())
+def choose_ratio(expect, name_pdf):
+    mat1 = []
+    mat2 = []
+    columns = list(pd.read_csv(name_pdf, nrows=0).columns.tolist())
     for i in expect:
         if not isinstance(i, list):
             mat1.append(process.extractOne(i, columns, scorer=fuzz.partial_ratio))
@@ -36,6 +37,7 @@ def choose_ratio(expect):
                 matches = process.extractOne(j, columns, scorer=fuzz.partial_ratio)
                 group_results.append(matches)
             mat1.append(group_results)
+
 
     above = 70
     for i in mat1:
@@ -54,14 +56,21 @@ def choose_ratio(expect):
                 element = i[highIdx][0]
                 mat2.append(element)
 
-    if (mat2[-1] == mat2[-2]):
-        mat2.pop()
+    try:
+        if (mat2[-1] == mat2[-2]):
+            mat2.pop()
+    except:
+        print("The table is not related to transaction")
 
-choose_ratio(expecting)
-new_df = pd.read_csv("output0.csv", usecols=mat2)
-new_df = new_df[mat2]
-date_list = new_df[new_df.columns[0]].tolist()
-date_column = new_df[new_df.columns[0]]
-change_type(date_list, date_column, new_df)
-print(new_df.columns.values)
-print(new_df)
+    return mat2
+
+mat2 = choose_ratio(expecting, "output0.csv")
+
+if mat2:
+    new_df = pd.read_csv("output0.csv", usecols=mat2)
+    new_df = new_df[mat2]
+    date_list = new_df[new_df.columns[0]].tolist()
+    date_column = new_df[new_df.columns[0]]
+    change_type(date_list, date_column, new_df)
+    print(new_df.columns.values)
+    # print(new_df)
