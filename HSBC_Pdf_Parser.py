@@ -12,10 +12,31 @@ class HSBC_PDF_CONVERSION:
         self.corrected_transaction = self.correct_transactions(self.detected_transactions)
         self.classified_transactions = self.classify_transactions(self.corrected_transaction)
 
-        self.df = pd.DataFrame(self.classified_transactions)
+        df = pd.DataFrame(self.classified_transactions)
+        date_column = df[df.columns[0]]
+        self.change_type(date_column, df)
+        self.unify_amount_columns(df)
+        self.df = df
 
         print(self.df.to_string(index=False))
         print("\n" + "="*100)
+
+    def unify_amount_columns(self, df):
+        same = df[df.columns[-3]].equals(df[df.columns[-2]])
+        
+        if (same):
+            df.drop(df.columns[[-3]], axis=1, inplace=True)
+        else:
+            corrected = (df[df.columns[-2]].fillna(0) - df[df.columns[-3]].fillna(0))
+            pos = len(df.columns) - 3
+            df.insert(pos, "Amount", corrected)
+            df.drop(columns=[df.columns[-3], df.columns[-2]], inplace=True)
+
+
+    def change_type(self, column, dataframe):
+        for i in column:
+            column = column.replace([i], dateutil.parser.parse(i).strftime("%d/%m/%Y"))
+        dataframe[dataframe.columns[0]] = column
 
     def return_text(self, pdf_file):
         with pdfplumber.open(pdf_file) as pdf:

@@ -2,7 +2,8 @@ import camelot
 import pandas as pd
 import csv 
 import pdfplumber
-
+import dateutil.parser
+from datetime import datetime
 def find_header(df):
     print("----------------------------------------")
     for i in range(min(15, len(df))):
@@ -30,6 +31,7 @@ def find_header(df):
             length = False
 
         if (string == True and unique == True and length == True):
+            #print(df.iloc[i])
             return i
     return 0
         
@@ -41,7 +43,6 @@ def clean_up(table, idx):
 
 
     for j in range(len(df)):
-
         for i in range(len(df.columns)):
             value = str(df.iat[j, i]).strip()
 
@@ -74,16 +75,33 @@ def clean_up(table, idx):
             rows_to_drop.append(j)
 
     df = df.drop(rows_to_drop)
-    df = df.drop_duplicates()
+    # df = df.drop_duplicates()
     df = df.reset_index(drop=True)
 
     if not df.empty:
+        date_list = df[df.columns[0]].tolist()
+        date_column = df[df.columns[0]]
+        # print(date_list)
+        change_type(date_list, date_column, df)
         df = df.replace(r'\n', ' ', regex=True) 
         dataframe_list.append(df)
         df.to_csv(f'output{idx}.csv', index=False)
     
     return dataframe_list
 
+def check_date_type(dateList):
+    try:
+        datetime.strptime(dateList[0], "%d/%m/%Y")
+        return True
+    except ValueError:
+        return False
+    
+# https://stackoverflow.com/questions/52206973/convert-different-date-formats-to-a-given-unique-date-format-in-python
+def change_type(dateList, column, dataframe):
+    if not check_date_type(dateList):
+        for i in column:
+            column = column.replace([i], dateutil.parser.parse(i).strftime("%d/%m/%Y"))
+    dataframe[dataframe.columns[0]] = column
 
 def run_camelot(name, flavor_camelot):
     if (flavor_camelot == "stream"):
@@ -117,8 +135,8 @@ def flavor_decision(name, idx):
 # fake_pdf
 # sample-tables
 # KH_P_statement
-flavor_choice = flavor_decision('2025-06-20_Statement.pdf', 0)
-tables = run_camelot('2025-06-20_Statement.pdf', flavor_choice)
+flavor_choice = flavor_decision('Statement_12_2025.pdf', 0)
+tables = run_camelot('Statement_12_2025.pdf', flavor_choice)
 
 for idx, table in enumerate(tables):
     dataframes = clean_up(table, idx)

@@ -51,7 +51,7 @@ class csvProcessor:
         self.cursor.execute(sql, (self.username,))
         result = self.cursor.fetchone()
         
-        if not result:
+        if not result: 
             hashed_password = self.hash_password(self.password)
 
             new_sql = f"INSERT INTO users ( username, hashed_password) VALUES (%s, %s)"
@@ -62,8 +62,8 @@ class csvProcessor:
         self.insert_account(userID, row)
 
     def insert_account(self, userID, row):
-        sql = f"SELECT accountID FROM accounts WHERE account_name = %s"
-        self.cursor.execute(sql, (self.acc_name,))
+        sql = f"SELECT accountID FROM accounts WHERE account_name = %s and userID = %s"
+        self.cursor.execute(sql, (self.acc_name, userID))
         result = self.cursor.fetchone()
 
         if not result:

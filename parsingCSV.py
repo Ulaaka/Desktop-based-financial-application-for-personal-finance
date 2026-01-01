@@ -4,8 +4,7 @@ import pandas as pd
 import dateutil.parser
 from datetime import datetime
 
-
-class csv_parsing():
+class csv_parsing:
 
     def __init__(self, pdf_name):
 
@@ -24,22 +23,25 @@ class csv_parsing():
             date_column = df[df.columns[0]]
             self.change_type(date_list, date_column, df)
 
-
             new_df = self.order_dataframe(df, selected_columns)
 
-            same = new_df[new_df.columns[-3]].equals(new_df[new_df.columns[-2]])
-            
-            if (same):
-                df.drop(df.columns[[-3]], axis=1, inplace=True)
-            else:
-                corrected = (new_df[new_df.columns[-2]].fillna(0) - new_df[new_df.columns[-3]].fillna(0))
-                pos = len(df.columns) - 3
-                df.insert(pos, "Amount", corrected)
-                df.drop(columns=[new_df.columns[-3], new_df.columns[-2]], inplace=True)
+            self.unify_amount_columns(new_df)
 
             # new_df = new_df.loc[:,~df.columns.duplicated()].copy()
             self.df = new_df
             print(self.df )
+            
+    def unify_amount_columns(self, df):
+        same = df[df.columns[-3]].equals(df[df.columns[-2]])
+        
+        if (same):
+            df.drop(df.columns[[-3]], axis=1, inplace=True)
+        else:
+            corrected = (df[df.columns[-2]].fillna(0) - df[df.columns[-3]].fillna(0))
+            pos = len(df.columns) - 3
+            df.insert(pos, "Amount", corrected)
+            df.drop(columns=[df.columns[-3], df.columns[-2]], inplace=True)
+
 
     def order_dataframe(self, df, columns):
         missing = sorted(list(set(range(6)) - set(columns)))
@@ -58,7 +60,6 @@ class csv_parsing():
                 df.insert(pos, "Description", "")
             else:
                 raise Exception("Important column is not selected")
-            
             extra+=1
         return df
 
@@ -73,7 +74,7 @@ class csv_parsing():
     def change_type(self, dateList, column, dataframe):
         if not self.check_date_type(dateList):
             for i in column:
-                column = column.replace([i], dateutil.parser.parse(i).strftime("%Y/%m/%d"))
+                column = column.replace([i], dateutil.parser.parse(i).strftime("%d/%m/%Y"))
         dataframe[dataframe.columns[0]] = column
 
 
