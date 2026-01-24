@@ -52,7 +52,6 @@ def handle_button_style(button_color, hover_color):
 
 class login_page(QWidget):
 
-
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
@@ -149,10 +148,10 @@ class login_page(QWidget):
 
         sql = f"SELECT hashed_password FROM users WHERE username = %s"
         self.cursor.execute(sql, (username_local, ))
-        hashed_password = self.cursor.fetchone()[0]
+        result = self.cursor.fetchone()
 
-        if (password_manager.check_password(password_local, hashed_password)):
-            self.controller.show_dashboard()
+        if result and password_manager.check_password(password_local, result[0]):
+                self.controller.show_dashboard()
         else:
             QMessageBox.warning(self, 'Error', 'Password or Username is wrong')
             return
@@ -263,19 +262,29 @@ class sign_up_page(QWidget):
         username_local = self.username.text()
         password_local = self.password.text()
         # later to be added
-        email_local = self.password.text()
+        email_local = self.email.text()
         password_manager = password_class()
+        sql = f"SELECT userID FROM users WHERE username = %s"
+        self.cursor.execute(sql, (username_local,))
+        result = self.cursor.fetchone()
         
-        if not username_local or not password_local:
+        if not username_local or not password_local or not email_local:
             QMessageBox.warning(self, 'Error', 'Please enter both of the credentials, thank you')
             return
-
-        sql = f"SELECT hashed_password FROM users WHERE username = %s"
-        self.cursor.execute(sql, (username_local, ))
-        hashed_password = self.cursor.fetchone()[0]
-
-        if (password_manager.check_password(password_local, hashed_password)):
-            self.controller.show_dashboard()
+        
+        if not result:
+            try:
+                hashed_password = password_manager.hash_password(password_local)
+                new_sql = f"INSERT INTO users (username, hashed_password) VALUES (%s, %s)"
+                self.cursor.execute(new_sql, (username_local, hashed_password))
+                self.db.commit()
+                self.controller.show_login()
+                print("Credentials added successfully")
+            except:
+                print("could not commit")
+        else:
+            QMessageBox.warning(self, 'Error', 'Username already exists, please try another username')
+            return
 
 class MainApp(QMainWindow):
     def __init__(self):
