@@ -2,6 +2,7 @@ import dateutil.parser
 from datetime import datetime
 import bcrypt
 
+
 class ParsingBase:
     def check_date_type(self, dateList):
         try:
@@ -56,3 +57,4 @@ class password_class:
     # later used to check the password
     def check_password(self, plain_text_password, hashed_password):
         return bcrypt.checkpw(plain_text_password, hashed_password)
+    

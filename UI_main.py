@@ -223,7 +223,7 @@ class sign_up_page(QWidget):
         self.password.setStyleSheet(input_style)
         self.password.setFont(QFont('Arial', 15))
 
-        # email input ( will add more functionalities)
+        # email input
         self.email = QLineEdit()
         self.email.setPlaceholderText('Email')
         self.email.setStyleSheet(input_style)
@@ -312,7 +312,6 @@ class MainApp(QMainWindow):
         layout.addWidget(logout_btn)
         self.dashboard_page.setLayout(layout)
 
-    # Navigation Functions
     def show_dashboard(self):
         self.stacked_widget.setCurrentIndex(1)
         self.setMinimumSize(1000, 700) 
