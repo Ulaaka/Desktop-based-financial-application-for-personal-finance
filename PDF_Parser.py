@@ -116,13 +116,14 @@ class ParsingPDF:
     def flavor_decision(self, name, idx):
         with pdfplumber.open(name) as pdf:
             page = pdf.pages[idx]
-
+            # 5, 100, 200
             header_rects = [
             r for r in page.rects 
             if r['height'] > 5 
             and r['height'] < 100 
             and r['width'] < 200
             ]
+            # 150
             im = page.to_image(resolution=150)
             im.draw_rects(header_rects, stroke="red", stroke_width=2)
             im.save('debug_rectangles.png')

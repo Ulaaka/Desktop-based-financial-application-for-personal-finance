@@ -319,9 +319,11 @@ class MainApp(QMainWindow):
 
     def show_login(self):
         self.stacked_widget.setCurrentIndex(0)
+        self.setMaximumSize(400, 500)
 
     def show_sign_up(self):
         self.stacked_widget.setCurrentIndex(2)
+        self.setMaximumSize(400, 500)
 
 
 if __name__ == '__main__':

@@ -52,7 +52,7 @@ class ParsingBase:
 class password_class:
     
     def hash_password(self, password):
-        return bcrypt.hashpw(password, bcrypt.gensalt())
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
     # later used to check the password
     def check_password(self, plain_text_password, hashed_password):
