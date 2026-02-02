@@ -5,11 +5,13 @@ import pandas as pd
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 from collections import defaultdict
+import numpy as np
+
 
 
 class ParsingBase:
     def __init__(self):
-        self.expecting = ["Date", ["Type" , "Category"], [ "Details", "Description", "Reference", "Narrative"], ["Credit Amount", "Withdrawal", "Out"], ["In", "Debit Amount", "Received", "Deposit"], "Balance"]
+        self.expecting = ["Date", ["Type" , "Category"], [ "Details", "Description", "Reference", "Narrative"], ["Out", "Credit Amount", "Withdrawal"], ["In", "Debit Amount", "Received", "Deposit"], "Balance"]
 
     # check the first value of the date list
     def check_date_type(self, test_date):
@@ -29,23 +31,24 @@ class ParsingBase:
 
     # need to do more debugging 
     def unify_amount_columns(self, df):
-        new_df = df
-        print(new_df)
-        same = new_df[new_df.columns[-3]].equals(new_df[new_df.columns[-2]])        
-        if (same):
-            # if 2 columns are equal, drop the later one
-            new_df.drop(new_df.columns[[-2]], axis=1, inplace=True)
-            print(new_df)
+        same = df[df.columns[-2]].equals(df[df.columns[-3]])
+        
+        if same:
+            print("dasdasda")
+            # Drop the one at position -2
+            df = df[df.columns.delete(-3)]
+            print(df)
         else:
 
-            # change any non-numeric value to NaN
-            new_df[new_df.columns[-3]] = pd.to_numeric(new_df[new_df.columns[-3]], errors='coerce')
-            new_df[new_df.columns[-2]] = pd.to_numeric(new_df[new_df.columns[-2]], errors='coerce')
+            df[df.columns[-3]] = pd.to_numeric(df[df.columns[-3]], errors='coerce')
+            df[df.columns[-2]] = pd.to_numeric(df[df.columns[-2]], errors='coerce')
 
-            corrected = (abs(new_df[new_df.columns[-2]].fillna(0)) - abs(new_df[new_df.columns[-3]].fillna(0)))
-            pos = len(new_df.columns) - 3
-            df.insert(pos, "Amount", corrected)
-            df.drop(columns=[new_df.columns[-3], new_df.columns[-2]], inplace=True)
+
+            # needs to algin the columns
+            corrected = (abs(df[df.columns[-2]].fillna(0)) - abs(df[df.columns[-3]].fillna(0)))
+            pos = len(df.columns) - 3
+            df.insert(pos, "Unified_Amount", corrected)
+            df.drop(columns=[df.columns[-3], df.columns[-2]], inplace=True)
 
     def order_dataframe(self, df, columns):
 
@@ -108,7 +111,6 @@ class ParsingBase:
                     mat2.append(element)
                     chosen_columns.append(idx)
                     percentage.append(highest)
-
         try:
             if (mat2[-1] == mat2[-2]):
                 mat2.pop()
@@ -136,7 +138,7 @@ class ParsingBase:
         for i in indices:
             chosen_columns.remove(i)
             mat2.pop(i)
-
+        print(mat1)
         return mat2, chosen_columns
 
 

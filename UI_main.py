@@ -1,4 +1,4 @@
-"""import sys
+import sys
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import *
@@ -332,4 +332,4 @@ if __name__ == '__main__':
     main_window = MainApp()
     main_window.show()
     
-    sys.exit(app.exec_())"""
+    sys.exit(app.exec_())

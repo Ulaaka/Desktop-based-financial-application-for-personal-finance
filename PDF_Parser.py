@@ -26,19 +26,21 @@ class ParsingPDF:
 
 
                 dataframe = dataframe[columns[0]]
-
-                self.parser.order_dataframe(dataframe, columns[1])
+                new_dataframe = self.parser.order_dataframe(dataframe, columns[1])
 
                 # needs to check the format
-                self.parser.unify_amount_columns(dataframe)
+                self.parser.unify_amount_columns(new_dataframe)
 
-                money_columns = [dataframe.columns[-1], dataframe.columns[-2]]
+
+                print(new_dataframe)
+
+                money_columns = [new_dataframe.columns[-1], new_dataframe.columns[-2]]
                 for i in money_columns:
                     # turn the values into a str, and replace comma to convert into numeric
                     #https://stackoverflow.com/questions/56947333/how-to-remove-commas-from-all-the-column-in-pandas-at-once
-                    dataframe[i] = pd.to_numeric(dataframe[i].astype(str).str.replace(',', ''), errors='coerce')
+                    dataframe[i] = pd.to_numeric(new_dataframe[i].astype(str).str.replace(',', ''), errors='coerce')
 
-                self.df.append(dataframe)
+                self.df.append(new_dataframe)
 
     def find_header(self, df):
         print("----------------------------------------")

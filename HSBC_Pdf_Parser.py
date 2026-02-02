@@ -16,6 +16,8 @@ class HSBC_PDF_CONVERSION:
         df = pd.DataFrame(self.classified_transactions)
         date_column = df[df.columns[0]]
         parser.change_type(df.loc[0, df.columns[0]] , date_column, df)
+
+        print(df)
         parser.unify_amount_columns(df)
         self.df = df
 
@@ -164,8 +166,8 @@ class HSBC_PDF_CONVERSION:
                 'Date': dict['date'],
                 'Type': dict['type'],
                 'Description': dict['description'],
-                'Credit': credit,
                 'Debit': debit,
+                'Credit': credit,
                 'Balance': balance
             })
         

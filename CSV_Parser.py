@@ -20,9 +20,8 @@ class ParsingCSV:
             df = pd.read_csv(pdf_name, usecols=mat2)
             df = df[mat2]
 
-            date_list = df[df.columns[0]].tolist()
             date_column = df[df.columns[0]]
-            parser.change_type(date_list, date_column, df)
+            parser.change_type(df.loc[0, df.columns[0]], date_column, df)
 
             new_df = parser.order_dataframe(df, selected_columns)
 
