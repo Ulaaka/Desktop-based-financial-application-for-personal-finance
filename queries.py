@@ -163,5 +163,4 @@ class query_processor:
         return output
 
 
-
-
+    # def delete_file(self, )

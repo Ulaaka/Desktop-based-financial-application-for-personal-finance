@@ -1,13 +1,16 @@
 import dateutil.parser
+from database_connection import database
 from datetime import datetime
 import bcrypt
 import pandas as pd
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from fuzzywuzzy import process, fuzz
 from collections import defaultdict
 import numpy as np
-
-
+from cryptography.fernet import Fernet
+import os
+from database_connection import database
+import base64
+from Crypto.Hash import SHA256
 
 class ParsingBase:
     def __init__(self):
@@ -34,21 +37,24 @@ class ParsingBase:
         same = df[df.columns[-2]].equals(df[df.columns[-3]])
         
         if same:
-            print("dasdasda")
-            # Drop the one at position -2
-            df = df[df.columns.delete(-3)]
-            print(df)
+            # since both columns are identical, even the name , needed to drop using iloc
+            # https://stackoverflow.com/questions/33045364/how-to-select-columns-by-position-in-pandas
+            columns = list(range(len(df.columns)))
+            columns.pop(-2)
+            df = df.iloc[:, columns]
+
         else:
 
             df[df.columns[-3]] = pd.to_numeric(df[df.columns[-3]], errors='coerce')
             df[df.columns[-2]] = pd.to_numeric(df[df.columns[-2]], errors='coerce')
-
 
             # needs to algin the columns
             corrected = (abs(df[df.columns[-2]].fillna(0)) - abs(df[df.columns[-3]].fillna(0)))
             pos = len(df.columns) - 3
             df.insert(pos, "Unified_Amount", corrected)
             df.drop(columns=[df.columns[-3], df.columns[-2]], inplace=True)
+        
+        return df
 
     def order_dataframe(self, df, columns):
 
@@ -57,7 +63,7 @@ class ParsingBase:
         if (not missing):
             return df
         print("missing values:\n")
-        print(missing)
+        # print(missing)
 
         extra = 0
         for i in missing:
@@ -138,7 +144,6 @@ class ParsingBase:
         for i in indices:
             chosen_columns.remove(i)
             mat2.pop(i)
-        print(mat1)
         return mat2, chosen_columns
 
 
@@ -151,3 +156,67 @@ class password_class:
     def check_password(self, plain_text_password, hashed_password):
         return bcrypt.checkpw(plain_text_password, hashed_password)
     
+
+# https://stackoverflow.com/questions/66218337/encrypt-and-protect-file-with-python
+#https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
+class cryptography:
+
+    def __init__(self):
+        connection = database()
+        self.db = connection.db
+        self.cursor = connection.cursor
+        self.salt = b'HuhTengereesZayatai'
+
+    def generate_key(self, password):
+        hashed = SHA256.new(password.encode()).digest()
+        return base64.urlsafe_b64encode(hashed)
+
+    def encrypt(self, save_folder, folder_path, filename, password, username):
+
+        file_path = os.path.join(folder_path, filename)
+        with open(file_path, 'rb') as file:
+            data = file.read()
+
+        key = self.generate_key(password)
+        fernet = Fernet(key)
+        encrypted = fernet.encrypt(data)
+
+        new_filename = filename[:-4] + str(datetime.now())
+
+        destination = os.path.join(save_folder, new_filename)
+        with open(destination, 'wb') as file:
+            file.write(encrypted)
+
+        query = f"SELECT userID FROM users WHERE username = '{username}'"
+        self.cursor.execute(query)
+        userID = self.cursor.fetchone()[0]
+
+        new_query = "INSERT INTO files (userID, file_name, hashed_name) VALUES (%s, %s, %s)"
+        self.cursor.execute(new_query, (userID, filename, new_filename))
+        self.db.commit()
+        # file needs to be deleted from the original folder
+
+    def decrypt(self, enc_storage_path, filename, password, username):
+
+        query = f"SELECT userID FROM users WHERE username = '{username}'"
+        self.cursor.execute(query)
+        userID = self.cursor.fetchone()[0]
+
+        new_sql = f"SELECT hashed_name FROM files WHERE userID = '{userID}' and file_name = '{filename}'"
+        self.cursor.execute(new_sql)
+        hashed_filename = self.cursor.fetchone()
+
+        file_path = os.path.join(enc_storage_path, hashed_filename)
+
+        with open(file_path, "rb") as file:
+            data = file.read()
+
+        key = self.generate_key(password)
+
+        fernet = Fernet(key)
+
+        decrypted = fernet.decrypt(data)
+
+        print(decrypted)
+
+

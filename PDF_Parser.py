@@ -1,14 +1,10 @@
 import camelot
 import pandas as pd
-import csv 
 import pdfplumber
-from datetime import datetime
 from BASE_Classes import ParsingBase
 import pandas as pd
 import re
 import numpy as np
-
-
 
 class ParsingPDF:
     def __init__(self, pdf_name):
@@ -24,12 +20,11 @@ class ParsingPDF:
 
                 columns = self.parser.choose_ratio(dataframe.columns.tolist())
 
-
                 dataframe = dataframe[columns[0]]
                 new_dataframe = self.parser.order_dataframe(dataframe, columns[1])
 
                 # needs to check the format
-                self.parser.unify_amount_columns(new_dataframe)
+                new_dataframe = self.parser.unify_amount_columns(new_dataframe)
 
 
                 print(new_dataframe)
@@ -83,7 +78,6 @@ class ParsingPDF:
             value = value.split("\n")[-1]
 
         value = re.sub(r'[^A-Za-z0-9 -./]+', '', value)
-
         try:
             value = float(value.replace(",", "").replace('"', ""))
         except:
@@ -126,7 +120,6 @@ class ParsingPDF:
             test_value = df.loc[0, df.columns[0]]      
             self.parser.change_type(test_value, df[df.columns[0]], df)
             dataframe_list.append(df)
-            # print(df)
             return dataframe_list
 
         return dataframe_list
