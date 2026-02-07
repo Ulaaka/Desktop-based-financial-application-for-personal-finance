@@ -138,8 +138,7 @@ class ParsingPDF:
             if r['height'] > 5 
             and r['height'] < 100 
             and r['width'] < 200
-            ]
-
+        ]
         # debugging
             im = page.to_image(resolution=150)
             im.draw_rects(header_rects, stroke="red", stroke_width=2)

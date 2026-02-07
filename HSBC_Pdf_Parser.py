@@ -165,7 +165,6 @@ class HSBC_PDF_CONVERSION:
                 'Credit': credit,
                 'Balance': balance
             })
-        
         return values
 
 

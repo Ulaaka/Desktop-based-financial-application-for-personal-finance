@@ -248,10 +248,56 @@ class query_processor:
         self.db.commit()
 
     def find_close_transactions(self, description):
+        # https://stackoverflow.com/questions/6259647/mysql-match-against-order-by-relevance-and-column
         regex = re.compile(r'\b[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*\b')
-        output = ' '.join.regex.findall(description)
+        str_list = regex.findall(description)
 
-        # needs to search for similar description to apply the same category in the database
-        
+        for idx,  word in enumerate(str_list):
+            str_list[idx] = f'+{word}'
 
+        parameters = [' '.join(str_list)]
+
+        query = "SELECT transactionID FROM transactions WHERE MATCH(description) AGAINST(%s IN BOOLEAN MODE)"
+        self.cursor.execute(query, parameters)
+        return  self.cursor.fetchall()
+
+    def update_category(self, category, transactionID):
+        parameter = [category]
+        if not isinstance(transactionID, list):
+            transactionID = [transactionID]
+
+        s_list = []
+        for i in range(len(transactionID)):
+            s_list.append("%s")
+
+        s_string = ', '.join(s_list)
+
+        query = f"""
+            UPDATE transactions
+            SET category = %s
+            WHERE transactionID IN ({s_string})
+        """
+        parameter += transactionID
+
+        self.cursor.execute(query, parameter)
+        self.db.commit()
+
+    # needs to search for similar description to apply the same category in the database
+    def change_category(self, category, transactionID):
+        self.update_category(category, transactionID)
+
+        description_query =  f"""
+            SELECT description
+            FROM transactions
+            WHERE transactionID = %s
+        """
+        self.cursor.execute(description_query, (transactionID, ))
+        description = self.cursor.fetchone()[0]
+
+        close_transaction_ids = self.find_close_transactions(description)
+
+        for idx,  i in enumerate(close_transaction_ids):
+            close_transaction_ids[idx] = i[0]
+
+        self.update_category(category, close_transaction_ids)
 
