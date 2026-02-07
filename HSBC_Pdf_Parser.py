@@ -16,7 +16,7 @@ class HSBC_PDF_CONVERSION:
         date_column = df[df.columns[0]]
         parser.change_type(df.loc[0, df.columns[0]] , date_column, df)
 
-        parser.unify_amount_columns(df)
+        df = parser.unify_amount_columns(df)
         self.df = df
 
     def return_text(self, pdf_file):

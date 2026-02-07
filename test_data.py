@@ -5,7 +5,8 @@ from PDF_Parser import ParsingPDF
 from queries import query_processor
 from pathlib import Path
 import os
-from BASE_Classes import cryptography
+from BASE_Classes import cryptography, password_class
+
 
 
 #parsing = ParsingCSV("Monzo_csv.csv")
@@ -28,19 +29,24 @@ from BASE_Classes import cryptography
 #query.common_transactions("test5",  5, account_name="savings",transfer_toggle=False, date_lower="2025-12-23", filter_amount=5)
 
 # https://stackoverflow.com/questions/10377998/how-can-i-iterate-over-files-in-a-given-directory
-"""folder_path = '/Users/nyamdorjbat-erdene/Final_year/file_storage'
+folder_path = '/Users/nyamdorjbat-erdene/Final_year/file_storage'
 save_folder = '/Users/nyamdorjbat-erdene/Final_year/encrypted_storage'
 
 password = 'Ulaaka_1223'
 username = "test5"
 account_name =  "savings"
+email = "urnaa@gmail.com"
+account_type = "Bank"
+account_currency = "GBP"
 query = query_processor()
-
 for filename in os.listdir(folder_path):
     if (filename.endswith(".csv") or filename.endswith(".pdf")): 
-        crypto = cryptography()
 
-        file_ID = crypto.encrypt(save_folder, folder_path, filename, password, username, account_name)
+        crypto = cryptography()
+        password_manager = password_class()
+        hashed_password = password_manager.hash_password(password)
+        userID = query.insert_user(username, password, email)
+        accountID = query.insert_account(userID, account_name, account_type, account_currency)
 
         file_path = os.path.join(folder_path, filename)
         if (filename.endswith(".csv")):
@@ -50,18 +56,8 @@ for filename in os.listdir(folder_path):
                 parsing = ParsingPDF(file_path)
             except:
                 parsing = HSBC_PDF_CONVERSION(file_path)
-
-        processor = ProcessingDF(parsing.df, username, password, "urnaa@gmail.com", account_name, "Bank", file_ID,  "GBP")
+        print("parsed: ", filename)
+        file_ID = crypto.encrypt(save_folder, folder_path, filename, password, accountID)
+        processor = ProcessingDF(parsing.df, username, password, email, account_name, account_type, file_ID,  account_currency)
     else:
         raise Exception("Incompatible file/s has been submitted.")
-"""
-
-query = query_processor()
-query.common_transactions('test5', 50, transfer_toggle=False, )
-
-"""import re
-# self, username, limit, account_name=None, transfer_toggle=None, date_lower=None, date_upper=None, filter_amount=None
-# query.common_transactions('test5', 50, transfer_toggle=False, )
-s = re.findall(r'\b[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*\b', 'TESCO STORES  6445')
-result =  ' '.join(s)
-print(result)"""

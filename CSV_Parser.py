@@ -25,8 +25,7 @@ class ParsingCSV:
 
             new_df = parser.order_dataframe(df, selected_columns)
 
-            parser.unify_amount_columns(new_df)
+            new_df = parser.unify_amount_columns(new_df)
 
             self.df = new_df
-            # print(self.df )
-    
+            # print(self.df)

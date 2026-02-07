@@ -15,7 +15,7 @@ from Crypto.Hash import SHA256
 
 class ParsingBase:
     def __init__(self):
-        self.expecting = ["Date", ["Type" , "Category"], [ "Details", "Description", "Reference", "Narrative"], ["Out", "Credit Amount", "Withdrawal"], ["In", "Debit Amount", "Received", "Deposit"], "Balance"]
+        self.expecting = [["Date"], ["Type" , "Category"], [ "Details", "Description", "Reference", "Narrative"], ["Money Out", "Paid Out", "Debit" "Debit Amount", "Withdrawal"], ["Money In", "Paid In", "Credit", "Credit Amount", "Received", "Deposit"], ["Balance"]]
         self.card = {'DEB', ')))', 'VIS', 'Card payment', 'Debit Card Transaction', 'DD'}
         self.atm = {'CPT', 'PIM', 'ATM', 'Cash withdrawal'}
         self.fast_payment = {'FPO', 'BP', 'Mobile/Online Transaction',  'FPI', 'Faster payment'}
@@ -51,123 +51,92 @@ class ParsingBase:
     # https://stackoverflow.com/questions/52206973/convert-different-date-formats-to-a-given-unique-date-format-in-python
     def change_type(self, test_date, column, dataframe):
         if not self.check_date_type(test_date):
-
             for i in column:
                 column = column.replace([i], dateutil.parser.parse(i).strftime("%d/%m/%Y"))
         dataframe[dataframe.columns[0]] = column
 
     # need to do more debugging 
     def unify_amount_columns(self, df):
-        same = df[df.columns[-2]].equals(df[df.columns[-3]])
-        
-        if same:
-            # since both columns are identical, even the name , needed to drop using iloc
-            # https://stackoverflow.com/questions/33045364/how-to-select-columns-by-position-in-pandas
-            columns = list(range(len(df.columns)))
-            columns.pop(-2)
-            df = df.iloc[:, columns]
-
-        else:
-
-            df[df.columns[-3]] = pd.to_numeric(df[df.columns[-3]], errors='coerce')
-            df[df.columns[-2]] = pd.to_numeric(df[df.columns[-2]], errors='coerce')
+        new_df = df.copy()
+        length = len(df.columns)
+        if (length == 6):
+            new_df[new_df.columns[-3]] = pd.to_numeric(new_df[new_df.columns[-3]], errors='coerce')
+            new_df[new_df.columns[-2]] = pd.to_numeric(new_df[new_df.columns[-2]], errors='coerce')
 
             # needs to algin the columns
-            corrected = (abs(df[df.columns[-2]].fillna(0)) - abs(df[df.columns[-3]].fillna(0)))
-            pos = len(df.columns) - 3
-            df.insert(pos, "Unified_Amount", corrected)
-            df.drop(columns=[df.columns[-3], df.columns[-2]], inplace=True)
-        
-        return df
+            corrected = (abs(new_df[new_df.columns[-2]].fillna(0)) - abs(new_df[new_df.columns[-3]].fillna(0)))
+            pos = len(new_df.columns) - 3
+            new_df.insert(pos, "Unified_Amount", corrected)
+            new_df.drop(columns=[new_df.columns[-3], new_df.columns[-2]], inplace=True)
+        else:
+            new_df[new_df.columns[-2]] = pd.to_numeric(new_df[new_df.columns[-2]], errors='coerce').fillna(0)
+        return new_df
 
     def order_dataframe(self, df, columns):
-
         missing = sorted(list(set(range(6)) - set(columns)))
-
         if (not missing):
             return df
         
+        new_df = df.copy()
         extra = 0
         for i in missing:
             pos = i + extra
             if (i == 1):
-                df.insert(pos, "Type", "Unknown")
+                new_df.insert(pos, "Type", "Unknown")
             elif (i == 2):
-                df.insert(pos, "Description", "Unknown")
+                new_df.insert(pos, "Description", "Unknown")
             elif(i == 5):
-                df.insert(pos, "Balance", 0)
+                new_df.insert(pos, "Balance", 0)
             else:
-                raise Exception("Important column is not selected")
+                pass
             extra+=1
-        return df
-    
+        return new_df
+
     def choose_ratio(self, columns):
-        mat1 = [0]*len(self.expecting)
-        mat2 = []
-        
-        for idx, i in enumerate(self.expecting):
-            if not isinstance(i, list):
-                #mat1.append(process.extractOne(i, columns, scorer=fuzz.partial_ratio))
-                mat1[idx] = process.extractOne(i, columns, scorer=fuzz.partial_ratio)
-                
-            else:
-                group_results = []
-                for j in i:
-                    group_results.append(process.extractOne(j, columns, scorer=fuzz.partial_ratio))
-                #mat1.append(group_results)
-                mat1[idx] = group_results
-
-        above = 60
+        mat1 = [None]*len(self.expecting)
+        used = set()
         chosen_columns = []
-        percentage = []
-        for idx, i in enumerate(mat1):
-            if not isinstance(i, list):
-                if (i[1] > above):
-                    mat2.append(i[0])
-                    chosen_columns.append(idx)
-                    percentage.append(i[1])
-            else:
-                highest = 0
-                highIdx = None
-                for sub_idx, j in enumerate(i):
-                    if (j[1] > highest and j[1] >above):
-                        highest = j[1]
-                        highIdx = sub_idx
 
-                if highIdx is not None:
-                    element = i[highIdx][0]
-                    mat2.append(element)
-                    chosen_columns.append(idx)
-                    percentage.append(highest)
-        try:
-            if (mat2[-1] == mat2[-2]):
-                mat2.pop()
-        except:
-            print("The table is not related to transaction")
-        # https://stackoverflow.com/questions/11236006/identify-duplicate-values-in-a-list-in-python
+        # list for debug
+        result_list = []
+        above = 50
+        for idx, i in enumerate(self.expecting):
+            highest_column_name = None
+            highest_column_index = None
+            highest = -1
 
-        Dict = defaultdict(list)
-        for idx,item in enumerate(mat2):
-            if (item not in [mat2[-3], mat2[-2]]):
-                Dict[item].append(idx)
+            score_list = [None]*len(i)
+            for extra_idx,  j in enumerate(i):
+                sub_list = []
+                for sub_idx, column in enumerate(columns):
+                    if (sub_idx in used):
+                        continue
 
-        indices = set()
-        for key, value in Dict.items():
-            if (len(value) > 1):
-                max_value = 0
-                max_ind = -1
-                for i in value:
-                    if (percentage[i] > max_value):
-                        max_value = percentage[i]
-                        max_ind = i
+                    grade = fuzz.partial_ratio(j, column)
+                    sub_list.append((column, grade))
+                    
+                    if (grade > highest and grade > above):
+                        highest = grade
+                        highest_column_name = column
+                        highest_column_index = sub_idx
 
-                indices = set(value) - {max_ind}
-                
-        for i in indices:
-            chosen_columns.remove(i)
-            mat2.pop(i)
+                score_list[extra_idx] = sub_list
+
+            result_list.append(score_list)
+            if (highest_column_index is not None):
+                mat1[idx] = highest_column_name
+                chosen_columns.append(idx)
+                used.add(highest_column_index)
+
+        mat2 = []
+        for i in mat1:
+            if (i is not None):
+                mat2.append(i)
+        #print("========")
+        #print(result_list)
+        # print(mat2)
+        #print(chosen_columns)
         return mat2, chosen_columns
-
 
 class password_class:
     
@@ -182,19 +151,17 @@ class password_class:
 # https://stackoverflow.com/questions/66218337/encrypt-and-protect-file-with-python
 #https://stackoverflow.com/questions/42568262/how-to-encrypt-text-with-a-password-in-python
 class cryptography:
-
     def __init__(self):
         connection = database()
         self.db = connection.db
         self.cursor = connection.cursor
         self.salt = b'HuhTengereesZayatai'
-        self.query = query_processor()
 
     def generate_key(self, password):
         hashed = SHA256.new(password.encode()).digest()
         return base64.urlsafe_b64encode(hashed)
 
-    def encrypt(self, save_folder, folder_path, filename, password, username, account_name):
+    def encrypt(self, save_folder, folder_path, filename, password, accountID):
 
         file_path = os.path.join(folder_path, filename)
         with open(file_path, 'rb') as file:
@@ -206,13 +173,11 @@ class cryptography:
 
         new_filename = filename[:-4] + str(datetime.now())
 
-        destination = os.path.join(save_folder, new_filename)
+        """ destination = os.path.join(save_folder, new_filename)
         with open(destination, 'wb') as file:
             file.write(encrypted)
- 
-        userID = self.query.get_userID(username)
-        accountID = self.query.get_accountID(account_name, userID)
-
+        """
+        
         new_query = "INSERT INTO files (accountID, file_name, hashed_name) VALUES (%s, %s, %s)"
         self.cursor.execute(new_query, (accountID,  filename, new_filename))
         file_ID = self.cursor.lastrowid
@@ -220,12 +185,12 @@ class cryptography:
         return file_ID
 
         # file needs to be deleted from the original folder
-
     def decrypt(self, enc_storage_path, filename, password, username, account_name):
+        query = query_processor()
 
-        userID = self.query.get_userID(username)
-        accountID = self.query.get_accountID(account_name, userID)
-        hashed_filename = self.query.get_hashed_name(accountID, filename)
+        userID = query.get_userID(username)
+        accountID = query.get_accountID(account_name, userID)
+        hashed_filename = query.get_hashed_name(accountID, filename)
 
         file_path = os.path.join(enc_storage_path, hashed_filename)
 

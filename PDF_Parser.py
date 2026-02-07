@@ -21,10 +21,8 @@ class ParsingPDF:
 
                 dataframe = dataframe[columns[0]]
                 new_dataframe = self.parser.order_dataframe(dataframe, columns[1])
-
                 # needs to check the format
                 new_dataframe = self.parser.unify_amount_columns(new_dataframe)
-
 
                 #print(new_dataframe)
 
@@ -35,6 +33,7 @@ class ParsingPDF:
                     dataframe[i] = pd.to_numeric(new_dataframe[i].astype(str).str.replace(',', ''), errors='coerce')
 
                 self.df.append(new_dataframe)
+                
 
     def find_header(self, df):
         print("----------------------------------------")
