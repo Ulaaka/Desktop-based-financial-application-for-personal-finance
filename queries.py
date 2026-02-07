@@ -188,9 +188,9 @@ class query_processor:
         self.db.commit()
         return accountID
     
-    def insert_into_transactions(self, accountID, file_ID, date, type, description, amount, balance):
-        sql = f"INSERT INTO transactions (accountID, file_ID, transaction_date, transaction_type, description, amount, balance) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        self.cursor.execute(sql, (accountID, file_ID, date, type, description, amount, balance))
+    def insert_into_transactions(self, accountID, file_ID, date, type, description, category, amount, balance):
+        sql = f"INSERT INTO transactions (accountID, file_ID, transaction_date, transaction_type, description, category, amount, balance) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        self.cursor.execute(sql, (accountID, file_ID, date, type, description, category, amount, balance))
         self.db.commit()
     
     def insert_user(self, username, hashed_password, email):
@@ -216,28 +216,26 @@ class query_processor:
     def get_userID(self, username):
         sql = f"SELECT userID FROM users WHERE username = %s"
         self.cursor.execute(sql, (username,))
-        output = self.cursor.fetchone()[0]
-
-        return output if output else None
-  
+        output = self.cursor.fetchone()
+        return output[0] if output else None
 
     def get_accountID(self, account_name, userID):
         sql = f"SELECT accountID FROM accounts WHERE account_name = %s and userID = %s"
         self.cursor.execute(sql, (account_name, userID))
-        output = self.cursor.fetchone()[0]
-        return output if output else None
+        output = self.cursor.fetchone()
+        return output[0] if output else None
     
     def get_hashed_name(self, accountID, filename):
         new_sql = f"SELECT hashed_name FROM files WHERE accountID = '{accountID}' and file_name = '{filename}'"
         self.cursor.execute(new_sql)
-        output = self.cursor.fetchone()[0]
-        return output if output else None
+        output = self.cursor.fetchone()
+        return output[0] if output else None
     
     def get_file_ID(self, accountID, filename):
         sql = "SELECT file_ID FROM files WHERE accountID = %s AND file_name = %s"
         self.cursor.execute(sql, (accountID, filename))
-        output = self.cursor.fetchone()[0]
-        return output if output else None
+        output = self.cursor.fetchone()
+        return output[0] if output else None
     
     # needs to polish, would be a trouble if the file names are the same
     def delete_file(self, username, account_name, filename):

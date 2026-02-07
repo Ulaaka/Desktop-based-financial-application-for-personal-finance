@@ -39,7 +39,6 @@ class ParsingBase:
         else:
             return transaction_type
         
-        
     # check the first value of the date list
     def check_date_type(self, test_date):
         try:
@@ -73,10 +72,9 @@ class ParsingBase:
         return new_df
 
     def order_dataframe(self, df, columns):
-        missing = sorted(list(set(range(6)) - set(columns)))
+        missing = sorted(list(set(range(7)) - set(columns)))
         if (not missing):
             return df
-        
         new_df = df.copy()
         extra = 0
         for i in missing:
@@ -87,9 +85,6 @@ class ParsingBase:
                 new_df.insert(pos, "Description", "Unknown")
             elif(i == 5):
                 new_df.insert(pos, "Balance", 0)
-            else:
-                pass
-            extra+=1
         return new_df
 
     def choose_ratio(self, columns):
@@ -114,7 +109,6 @@ class ParsingBase:
 
                     grade = fuzz.partial_ratio(j, column)
                     sub_list.append((column, grade))
-                    
                     if (grade > highest and grade > above):
                         highest = grade
                         highest_column_name = column
