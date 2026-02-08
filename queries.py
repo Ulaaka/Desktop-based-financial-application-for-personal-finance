@@ -3,7 +3,7 @@ from datetime import datetime
 import re
 from nltk.corpus import stopwords
 from geotext import GeoText
-
+import json
 class query_processor:
     def __init__(self):
         connection = database()
@@ -217,6 +217,35 @@ class query_processor:
             except:
                 print("could not execute insert_into_accounts ")
         return accountID
+    
+    def insert_category(self, userID, category_list, category_name):
+        categoryID = self.get_category(userID, category_list)
+        if categoryID is not None:
+            try:
+                query = f"""
+                    UPDATE categories
+                    SET category_name = %s
+                    WHERE categoryID = %s
+                """
+                self.cursor.execute(query, (category_name, categoryID))
+                self.db.commit()
+            except:
+                print(f"could not update the category:{categoryID}")
+        else:
+                query = f"INSERT INTO categories (userID, category_list, category_name) VALUES (%s, %s, %s)"
+                self.cursor.execute(query, (userID, json.dumps(category_list), category_name))
+                categoryID = self.cursor.lastrowid
+                self.db.commit()
+        return categoryID
+
+    def get_category(self, userID, category_list):
+        # https://stackoverflow.com/a/37662298
+        # https://dev.mysql.com/doc/refman/8.4/en/json-search-functions.html
+
+        sql = f"SELECT categoryID FROM categories WHERE userID = %s AND JSON_CONTAINS(category_list, %s)"
+        self.cursor.execute(sql, (userID, json.dumps(category_list)))
+        output = self.cursor.fetchone()
+        return output[0] if output else None
 
     def get_userID(self, username):
         sql = f"SELECT userID FROM users WHERE username = %s"
@@ -263,12 +292,13 @@ class query_processor:
         regex = re.compile(r'\b[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})*\b')
         str_list = regex.findall(description)
         plus_list = []
+        word_list = []
         for  word in str_list:
             if (word.lower() not in (places_set | self.stop_words)):
                 # since the case does not matter
                 plus_list.append(f'+{word}')
+                word_list.append(word)
         
-
         parameters = [' '.join(plus_list)]
 
         query = "SELECT transactionID, description FROM transactions WHERE MATCH(description) AGAINST(%s IN NATURAL LANGUAGE MODE)"
@@ -277,7 +307,7 @@ class query_processor:
         output = self.cursor.fetchall()
         selective_ids = [value[0] for value in output]
 
-        return selective_ids
+        return selective_ids, word_list
 
     def update_category(self, category, transactionID):
         parameter = [category]
@@ -309,9 +339,18 @@ class query_processor:
             FROM transactions
             WHERE transactionID = %s
         """
+
         self.cursor.execute(description_query, (transactionID, ))
         description = self.cursor.fetchone()[0]
 
         close_transaction_ids = self.find_close_transactions(description)
-        self.update_category(category, close_transaction_ids)
+        print(close_transaction_ids[1])
+        categoryID = self.insert_category(userID, close_transaction_ids[1], category)
+
+        self.update_category(category, close_transaction_ids[0])
+    
+
+    
+
+
 

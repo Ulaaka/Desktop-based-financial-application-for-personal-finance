@@ -61,8 +61,8 @@ for filename in os.listdir(folder_path):
         file_ID = crypto.encrypt(save_folder, folder_path, filename, password, accountID)
         processor = ProcessingDF(parsing.df, username, password, email, account_name, account_type, file_ID,  account_currency)
     else:
-        raise Exception("Incompatible file/s has been submitted.")
-"""
+        raise Exception("Incompatible file/s has been submitted.")"""
+
 query = query_processor()
 # "TESCO STORES 5243"
-query.change_category("subscription", 492)
+query.change_category(1, "Grocery", 461)
