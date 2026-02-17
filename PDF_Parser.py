@@ -54,18 +54,22 @@ class ParsingPDF:
                 length = False
 
             if (string == True and unique == True and length == True):
-                print(index)
                 return index
-            else: 
+            else:
                 return 0
 
     def find_header(self, df):
         print("----------------------------------------")
-        new_df = df.loc[0:min(15, len(df))]
+        """        new_df = df.loc[0:min(15, len(df))]
         new_df['index'] = new_df.index
-        new_df.apply(lambda row: self.select_header(row['index'], row.tolist(), len(df.columns)), axis=1)
+        try:
+            header_index = new_df.apply(lambda row: self.select_header(row['index'], row.tolist(), len(df.columns)), axis=1)
+            print(header_index)
+        except:
+            header_index = 0
+        return header_index"""
 
-    """        for i in range(min(15, len(df))):
+        for i in range(min(15, len(df))):
             row = df.iloc[i]
 
             header_Values = row.tolist()
@@ -84,7 +88,6 @@ class ParsingPDF:
 
             if len(header_Values) > len(set(header_Values)):
                 unique = False
-            print(len(df.columns))
 
             if (length_count != len(df.columns)):
                 length = False
@@ -93,7 +96,6 @@ class ParsingPDF:
                 return i
         return 0
     
-    """
     def pre_clean_up(self, value):
         if value is None or not value or not isinstance(value, str):
             return value
