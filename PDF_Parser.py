@@ -33,8 +33,8 @@ class ParsingPDF:
                     dataframe[i] = pd.to_numeric(new_dataframe[i].astype(str).str.replace(',', ''), errors='coerce')
 
                 self.df.append(new_dataframe)
-                
-    def select_header(self, index, header_Values, size_columns):            
+
+    def select_header(self, index, header_Values, size_columns):
             string = True
             unique = True
             length = True
@@ -123,7 +123,7 @@ class ParsingPDF:
 
         header = self.find_header(df)
         df.columns = df.iloc[header]
-        df = df.reset_index(drop=True) 
+        df = df.reset_index(drop=True)
 
         dataframe_list = []
         rows_to_drop = []
@@ -146,7 +146,7 @@ class ParsingPDF:
         df = df.reset_index(drop=True)
 
         if not df.empty:
-            test_value = df.loc[0, df.columns[0]]      
+            test_value = df.loc[0, df.columns[0]]
             self.parser.change_type(test_value, df[df.columns[0]], df)
             dataframe_list.append(df)
             # return dataframe_list
@@ -156,7 +156,7 @@ class ParsingPDF:
     def run_camelot(self, name, flavor_camelot):
         if (flavor_camelot == "stream"):
             tables = camelot.read_pdf(name, flavor=flavor_camelot ,pages='all', row_tol = 20)
-        else: 
+        else:
             tables = camelot.read_pdf(name, flavor=flavor_camelot, pages='all', line_scale=40)
         return tables
 
@@ -164,9 +164,9 @@ class ParsingPDF:
         with pdfplumber.open(name) as pdf:
             page = pdf.pages[idx]
             header_rects = [
-            r for r in page.rects 
-            if r['height'] > 5 
-            and r['height'] < 100 
+            r for r in page.rects
+            if r['height'] > 5
+            and r['height'] < 100
             and r['width'] < 200
         ]
         if len(header_rects) > 15:

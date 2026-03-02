@@ -59,13 +59,6 @@ class ProcessingDF:
             else:
                 category = output[1]
 
-            """            # AND file_ID = %s
-            # self.file_ID
-            sql = f"SELECT 1 FROM transactions WHERE accountID = %s AND transaction_date = %s AND transaction_type = %s AND description = %s AND category = %s AND amount = %s AND balance = %s"
-            self.cursor.execute(sql, (accountID, self.change_to_date(row[0]), row[1], row[2], category, Decimal(row[3]),  Decimal(row[4])))
-            result = self.cursor.fetchone()
-            """
-
             row[1] = parser.classify_transaction_type(row[1])
             transaction_list.append((accountID, self.file_ID, self.change_to_date(row[0]), row[1], row[2], category, Decimal(row[3]),  Decimal(row[4])))
         
