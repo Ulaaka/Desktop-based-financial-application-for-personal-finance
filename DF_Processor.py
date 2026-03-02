@@ -49,7 +49,7 @@ class ProcessingDF:
         # https://stackoverflow.com/questions/16476924/how-can-i-iterate-over-rows-in-a-pandas-dataframe
 
         transaction_list = []
-        for index, row in dtb.iterrows():
+        for _, row in dtb.iterrows():
             row = list(map(str, row.tolist()))
             word_list = query.return_word_list(row[2])[1]
             

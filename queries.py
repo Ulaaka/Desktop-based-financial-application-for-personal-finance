@@ -4,6 +4,7 @@ import re
 from nltk.corpus import stopwords
 from geotext import GeoText
 import json
+
 class query_processor:
     def __init__(self):
         connection = database()
@@ -193,7 +194,6 @@ class query_processor:
         return accountID
     
     def insert_into_transactions(self, transaction_list):
-        
         sql = """INSERT IGNORE INTO transactions (accountID, file_ID, transaction_date, transaction_type, description, category, amount, balance) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         self.cursor.executemany(sql, transaction_list)
         self.db.commit()
