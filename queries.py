@@ -369,6 +369,15 @@ class query_processor:
         self.cursor.execute(query, (userID, ))
         result = self.cursor.fetchall()
         return result if result else None
+    
+    def return_updated_category(self, description):
+        word_list = self.return_word_list(description)[1]
+        output = self.get_category(1, word_list)
+        if (output is None):
+            category = "Undefined"
+        else:
+            category = output[1]
+        return category
 
     def show_description_list_by_category_name(self, userID, category_name):
         query = """
@@ -408,7 +417,6 @@ class query_processor:
         self.cursor.execute(query, (userID, category_name))
         result = self.cursor.fetchall()
          #return result if result else None
-        
         # close_transaction_ids = self.find_close_transactions(description)
 
         

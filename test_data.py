@@ -64,12 +64,24 @@ for filename in os.listdir(folder_path):
     else:
         raise Exception("Incompatible file/s has been submitted.")"""
 
+
 query = query_processor()
 # "TESCO STORES 5243"
 #query.change_category(1, "shopping", 228)
 #result = query.get_categories(1)
 # result = query.show_description_list_by_category_name(1, "grocery")
-result = query.add_description_into_list_category(1, "lidl", "grocery")
-print(result)
+description  = "Lidl Cosmetic Surgery Mongolia"
+word_list = query.return_word_list(description)[1]
+print(word_list)
+output = query.get_category(1, word_list)
+if (output is None):
+    category = "Undefined"
+else:
+    category = output[1]
+print(category)
+transaction = [(1, 7, "2026-03-09", "Deposit", description, category, "30", "2034")]
+query.insert_into_transactions(transaction)
+
+# result = query.add_description_into_list_category(1, "lidl Cosmetic Surgery Mongolia", "cosmetic")
 
 

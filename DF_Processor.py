@@ -51,14 +51,7 @@ class ProcessingDF:
         transaction_list = []
         for _, row in dtb.iterrows():
             row = list(map(str, row.tolist()))
-            word_list = query.return_word_list(row[2])[1]
-            
-            output = query.get_category(userID, word_list)
-            if (output is None):
-                category = "Undefined"
-            else:
-                category = output[1]
-
+            category = query.return_updated_category(row[2])
             row[1] = parser.classify_transaction_type(row[1])
             transaction_list.append((accountID, self.file_ID, self.change_to_date(row[0]), row[1], row[2], category, Decimal(row[3]),  Decimal(row[4])))
         
