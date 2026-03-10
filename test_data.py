@@ -78,4 +78,8 @@ query.insert_into_transactions(transaction)
 # result = query.add_description_into_list_category(1, "lidl Cosmetic Surgery Mongolia", "cosmetic")
 
 #result = query.remove_description_from_list_category(1, 7, "cosmetic")
-query.update_transaction_after_deletion_description(1, "cosmetic")
+#query.update_transaction_after_deletion_description(1, "cosmetic")
+
+system = system_functions()
+random = system.generate_random_digits(6)
+print(random)

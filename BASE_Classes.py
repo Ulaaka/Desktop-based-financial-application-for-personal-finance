@@ -128,6 +128,10 @@ class ParsingBase:
         return mat2, chosen_columns
 
 class password_class:
+    def __init__(self):
+        connection = database()
+        self.db = connection.db
+        self.cursor = connection.cursor
 
     def hash_password(self, password):
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
@@ -135,6 +139,17 @@ class password_class:
     # later used to check the password
     def check_password(self, plain_text_password, hashed_password):
         return bcrypt.checkpw(plain_text_password, hashed_password)
+    
+    def change_password(self, userID, new_password):
+        hashed = self.hash_password(new_password)
+        query = f"""
+            UPDATE users
+            SET hashed_password = %s
+            WHERE userID = %s
+        """
+        self.cursor.execute(query, (hashed, userID))
+        self.db.commit()
+        print("changed the password successfully")
 
 
 # https://stackoverflow.com/questions/66218337/encrypt-and-protect-file-with-python
