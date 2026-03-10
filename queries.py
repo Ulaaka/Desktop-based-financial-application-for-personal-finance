@@ -443,18 +443,6 @@ class query_processor:
                 new_category = self.return_updated_category(j)
                 self.update_category(new_category, i)
 
-    def change_password(self, userID, new_password):
-        query = f"""
-            UPDATE users
-            SET hashed_password = %s
-            WHERE userID = %s
-        """
-        self.cursor.execute(query, (new_password, userID))
-        self.db.commit()
-        print("changed the password successfully")
-
-
-
 
 
 
