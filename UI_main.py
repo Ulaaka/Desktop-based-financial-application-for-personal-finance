@@ -168,22 +168,23 @@ class login_page(QWidget):
         layout.addWidget(forgot_password, alignment=Qt.AlignCenter)
         layout.addWidget(signup_btn)
         layout.addStretch()
-        
+
         self.setLayout(layout)
 
-        
+
     def handle_sign_up(self):
         self.controller.show_sign_up()
-    
+
     def handle_login(self):
         username_local = self.username.text()
         password_local = self.password.text()
         password_manager = password_class()
-        
+
         if not username_local or not password_local:
             QMessageBox.warning(self, 'Error', 'Please enter both of the credentials, thank you')
             return
-
+        
+        # needs to add a timer of 1 minute
         sql = f"SELECT hashed_password FROM users WHERE username = %s"
         self.cursor.execute(sql, (username_local, ))
         result = self.cursor.fetchone()
@@ -193,11 +194,11 @@ class login_page(QWidget):
         else:
             QMessageBox.warning(self, 'Error', 'Password or Username is wrong')
             return
-        
+
     # finished to be later
     def handle_forgot_password(self):
         username_local = self.username.text()
-        
+
         if not username_local:
             QMessageBox.information(
                 self, 
@@ -205,7 +206,7 @@ class login_page(QWidget):
                 'Please enter your username first, then click "Forgot your password?"'
             )
             return
-        
+
         email_query = "SELECT email_address FROM users WHERE username = %s"
         self.cursor.execute(email_query, (username_local, ))
         email_user = self.cursor.fetchone()[0]
@@ -360,7 +361,7 @@ class reset_password(QWidget):
 
         # Retype New Password
         self.password_2 = PasswordEdit()
-        self.password_2.setPlaceholderText('New Password')
+        self.password_2.setPlaceholderText('Re-type New Password')
         self.password_2.setStyleSheet(input_style)
         self.password_2.setFont(QFont('Arial', 15))
 
@@ -382,14 +383,15 @@ class reset_password(QWidget):
         self.setLayout(layout)
 
     def compare_password(self):
+        # needs to add password check, warning to the user
+        password_manager = password_class()
+        safety = password_manager.check_password_safety(self.password_1.text())
         if self.password_1.text() == self.password_2.text():
            print("New Password Matches")
 
-           password_manager = password_class()
-
            hashed_password = password_manager.hash_password(self.password_1.text())
            username = self.login_page.get_username()
-           
+
            query = "UPDATE users SET hashed_password = %s WHERE username = %s"
            self.cursor.execute(query, (hashed_password, username))
            self.db.commit()

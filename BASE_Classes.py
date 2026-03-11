@@ -11,6 +11,7 @@ import os
 from database_connection import database
 import base64
 from Crypto.Hash import SHA256
+import re
 
 class ParsingBase:
     def __init__(self):
@@ -132,7 +133,13 @@ class password_class:
         connection = database()
         self.db = connection.db
         self.cursor = connection.cursor
-
+        
+    # https://stackoverflow.com/questions/74932694/checking-password-validation-in-python
+    def check_password_safety(self, password):
+        if len(password) >= 6 and re.search(r"\d", password) and re.search(r"[A-Z]", password) and re.search(r"[!$@%]", password):
+            return True 
+        return False
+    
     def hash_password(self, password):
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
