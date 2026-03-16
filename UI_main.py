@@ -93,8 +93,8 @@ random_digit_box_style = '''
         border: 2px solid #6C63FF;
         background: white;
     }
-
 '''
+
 # if underline_button, button_color = "transparent"
 def handle_button_style(if_handle, button_color, hover_color):
         handle_button_additional = """
