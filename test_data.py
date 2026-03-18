@@ -55,29 +55,32 @@ for filename in os.listdir(folder_path):
         if not os.path.exists(sub_save_folder):
             os.makedirs(sub_save_folder)
 
-        if os.path.exists(sub_save_folder):
+
+        found = False
         # needs to be fixed
-            for encrypted_file in os.listdir(sub_save_folder):
-                decrypted = crypto.decrypt(sub_save_folder, password, username, account_name, hashed_filename=encrypted_file)
-                if os.path.getsize(file_path) == len(decrypted):
-                    with open(file_path, 'rb') as file:
-                        if file.read() == decrypted:
-                            existing_name = query.get_file_name_from_hashed(accountID, encrypted_file)
-                            print(f"The same file already exists: {existing_name}")
-                        else:
+        for encrypted_file in os.listdir(sub_save_folder):
+            decrypted = crypto.decrypt(sub_save_folder, password, username, account_name, hashed_filename=encrypted_file)
+            
+            if os.path.getsize(file_path) == len(decrypted):
+                with open(file_path, 'rb') as file:
+                    if file.read() == decrypted:
+                        existing_name = query.get_file_name_from_hashed(accountID, encrypted_file)
+                        found = True
+                        print(f"The same file already exists: {existing_name}")
+                        break
 
-                            if (filename.endswith(".csv")):
-                                parsing = ParsingCSV(file_path)
-                            else:
-                                try:
-                                    parsing = ParsingPDF(file_path)
-                                except:
-                                    parsing = HSBC_PDF_CONVERSION(file_path)
+        if found is False:
+            if (filename.endswith(".csv")):
+                parsing = ParsingCSV(file_path)
+            else:
+                try:
+                    parsing = ParsingPDF(file_path)
+                except:
+                    parsing = HSBC_PDF_CONVERSION(file_path)
 
-                            print("parsed: ", filename)
-                            file_ID = crypto.encrypt(sub_save_folder, folder_path, filename, password, accountID)
-                            processor = ProcessingDF(parsing.df, username, password, email, account_name, account_type, file_ID,  account_currency)
-
+            print("parsed: ", filename)
+            file_ID = crypto.encrypt(sub_save_folder, folder_path, filename, password, accountID)
+            processor = ProcessingDF(parsing.df, username, password, email, account_name, account_type, file_ID,  account_currency)
     else:
         raise Exception("Incompatible file/s has been submitted.")
 
