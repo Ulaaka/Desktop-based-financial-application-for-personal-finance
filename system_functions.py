@@ -54,5 +54,5 @@ class system_functions:
     def delete_temp_file(self, temp_name):
         os.unlink(temp_name)
 
-    def open_temp_file(self, temp_name)
+    def open_temp_file(self, temp_name):
         os.system(f"open {temp_name}")
