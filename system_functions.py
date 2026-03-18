@@ -1,4 +1,4 @@
-import random
+import random, tempfile, os
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -45,3 +45,14 @@ class system_functions:
         print(number)
         return number
 
+    def show_decrypted_pdf(self, decrypted_text):
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+            tmp.write(decrypted_text)  
+            tmp.flush()
+        return tmp.name
+    
+    def delete_temp_file(self, temp_name):
+        os.unlink(temp_name)
+
+    def open_temp_file(self, temp_name)
+        os.system(f"open {temp_name}")

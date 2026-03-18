@@ -4,9 +4,10 @@ from HSBC_Pdf_Parser import HSBC_PDF_CONVERSION
 from PDF_Parser import ParsingPDF
 from queries import query_processor
 from pathlib import Path
-import os
 from BASE_Classes import cryptography, password_class
 from system_functions import system_functions
+import os
+
 
 
 #parsing = ParsingCSV("Monzo_csv.csv")
@@ -60,6 +61,8 @@ for filename in os.listdir(exp_folder):
         for encrypted_file in os.listdir(sub_save_folder):
             decrypted = crypto.decrypt(sub_save_folder, password, username, account_name, hashed_filename=encrypted_file)
             # check the size of the file, avoiding reading the whole files
+
+            # https://stackoverflow.com/a/254373
             if os.path.getsize(file_path) == len(decrypted):
                 # if the same size, then read them
                 with open(file_path, 'rb') as file:
