@@ -3,7 +3,6 @@ from BASE_Classes import password_class, ParsingBase
 from datetime import datetime
 from decimal import Decimal
 from queries import query_processor
-import pandas as pd
 
 
 class ProcessingDF:
@@ -34,6 +33,7 @@ class ProcessingDF:
             category = query.return_updated_category(row[2])
             row[1] = parser.classify_transaction_type(row[1])
             transaction_list.append((accountID, self.file_ID, self.change_to_date(row[0]), row[1], row[2], category, Decimal(row[3]),  Decimal(row[4])))
+        
         self.query.insert_into_transactions(transaction_list)
 
     def change_to_date(self, date_string):

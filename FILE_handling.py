@@ -2,22 +2,20 @@
 from decouple import config
 import os, tempfile
 from BASE_Classes import cryptography, password_class
+from CSV_Parser import ParsingCSV
+from DF_Processor import ProcessingDF
+from HSBC_Pdf_Parser import HSBC_PDF_CONVERSION
+from PDF_Parser import ParsingPDF
+from BASE_Classes import cryptography
 from queries import query_processor
 
-
-password = 'Ulaaka_1223'
-username = "test5"
-account_name =  "savings"
-email = "urnaa@gmail.com"
-account_type = "Bank"
-account_currency = "GBP"
 
 class file_handling():
     def __init__(self, accountID, key):
         self.accountID = accountID
         self.key = key
         self.crypto = cryptography()
-        self.password_manager = password_class()
+        self.crypto = cryptography()
         self.query = query_processor()
 
     def show_decrypted_pdf(self, decrypted_text):
@@ -49,11 +47,10 @@ class file_handling():
                         found = True
                         print(f"The file {filename} already exists as: {existing_name}")
                         break
-
         return found
-    
+
+
     def process_files_in_folder(self):
-        query = query_processor()
         for filename in os.listdir(config('FOLDER_PATH')):
             if (filename.endswith(".csv") or filename.endswith(".pdf")): 
 
@@ -76,9 +73,10 @@ class file_handling():
                             parsing = HSBC_PDF_CONVERSION(file_path)
 
                     print("parsed: ", filename)
-                    file_ID = crypto.encrypt(sub_save_folder, folder_path, filename, password, accountID)
-                    processor = ProcessingDF(parsing.df, username, password, email, account_name, account_type, file_ID,  account_currency)
-
+                    file_ID = self.crypto.encrypt(sub_save_folder, config('FOLDER_PATH'), filename, self.key, self.accountID)
+                    ProcessingDF(parsing.df, file_ID, self.accountID)
+            else:
+                raise Exception("Incompatible file/s has been submitted.")
 
 
 
