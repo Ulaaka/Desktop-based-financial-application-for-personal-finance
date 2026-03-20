@@ -11,13 +11,11 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.icon_only_widget.hide()
+        self.ui.full_menu_widget.hide()
         self.ui.stackedWidget.setCurrentIndex(0)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
-
 
     window = MainWindow()
     window.show()
