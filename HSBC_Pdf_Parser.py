@@ -5,6 +5,11 @@ from datetime import datetime
 from BASE_Classes import ParsingBase
 # https://github.com/Anlanther/bank-statement-converter/blob/main/src/classes/BOCStatement.py#L28
 class HSBC_PDF_CONVERSION:
+
+    """
+    Manages the parsing of the HSBC bank pdf
+    """
+
     def __init__(self, pdf_name):
         text = self.return_text(pdf_name)
         detected_transactions = self.detect_transactions(text)
@@ -19,6 +24,7 @@ class HSBC_PDF_CONVERSION:
         df = parser.unify_amount_columns(df)
         self.df = df
 
+    # Extracts text from pdf file
     def return_text(self, pdf_file):
         with pdfplumber.open(pdf_file) as pdf:
             text_list = []
@@ -26,7 +32,7 @@ class HSBC_PDF_CONVERSION:
                 text_list.append(page.extract_text(x_tolerance=1))
             return " ".join(text_list)
 
-
+    # Identifies financial transactions section from the returned text
     def detect_transactions(self, text):
         lines = text.split("\n")
 
@@ -52,16 +58,17 @@ class HSBC_PDF_CONVERSION:
 
         return transaction_lines
 
-
+    # Finds the beginning new transaction by detecting the date
     def new_transaction_func(self, i):
         regex_date = r"\b\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2}\b"
         return re.search(regex_date, i)
 
-
+    # Checks if the transaction line contains a balance, later being used to calculate absent balances
     def has_balance_func(self, i):
         regex_float = r'\d+\.\d+'
         return re.findall(regex_float, i)
 
+    # Returns individual lines of transaction found from transaction section
     def correct_transactions(self, detect):
         carry_balance = "None"
         carry_date = None
@@ -105,11 +112,13 @@ class HSBC_PDF_CONVERSION:
 
         return entire_lines
 
+    # Finds the types of the transaction
     def transaction_type(self, transaction):
         if transaction[10:].split():
             return transaction[10:].split()[0]
         return ''
 
+    # Analyses the transaction line, returning dictionary with target columns values, if not found, set to default
     def parse_transaction(self, line):
 
         parts = line.rsplit(maxsplit=2)
@@ -128,21 +137,21 @@ class HSBC_PDF_CONVERSION:
             'balance': None if parts[2] == "None" else float(parts[2])
         }
 
+    # Classify transactions and create DataFrame with Credit/Debit columns
     def classify_transactions(self, transactions, initial_balance=89.78):
-        """Classify transactions and create DataFrame with Credit/Debit columns"""
         parsed = []
         for i in transactions:
             result = self.parse_transaction(i)
             if result:
                 parsed.append(result)
-        
+
         balance = initial_balance
         values = []
         for dict in parsed:
 
             credit = None
             debit = None
-            
+
             if dict['type'] == 'CR' or dict['type'] == 'PIM':
                 credit = dict['amount']
                 if dict['balance'] is not None:
