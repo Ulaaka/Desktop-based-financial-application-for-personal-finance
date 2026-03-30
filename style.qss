@@ -11,25 +11,27 @@
 /* Icon only menu style */
 #icon_only_widget {
     background-color: #313a46;
+    border-radius: 15px;
 }
 
 #icon_only_widget QPushButton {
     height: 50px;
-    border: none;
-}
+    border: none;}
 
 #icon_only_widget QPushButton:hover {
     background-color: rgba(86, 101, 115, 0.5);
+    border-radius: 15px;
 }
 
 /* Full menu style */
 #full_menu_widget {
     background-color: #313a46;
+    border-radius: 15px;
 }
 
 #full_menu_widget QPushButton {
     border: none;
-    border-radius: 3px;
+    border-radius: 15px;
     text-align: left;
     padding: 8px 0 8px 15px;
     color: #788596;
@@ -70,7 +72,8 @@
 
 /* Search button style */
 #search_button {
-    border: none;}
+    border: none;
+}
 
 #search_button:hover {
     background-color: rgba(86, 101, 115, 0.1);
