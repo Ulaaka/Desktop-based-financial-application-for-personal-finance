@@ -44,12 +44,6 @@
            <height>500</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>60</width>
-           <height>500</height>
-          </size>
-         </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <property name="leftMargin">
            <number>0</number>
@@ -66,12 +60,6 @@
           <item>
            <widget class="QPushButton" name="pushButton_3">
             <property name="minimumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>50</width>
               <height>50</height>
@@ -107,12 +95,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string/>
             </property>
@@ -138,12 +120,6 @@
           <item>
            <widget class="QPushButton" name="upload_button_1">
             <property name="minimumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>50</width>
               <height>50</height>
@@ -179,12 +155,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string/>
             </property>
@@ -210,12 +180,6 @@
           <item>
            <widget class="QPushButton" name="pushButton">
             <property name="minimumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>50</width>
               <height>50</height>
@@ -251,12 +215,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string/>
             </property>
@@ -282,12 +240,6 @@
           <item>
            <widget class="QPushButton" name="settings_button_1">
             <property name="minimumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>50</width>
               <height>50</height>
@@ -336,12 +288,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>50</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string>Exit</string>
             </property>
@@ -358,12 +304,6 @@
        </item>
        <item>
         <widget class="QWidget" name="full_menu_widget" native="true">
-         <property name="maximumSize">
-          <size>
-           <width>130</width>
-           <height>500</height>
-          </size>
-         </property>
          <property name="sizeIncrement">
           <size>
            <width>0</width>
@@ -386,12 +326,6 @@
           <item>
            <widget class="QPushButton" name="pushButton_4">
             <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>50</height>
@@ -427,12 +361,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>48</height>
-             </size>
-            </property>
             <property name="text">
              <string> Home    </string>
             </property>
@@ -458,12 +386,6 @@
           <item>
            <widget class="QPushButton" name="upload_button_2">
             <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>50</height>
@@ -499,12 +421,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string>  Files</string>
             </property>
@@ -524,12 +440,6 @@
           <item>
            <widget class="QPushButton" name="pushButton_2">
             <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>50</height>
@@ -559,12 +469,6 @@
               <height>50</height>
              </size>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
             <property name="text">
              <string> Profile</string>
             </property>
@@ -584,12 +488,6 @@
           <item>
            <widget class="QPushButton" name="settings_button_2">
             <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>50</height>
@@ -627,12 +525,6 @@
           <item>
            <widget class="QPushButton" name="exit_button_2">
             <property name="minimumSize">
-             <size>
-              <width>100</width>
-              <height>50</height>
-             </size>
-            </property>
-            <property name="maximumSize">
              <size>
               <width>100</width>
               <height>50</height>
