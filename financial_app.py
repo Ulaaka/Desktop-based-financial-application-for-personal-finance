@@ -221,7 +221,7 @@ class Ui_MainWindow(object):
         self.label_3.setGeometry(QtCore.QRect(320, 180, 121, 71))
         self.label_3.setObjectName("label_3")
         self.widget_2 = QtWidgets.QWidget(self.page)
-        self.widget_2.setGeometry(QtCore.QRect(0, -20, 790, 76))
+        self.widget_2.setGeometry(QtCore.QRect(0, -10, 790, 76))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)

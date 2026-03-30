@@ -18,6 +18,10 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
+    with open('style.qss', 'r') as styling:
+        style = styling.read()
+
+    app.setStyleSheet(style)
     window = MainWindow()
     window.show()
 
