@@ -19,21 +19,21 @@ class MainWindow(QMainWindow):
         self.ui.home_button_1.clicked.connect(self.home_page_show)
         self.ui.home_button_2.clicked.connect(self.home_page_show)
 
-        self.ui.upload_button_1.clicked.connect(self.home_page_show)
-        self.ui.upload_button_2.clicked.connect(self.home_page_show)
+        self.ui.upload_button_1.clicked.connect(self.upload_page_show)
+        self.ui.upload_button_2.clicked.connect(self.upload_page_show)
 
-        self.ui.file_button_1.clicked.connect(self.home_page_show)
-        self.ui.file_button_1.clicked.connect(self.home_page_show)
+        self.ui.file_button_1.clicked.connect(self.file_page_show)
+        self.ui.file_button_1.clicked.connect(self.file_page_show)
 
 
-        self.ui.stats_button_1.clicked.connect(self.home_page_show)
-        self.ui.stats_button_2.clicked.connect(self.home_page_show)
+        self.ui.stats_button_1.clicked.connect(self.stats_page_show)
+        self.ui.stats_button_2.clicked.connect(self.stats_page_show)
 
-        self.ui.profile_button_1.clicked.connect(self.home_page_show)
-        self.ui.profile_button_2.clicked.connect(self.home_page_show)
+        self.ui.profile_button_1.clicked.connect(self.profile_page_show)
+        self.ui.profile_button_2.clicked.connect(self.profile_page_show)
 
-        self.ui.settings_button_1.clicked.connect(self.home_page_show)
-        self.ui.settings_button_2.clicked.connect(self.home_page_show)
+        self.ui.settings_button_1.clicked.connect(self.settings_page_show)
+        self.ui.settings_button_2.clicked.connect(self.settings_page_show)
 
 
     def home_page_show(self):
@@ -42,16 +42,16 @@ class MainWindow(QMainWindow):
     def upload_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.upload_page)
 
-    def upload_page_show(self):
+    def file_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.file_button_2)
 
-    def upload_page_show(self):
+    def stats_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.stats_page)
 
-    def upload_page_show(self):
+    def profile_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.profile_page)
 
-    def upload_page_show(self):
+    def settings_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.settings_page)
 
 if __name__ == "__main__":
