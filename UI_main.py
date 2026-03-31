@@ -9,6 +9,7 @@ from decouple import config
 from database_connection import database
 from BASE_Classes import password_class, cryptography
 from system_functions import system_functions
+from queries import query_processor
 from MainWindow import MainWindow
 
 
@@ -95,6 +96,7 @@ class login_page(QWidget):
         self.db = db
         self.cursor = cursor
         self.system = system_functions()
+        self.query = query_processor()
 
         self.user_interface()
 
@@ -183,9 +185,7 @@ class login_page(QWidget):
             QMessageBox.warning(self, 'Error', 'Please enter both of the credentials, thank you')
             return
 
-        sql = f"SELECT hashed_password FROM users WHERE username = %s"
-        self.cursor.execute(sql, (username_local, ))
-        result = self.cursor.fetchone()
+        result = self.query.get_hashed_password(username_local)
 
         if result and password_manager.check_password(password_local, result[0]):
                 key = crypto.generate_key(password_local)
@@ -224,6 +224,7 @@ class sign_up_page(QWidget):
         self.db = db
         self.cursor = cursor
         self.user_interface()
+        self.query = query_processor()
 
     def user_interface(self):
         # set the size and name
@@ -308,9 +309,7 @@ class sign_up_page(QWidget):
 
         password_manager = password_class()
 
-        sql = f"SELECT userID FROM users WHERE username = %s"
-        self.cursor.execute(sql, (username_local,))
-        result = self.cursor.fetchone()
+        result = self.query.get_userID(username_local)
 
         if not username_local or not password_local or not email_local:
             QMessageBox.warning(self, 'Error', 'Please enter all  the credentials, thank you')
@@ -330,9 +329,7 @@ class sign_up_page(QWidget):
 
         try:
             hashed_password = password_manager.hash_password(password_local)
-            new_sql = f"INSERT INTO users (username, hashed_password, email_address) VALUES (%s, %s, %s)"
-            self.cursor.execute(new_sql, (username_local, hashed_password, email_local))
-            self.db.commit()
+            self.query.insert_user(username_local, hashed_password, email_local)
             self.controller.show_login()
             print("Credentials added successfully")
         except:

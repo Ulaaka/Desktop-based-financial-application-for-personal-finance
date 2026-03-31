@@ -311,6 +311,12 @@ class query_processor:
         output = self.cursor.fetchone()
         return output[0] if output else None
 
+    def get_hashed_password(self, username):
+        sql = f"SELECT hashed_password FROM users WHERE username = %s"
+        self.cursor.execute(sql, (username, ))
+        result = self.cursor.fetchone()
+        return result if result else None
+
     # Returns the original name of the file from the hashed
     def get_file_name_from_hashed(self, accountID, hashed_name):
         new_sql = f"SELECT file_name FROM files WHERE accountID = '{accountID}' and hashed_name = '{hashed_name}'"
