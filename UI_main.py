@@ -505,13 +505,14 @@ class reset_password(QWidget):
         # New Password input
         self.password_1 = PasswordEdit()
         self.password_1.setPlaceholderText('New Password')
-        self.password_1.setStyleSheet(input_style)
+        self.password_1.setObjectName("input_field")
+
         self.password_1.setFont(QFont('Arial', 15))
 
         # Retype New Password
         self.password_2 = PasswordEdit()
         self.password_2.setPlaceholderText('Re-type New Password')
-        self.password_2.setStyleSheet(input_style)
+        self.password_2.setObjectName("input_field")
         self.password_2.setFont(QFont('Arial', 15))
 
         # Login button
@@ -603,15 +604,12 @@ class MainApp(QMainWindow):
         self.stacked_widget.addWidget(self.sign_up_page)
         self.stacked_widget.addWidget(self.validation_page)
         self.stacked_widget.addWidget(self.reset_password)
-    
-    def setup_ui(self):
-
 
     def setup_dashboard(self):
         layout = QVBoxLayout()
 
         logout_btn = QPushButton("Log Out")
-        logout_btn.clicked.connect(self.show_login)
+        logout_btn.clicked.connect (self.show_login)
 
         layout.addWidget(logout_btn)
         self.dashboard_page.setLayout(layout)
