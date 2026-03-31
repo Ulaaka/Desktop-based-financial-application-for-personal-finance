@@ -273,9 +273,16 @@ class Ui_MainWindow(object):
         self.stackedWidget.addWidget(self.stats_page)
         self.upload_page = QtWidgets.QWidget()
         self.upload_page.setObjectName("upload_page")
-        self.label_4 = QtWidgets.QLabel(self.upload_page)
-        self.label_4.setGeometry(QtCore.QRect(330, 170, 151, 51))
-        self.label_4.setObjectName("label_4")
+        self.pushButton = QtWidgets.QPushButton(self.upload_page)
+        self.pushButton.setGeometry(QtCore.QRect(30, 0, 111, 71))
+        self.pushButton.setIcon(icon4)
+        self.pushButton.setIconSize(QtCore.QSize(25, 25))
+        self.pushButton.setCheckable(True)
+        self.pushButton.setAutoRepeat(True)
+        self.pushButton.setObjectName("pushButton")
+        self.label = QtWidgets.QLabel(self.upload_page)
+        self.label.setGeometry(QtCore.QRect(0, 60, 181, 51))
+        self.label.setObjectName("label")
         self.stackedWidget.addWidget(self.upload_page)
         self.files_page = QtWidgets.QWidget()
         self.files_page.setObjectName("files_page")
@@ -301,7 +308,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(5)
+        self.stackedWidget.setCurrentIndex(2)
         self.home_button_1.toggled['bool'].connect(self.home_button_2.setChecked) # type: ignore
         self.upload_button_1.toggled['bool'].connect(self.upload_button_2.setChecked) # type: ignore
         self.file_button_1.toggled['bool'].connect(self.file_button_2.setChecked) # type: ignore
@@ -339,7 +346,8 @@ class Ui_MainWindow(object):
         self.exit_button_2.setText(_translate("MainWindow", "Exit"))
         self.label_3.setText(_translate("MainWindow", "Home Page"))
         self.label_8.setText(_translate("MainWindow", "stats"))
-        self.label_4.setText(_translate("MainWindow", "Upload Page"))
+        self.pushButton.setText(_translate("MainWindow", "Upload file"))
+        self.label.setText(_translate("MainWindow", "Supports csv and pdf files"))
         self.label_5.setText(_translate("MainWindow", "Files Page"))
         self.label_6.setText(_translate("MainWindow", "Profile page"))
         self.label_7.setText(_translate("MainWindow", "Settings Page"))

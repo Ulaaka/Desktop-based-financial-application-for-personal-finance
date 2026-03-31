@@ -187,7 +187,8 @@ class login_page(QWidget):
 
         if result and password_manager.check_password(password_local, result[0]):
                 key = crypto.generate_key(password_local)
-                self.controller.show_dashboard(key)
+                userID = self.query.get_userID(username_local)
+                self.controller.show_dashboard(key, userID)
         else:
             QMessageBox.warning(self, 'Error', 'Password or Username is wrong')
             return
@@ -588,9 +589,8 @@ class MainApp(QMainWindow):
         self.stacked_widget.addWidget(self.validation_page)
         self.stacked_widget.addWidget(self.reset_password)
 
-
-    def show_dashboard(self, key):
-        self.main_window = MainWindow(self, key)
+    def show_dashboard(self, key, userID):
+        self.main_window = MainWindow(self, key, userID)
         self.main_window.show()
         self.close()
 
