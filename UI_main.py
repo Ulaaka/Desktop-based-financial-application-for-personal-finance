@@ -12,8 +12,6 @@ from system_functions import system_functions
 from queries import query_processor
 from MainWindow import MainWindow
 
-
-
 color_dic = {
 "login_page": {
     "title_color" :"#32CD32",

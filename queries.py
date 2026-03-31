@@ -263,12 +263,12 @@ class query_processor:
         return categoryID
 
     # Deleted the user, resulting in cascading effect
-    def delete_user(self):
+    def delete_user(self, username):
         """
         All data relating to the user is deleted
         """
         sql = f"DELETE FROM users WHERE username = %s"
-        self.cursor.execute(sql, (self.username,))
+        self.cursor.execute(sql, (username,))
         self.db.commit()
 
     # Returns the category based on the tokens of words in the list
@@ -519,13 +519,3 @@ class query_processor:
         self.cursor.execute(query, (userID,))
         result = self.cursor.fetchall()
         return result if result else None
-
-
-
-
-
-
-
-
-
-
