@@ -151,6 +151,3 @@ QLineEdit#digit_box:focus {
     border: 2px solid #6C63FF;
     background: white;
 }
-QWidget#Form {
-    background-color:#fff;
-}

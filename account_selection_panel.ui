@@ -45,7 +45,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="accounts_list">
+    <widget class="TurnListButton" name="accounts_list">
      <property name="maximumSize">
       <size>
        <width>16777215</width>
@@ -63,6 +63,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TurnListButton</class>
+   <extends>QListWidget</extends>
+   <header>turnlistbutton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

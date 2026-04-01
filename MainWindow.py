@@ -34,6 +34,7 @@ class Account_selection_page(QtWidgets.QDialog):
         self.ui.accounts_list.model().rowsRemoved.connect(self.update_list)
         self.ui.add_accounts_empty.clicked.connect(self.add_accounts)
         self.ui.add_accounts_list.clicked.connect(self.add_accounts)
+        self.ui.accounts_list.clicked.connect(self.set_account)
 
     def show_accounts(self):
         self.account_options = self.compute_account_options()
@@ -42,6 +43,9 @@ class Account_selection_page(QtWidgets.QDialog):
         if self.account_options:
             self.ui.accounts_list.addItems(self.account_options)
         self.update_list()
+
+    def set_account(self, option):
+        print(option)
 
     def compute_account_options(self):
         accounts = self.query.return_accounts_given_userID(self.userID)
@@ -105,6 +109,7 @@ class MainWindow(QMainWindow):
         self.controller = controller
         self.key = key
         self.userID = userID
+        self.accountID = None
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -136,7 +141,6 @@ class MainWindow(QMainWindow):
         self.ui.settings_button_2.clicked.connect(self.settings_page_show)
 
         self.ui.account_button.clicked.connect(self.accounts_selection_show)
-
 
     def home_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.home_page)

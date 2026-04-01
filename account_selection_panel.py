@@ -11,12 +11,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class account_selection_form(object):
+class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(411, 325)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(Form)
-        self.verticalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetFixedSize)
+        self.verticalLayout_2.setSizeConstraint(QtCore.Qt.QLayout::SizeConstraint::SetFixedSize)
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.lineEdit = QtWidgets.QLineEdit(Form)
         self.lineEdit.setText("")
@@ -33,7 +33,7 @@ class account_selection_form(object):
         self.add_accounts_empty.setObjectName("add_accounts_empty")
         self.verticalLayout.addWidget(self.add_accounts_empty)
         self.verticalLayout_2.addWidget(self.empty_container)
-        self.accounts_list = QtWidgets.QListWidget(Form)
+        self.accounts_list = TurnListButton(Form)
         self.accounts_list.setMaximumSize(QtCore.QSize(16777215, 300))
         self.accounts_list.setObjectName("accounts_list")
         self.verticalLayout_2.addWidget(self.accounts_list)
@@ -47,7 +47,7 @@ class account_selection_form(object):
     def retranslateUi(self, Form):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
-        self.lineEdit.setPlaceholderText(_translate("Form", "Search"))
         self.empty_message.setText(_translate("Form", "No Account Found"))
         self.add_accounts_empty.setText(_translate("Form", "Add Account"))
         self.add_accounts_list.setText(_translate("Form", "Add Account"))
+from turnlistbutton import TurnListButton
