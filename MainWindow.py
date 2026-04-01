@@ -34,7 +34,6 @@ class Account_selection_page(QtWidgets.QDialog):
         self.ui.accounts_list.model().rowsRemoved.connect(self.update_list)
         self.ui.add_accounts_empty.clicked.connect(self.add_accounts)
         self.ui.add_accounts_list.clicked.connect(self.add_accounts)
-        self.ui.accounts_list.clicked.connect(self.set_account)
 
     def show_accounts(self):
         self.account_options = self.compute_account_options()
@@ -42,6 +41,7 @@ class Account_selection_page(QtWidgets.QDialog):
         self.ui.accounts_list.clear()
         if self.account_options:
             self.ui.accounts_list.addItems(self.account_options)
+            self.ui.accounts_list.currentTextChanged.connect(self.set_account)
         self.update_list()
 
     def set_account(self, option):
