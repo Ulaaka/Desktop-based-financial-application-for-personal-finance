@@ -114,14 +114,12 @@ class MainWindow(QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.no_account_label.setObjectName("no_account_label")
         self.status_panel = False
 
         self.ui.full_menu_widget.hide()
         self.ui.stackedWidget.setCurrentIndex(0)
         self.buttons_connected()
-        self.set_table(False)
-        self.ui.no_account_label.setText("Select Account To View Transactions")
-        print("Select Account To View Transactions")
 
         self.query = query_processor()
         self.accounts_selection_show()
@@ -130,12 +128,16 @@ class MainWindow(QMainWindow):
             self.update_table()
 
     def update_table(self):
+        if self.account_name is None:
+            self.set_table(False)
+            self.ui.no_account_label.setText("Select Account To View Transactions")
+            return
+
         accountID = self.query.get_accountID(self.account_name, self.userID)
         transactions = self.query.get_transactions(accountID)
         if transactions.empty:
             self.set_table(False)
-            self.ui.no_account_label.setText("No transaction found under the account")
-            print("No transaction found under the account")
+            self.ui.no_account_label.setText("No transactions found under this account")
         else:
             self.set_table(True)
             self.model = ListModel(transactions)
@@ -146,10 +148,6 @@ class MainWindow(QMainWindow):
             self.ui.home_stacked.setCurrentWidget(self.ui.table_page)
         else:
             self.ui.home_stacked.setCurrentWidget(self.ui.no_account_page)
-        print(f"flag: {flag}")
-        print(f"home_stacked current index: {self.ui.home_stacked.currentIndex()}")
-        print(f"home_stacked size: {self.ui.home_stacked.size()}")
-        print(f"no_account_page visible: {self.ui.no_account_page.isVisible()}")
 
     def buttons_connected(self):
 

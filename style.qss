@@ -151,3 +151,7 @@ QLineEdit#digit_box:focus {
     border: 2px solid #6C63FF;
     background: white;
 }
+QLabel#no_account_label {
+    color: black;
+    background-color: transparent;
+}
