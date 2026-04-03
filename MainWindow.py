@@ -1,5 +1,6 @@
-import sys
-from PyQt5.QtWidgets import QMainWindow, QApplication, QCompleter
+import sys,  shutil, pycountry
+from decouple import config
+from PyQt5.QtWidgets import QMainWindow, QApplication, QCompleter, QFileDialog
 from PyQt5.QtCore import Qt, QPoint
 from PyQt5 import QtCore, QtWidgets
 from financial_app import Ui_MainWindow
@@ -7,8 +8,8 @@ from account_selection_panel import account_selection_form
 from account_add_page import account_add_page_form
 from queries import query_processor
 from Table_View import ListModel
-import pycountry
-
+from FILE_handling import file_handling
+ 
 class Account_selection_page(QtWidgets.QDialog):
     def __init__(self, parent):
         super().__init__(parent)
@@ -96,6 +97,7 @@ class Account_add_page(QtWidgets.QDialog):
         self.query.insert_account(self.userID, account_name, account_type, account_currency)
         self.parent().show_accounts()
         self.close()
+        
 
 class MainWindow(QMainWindow):
     def __init__(self, controller , key, userID):
@@ -155,6 +157,19 @@ class MainWindow(QMainWindow):
         else:
             self.ui.home_stacked.setCurrentWidget(self.ui.no_account_page)
 
+    def upload_file(self):
+ 
+        file_paths, _ = QFileDialog.getOpenFileNames(self, 'Open File', "", "CSV Files (*.csv);;PDF Files (*.pdf)")
+        if file_paths:
+            for file_path in file_paths:
+                # config('FOLDER_PATH')
+                shutil.copy(file_path, "/Users/nyamdorjbat-erdene/Final_year/exp_folder")
+        accountID = self.query.get_accountID(self.account_name, self.userID)
+        files_process = file_handling(accountID, self.key)
+        # process the files
+        files_process.process_files_in_folder()
+
+
     def buttons_connected(self):
 
         self.ui.home_button_1.clicked.connect(self.home_page_show)
@@ -176,6 +191,9 @@ class MainWindow(QMainWindow):
         self.ui.settings_button_2.clicked.connect(self.settings_page_show)
 
         self.ui.account_button.clicked.connect(self.accounts_selection_show)
+
+        self.ui.upload_file_button.clicked.connect(self.upload_file)
+        self.ui.upload_file_button.setObjectName('upload_file_button')
 
     def home_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.home_page)

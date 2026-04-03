@@ -159,3 +159,15 @@ QTableView#tableView {
     color: black;
     background-color: transparent;
 }
+
+QPushButton#upload_file_button {
+    border: black;
+    background-color: #313a46;
+    border-radius: 15px;
+}
+
+QPushButton#upload_file_button:hover {
+    background-color: rgba(86, 101, 115, 0.1);
+    border-radius: 15px;
+    color: black;
+}

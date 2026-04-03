@@ -734,7 +734,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="home_page">
              <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -792,49 +792,47 @@
              </widget>
             </widget>
             <widget class="QWidget" name="upload_page">
-             <widget class="QPushButton" name="pushButton">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>0</y>
-                <width>111</width>
-                <height>71</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Upload file</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../Desktop/resource.qrc">
-                <normaloff>:/icons/icons_financial_app/upload_icon.png</normaloff>
-                <normalon>:/icons/icons_financial_app/upload_icon.png</normalon>:/icons/icons_financial_app/upload_icon.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>25</width>
-                <height>25</height>
-               </size>
-              </property>
-              <property name="checkable">
-               <bool>true</bool>
-              </property>
-              <property name="autoRepeat">
-               <bool>true</bool>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>60</y>
-                <width>181</width>
-                <height>51</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Supports csv and pdf files</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_7">
+              <item>
+               <widget class="QPushButton" name="upload_file_button">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>106</horstretch>
+                  <verstretch>70</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>110</width>
+                  <height>70</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>Upload file</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../Desktop/resource.qrc">
+                  <normaloff>:/icons/icons_financial_app/upload_icon.png</normaloff>
+                  <normalon>:/icons/icons_financial_app/upload_icon.png</normalon>:/icons/icons_financial_app/upload_icon.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>25</width>
+                  <height>25</height>
+                 </size>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+                <property name="autoExclusive">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="files_page">
              <widget class="QLabel" name="label_5">
