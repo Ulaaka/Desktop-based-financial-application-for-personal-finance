@@ -94,9 +94,10 @@ class Account_add_page(QtWidgets.QDialog):
         account_name = self.ui.account_name_type.text()
         account_type = self.ui.account_type_combo.currentText()
         account_currency = self.ui.account_currency_combo.currentText()[:3]
-        self.query.insert_account(self.userID, account_name, account_type, account_currency)
+        accountID = self.query.insert_account(self.userID, account_name, account_type, account_currency)
         self.parent().show_accounts()
         self.close()
+        return accountID
         
 
 class MainWindow(QMainWindow):
@@ -107,6 +108,7 @@ class MainWindow(QMainWindow):
         self.key = key
         self.userID = userID
         self.account_name = None
+        self.accountID = None
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
@@ -168,6 +170,7 @@ class MainWindow(QMainWindow):
         files_process = file_handling(accountID, self.key)
         # process the files
         files_process.process_files_in_folder()
+        self.update_table()
 
 
     def buttons_connected(self):
