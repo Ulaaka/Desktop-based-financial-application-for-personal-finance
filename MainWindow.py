@@ -139,13 +139,17 @@ class MainWindow(QMainWindow):
         else:
             self.set_table(True)
             self.model = ListModel(transactions)
-            self.ui.tableWidget.setModel(self.model)
+            self.ui.tableView.setModel(self.model)
 
     def set_table(self, flag):
         if flag:
             self.ui.home_stacked.setCurrentWidget(self.ui.table_page)
         else:
             self.ui.home_stacked.setCurrentWidget(self.ui.no_account_page)
+        print(f"flag: {flag}")
+        print(f"home_stacked current index: {self.ui.home_stacked.currentIndex()}")
+        print(f"home_stacked size: {self.ui.home_stacked.size()}")
+        print(f"no_account_page visible: {self.ui.no_account_page.isVisible()}")
 
     def buttons_connected(self):
 

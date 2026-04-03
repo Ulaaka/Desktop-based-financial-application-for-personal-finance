@@ -761,13 +761,13 @@
                  </layout>
                 </widget>
                 <widget class="QWidget" name="table_page">
-                 <widget class="QTableWidget" name="tableWidget">
+                 <widget class="QTableView" name="tableView">
                   <property name="geometry">
                    <rect>
-                    <x>0</x>
-                    <y>-10</y>
-                    <width>256</width>
-                    <height>192</height>
+                    <x>10</x>
+                    <y>10</y>
+                    <width>781</width>
+                    <height>461</height>
                    </rect>
                   </property>
                  </widget>
