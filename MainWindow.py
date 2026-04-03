@@ -43,9 +43,6 @@ class Account_selection_page(QtWidgets.QDialog):
         if self.account_options:
             self.ui.accounts_list.addItems(self.account_options)
             self.ui.accounts_list.currentTextChanged.connect(self.set_account)
-
-            self.ui.accounts_list.setCurrentRow(0)
-            self.set_account(self.account_options[0])
         self.update_list()
 
     def set_account(self, option):
@@ -122,28 +119,28 @@ class MainWindow(QMainWindow):
         self.ui.full_menu_widget.hide()
         self.ui.stackedWidget.setCurrentIndex(0)
         self.buttons_connected()
+        self.set_table(False)
+        self.ui.no_account_label.setText("Select Account To View Transactions")
 
         self.query = query_processor()
         self.accounts_selection_show()
         self.update_table()
 
     def update_table(self):
-        if self.account_name is None:
-            self.ui.tableView.setVisible(False)
-            self.ui.no_account_widget.setVisible(True)
-            self.ui.no_account_label.setText("no account Selected")
+        accountID = self.query.get_accountID(self.account_name, self.userID)
+        transactions = self.query.get_transactions(accountID)
+        if transactions.empty:
+            self.set_table(False)
+            self.ui.no_account_label.setText("No transaction found under the account")
         else:
-            accountID = self.query.get_accountID(self.account_name, self.userID)
-            transactions = self.query.get_transactions(accountID)
-            if transactions.empty:
-                self.ui.tableView.setVisible(False)
-                self.ui.no_account_widget.setVisible(True)
-                self.ui.no_account_label.setText("No transaction found under the account")
-            else:
-                self.ui.tableView.setVisible(True)
-                self.ui.no_account_widget.setVisible(False)
-                self.model = ListModel(transactions)
-                self.ui.tableView.setModel(self.model)
+            self.set_table(True)
+            self.model = ListModel(transactions)
+            self.ui.tableView.setModel(self.model)
+    
+    def set_table(self, flag):
+        self.ui.tableView.setVisible(flag)
+        self.ui.no_account_widget.setVisible(not flag)
+
     def buttons_connected(self):
         self.ui.home_button_1.clicked.connect(self.home_page_show)
         self.ui.home_button_2.clicked.connect(self.home_page_show)
