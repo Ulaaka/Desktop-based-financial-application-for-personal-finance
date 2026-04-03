@@ -199,6 +199,7 @@ class MainWindow(QMainWindow):
 
     def upload_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.upload_page)
+        self.ui.upload_stack.setCurrentWidget(self.ui.page)
 
     def file_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.files_page)

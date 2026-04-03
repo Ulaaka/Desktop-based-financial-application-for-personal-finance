@@ -810,42 +810,66 @@
             <widget class="QWidget" name="upload_page">
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
-               <widget class="QPushButton" name="upload_file_button">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>106</horstretch>
-                  <verstretch>70</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>110</width>
-                  <height>70</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>Upload file</string>
-                </property>
-                <property name="icon">
-                 <iconset resource="../Desktop/resource.qrc">
-                  <normaloff>:/icons/icons_financial_app/upload_icon.png</normaloff>
-                  <normalon>:/icons/icons_financial_app/upload_icon.png</normalon>:/icons/icons_financial_app/upload_icon.png</iconset>
-                </property>
-                <property name="iconSize">
-                 <size>
-                  <width>25</width>
-                  <height>25</height>
-                 </size>
-                </property>
-                <property name="checkable">
-                 <bool>true</bool>
-                </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
-                </property>
-                <property name="autoExclusive">
-                 <bool>true</bool>
-                </property>
+               <widget class="QStackedWidget" name="upload_stack">
+                <widget class="QWidget" name="page">
+                 <widget class="QPushButton" name="upload_file_button">
+                  <property name="geometry">
+                   <rect>
+                    <x>30</x>
+                    <y>30</y>
+                    <width>125</width>
+                    <height>70</height>
+                   </rect>
+                  </property>
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                    <horstretch>106</horstretch>
+                    <verstretch>70</verstretch>
+                   </sizepolicy>
+                  </property>
+                  <property name="minimumSize">
+                   <size>
+                    <width>110</width>
+                    <height>70</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Upload file</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../Desktop/resource.qrc">
+                    <normaloff>:/icons/icons_financial_app/upload_icon.png</normaloff>
+                    <normalon>:/icons/icons_financial_app/upload_icon.png</normalon>:/icons/icons_financial_app/upload_icon.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>25</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="checkable">
+                   <bool>true</bool>
+                  </property>
+                  <property name="autoRepeat">
+                   <bool>false</bool>
+                  </property>
+                  <property name="autoExclusive">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </widget>
+                <widget class="QWidget" name="page_2">
+                 <widget class="QTextEdit" name="live_output">
+                  <property name="geometry">
+                   <rect>
+                    <x>60</x>
+                    <y>0</y>
+                    <width>641</width>
+                    <height>441</height>
+                   </rect>
+                  </property>
+                 </widget>
+                </widget>
                </widget>
               </item>
              </layout>
