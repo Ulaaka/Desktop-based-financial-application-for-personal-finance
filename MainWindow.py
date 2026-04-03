@@ -47,6 +47,8 @@ class Account_selection_page(QtWidgets.QDialog):
 
     def set_account(self, option):
         self.parent().account_name = option
+        accountID = self.query.get_accountID(option, self.userID)
+        self.parent().accountID = accountID
         self.parent().show_table()
 
     def update_list(self):
@@ -97,7 +99,6 @@ class Account_add_page(QtWidgets.QDialog):
         accountID = self.query.insert_account(self.userID, account_name, account_type, account_currency)
         self.parent().show_accounts()
         self.close()
-        return accountID
         
 
 class MainWindow(QMainWindow):
@@ -148,8 +149,7 @@ class MainWindow(QMainWindow):
                 self.ui.tableView.setColumnHidden(i, True)
 
     def update_table(self):
-        accountID = self.query.get_accountID(self.account_name, self.userID)
-        transactions = self.query.get_transactions(accountID)
+        transactions = self.query.get_transactions(self.accountID)
         self.model = ListModel(transactions, self)
         self.ui.tableView.setModel(self.model)
 
@@ -166,8 +166,7 @@ class MainWindow(QMainWindow):
             for file_path in file_paths:
                 # config('FOLDER_PATH')
                 shutil.copy(file_path, "/Users/nyamdorjbat-erdene/Final_year/exp_folder")
-        accountID = self.query.get_accountID(self.account_name, self.userID)
-        files_process = file_handling(accountID, self.key)
+        files_process = file_handling(self.accountID, self.key)
         # process the files
         files_process.process_files_in_folder()
         self.update_table()
