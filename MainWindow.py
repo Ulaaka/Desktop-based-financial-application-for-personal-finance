@@ -194,12 +194,15 @@ class MainWindow(QMainWindow):
         sys.stdout = self.print_output
         # process the files
         files_process.process_files_in_folder()
+        self.live_output.adjustSize()
         self.live_output.show()
         self.update_table()
 
-
     def get_output(self, text):
-        self.live_output.ui.textEdit.append(text)
+        #self.live_output.ui.textEdit.append(text.strip())
+        stripped_list = [line for line in text.splitlines() if line.strip() != ""]
+        lines = "\n".join(stripped_list)
+        self.live_output.ui.textEdit.append(lines)
 
     def buttons_connected(self):
         self.ui.home_button_1.clicked.connect(self.home_page_show)

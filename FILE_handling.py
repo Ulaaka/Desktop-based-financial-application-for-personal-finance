@@ -50,13 +50,17 @@ class file_handling():
                         # find the submitted existing file_name in the folder
                         existing_name = self.query.get_file_name_from_hashed(self.accountID, encrypted_file)
                         found = True
-                        print(f"The file {filename} already exists as: {existing_name}")
+                        # print(f"The file {filename} already exists as: {existing_name}")
+                        output = f"\tThe file {filename} already exists as {existing_name}"
                         break
-        return found
+        return found, output
 
     # The functions for handling the parsing of the user input files
     def process_files_in_folder(self):
-        for filename in os.listdir(config('FOLDER_PATH')):
+        dir = os.listdir(config('FOLDER_PATH'))
+        parsed_count = 0
+        existing_file_output = []
+        for filename in dir:
             if (filename.endswith(".csv") or filename.endswith(".pdf")): 
 
                 file_path = os.path.join(config('FOLDER_PATH'), filename)
@@ -66,7 +70,8 @@ class file_handling():
                 if not os.path.exists(sub_save_folder):
                     os.makedirs(sub_save_folder)
 
-                flag = self.check_file_exists(sub_save_folder, file_path, filename)
+                result = self.check_file_exists(sub_save_folder, file_path, filename)
+                flag = result[0]
 
                 if flag is False:
                     if (filename.endswith(".csv")):
@@ -76,12 +81,19 @@ class file_handling():
                             parsing = ParsingPDF(file_path)
                         except:
                             parsing = HSBC_PDF_CONVERSION(file_path)
-
-                    print("parsed: ", filename)
+                    # print("parsed: ", filename)
+                    parsed_count+=1
                     file_ID = self.crypto.encrypt(sub_save_folder, config('FOLDER_PATH'), filename, self.key, self.accountID)
                     ProcessingDF(parsing.df, file_ID, self.accountID)
+                else:
+                    existing_file_output.append(result[1])
             else:
                 raise Exception("Incompatible file/s has been submitted.")
+        print(f"{parsed_count}/{len(dir)} files loaded successfully")
+        if (len(existing_file_output) > 0):
+            print(f"Skipped duplicates:\n")
+            for i in existing_file_output:
+                print(i)
 
     # Shows existing files IDs and filename submitted in the account
     def show_files(self, accountID):
