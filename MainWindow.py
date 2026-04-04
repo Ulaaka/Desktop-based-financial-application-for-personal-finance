@@ -9,12 +9,21 @@ from account_add_page import account_add_page_form
 from queries import query_processor
 from Table_View import ListModel
 from FILE_handling import file_handling
+from live_output_widget import live_output_page
+
+class Live_output_window(QtWidgets.QDialog):
+    def __init__(self, parent):
+        super().__init__(parent)
+        self.ui = live_output_page()
+        self.ui.setupUi(self)
+        self.setObjectName('live_output_window')
+        self.ui.textEdit.setObjectName('live_output')
 
 # custom class for capturing print outputs
 class Stream(QtCore.QObject):
     input_text = QtCore.pyqtSignal(str)
 
-    def write(self, text):
+    def write(self, text):#
         self.input_text.emit(text)
 
     def flush(self):
@@ -178,16 +187,19 @@ class MainWindow(QMainWindow):
                 shutil.copy(file_path, "/Users/nyamdorjbat-erdene/Final_year/exp_folder")
         files_process = file_handling(self.accountID, self.key)
 
-        self.ui.upload_stack.setCurrentWidget(self.ui.page_2)
+        # self.ui.upload_stack.setCurrentWidget(self.ui.page_2)
         self.print_output = Stream()
+        self.live_output = Live_output_window(self)
         self.print_output.input_text.connect(self.get_output)
         sys.stdout = self.print_output
         # process the files
         files_process.process_files_in_folder()
+        self.live_output.show()
         self.update_table()
 
+
     def get_output(self, text):
-        self.ui.live_output.append(text)
+        self.live_output.ui.textEdit.append(text)
 
     def buttons_connected(self):
         self.ui.home_button_1.clicked.connect(self.home_page_show)
@@ -212,6 +224,8 @@ class MainWindow(QMainWindow):
 
         self.ui.upload_file_button.clicked.connect(self.upload_file)
         self.ui.upload_file_button.setObjectName('upload_file_button')
+
+        self.ui.live_output.setObjectName('live_output')
 
     def home_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.home_page)

@@ -171,3 +171,13 @@ QPushButton#upload_file_button:hover {
     border-radius: 15px;
     color: black;
 }
+
+QTextEdit#live_output{
+    background-color: transparent;
+    color: black;
+    border-radius: 15px;
+}
+
+QWidget#live_output_window{
+    background-color: #fff
+}

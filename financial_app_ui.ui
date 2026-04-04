@@ -808,7 +808,7 @@
              </widget>
             </widget>
             <widget class="QWidget" name="upload_page">
-             <layout class="QVBoxLayout" name="verticalLayout_7">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
               <item>
                <widget class="QStackedWidget" name="upload_stack">
                 <widget class="QWidget" name="page">
@@ -859,16 +859,7 @@
                  </widget>
                 </widget>
                 <widget class="QWidget" name="page_2">
-                 <widget class="QTextEdit" name="live_output">
-                  <property name="geometry">
-                   <rect>
-                    <x>60</x>
-                    <y>0</y>
-                    <width>641</width>
-                    <height>441</height>
-                   </rect>
-                  </property>
-                 </widget>
+                 <layout class="QVBoxLayout" name="verticalLayout_8"/>
                 </widget>
                </widget>
               </item>
