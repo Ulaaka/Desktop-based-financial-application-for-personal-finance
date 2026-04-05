@@ -21,7 +21,7 @@ class Live_output_window(QtWidgets.QDialog):
         self.ui.setupUi(self)
         self.setObjectName('live_output_window')
         self.ui.textBrowser.setObjectName('live_output')
-        self.ui.textBrowser.setOpenLinks(False) 
+        self.ui.textBrowser.setOpenLinks(False)
         self.ui.textBrowser.textChanged.connect(self.adjust_text_edit)
         self.ui.textBrowser.anchorClicked.connect(self.link_click)
         self.crypto = cryptography()
@@ -133,8 +133,8 @@ class Account_add_page(QtWidgets.QDialog):
         account_type = self.ui.account_type_combo.currentText()
         account_currency = self.ui.account_currency_combo.currentText()[:3]
         accountID = self.query.insert_account(self.userID, account_name, account_type, account_currency)
-        self.parent().show_accounts()
         self.parent().parent().show_table()
+        self.parent().show_accounts()
         self.close()
 
 class MainWindow(QMainWindow):
@@ -168,7 +168,7 @@ class MainWindow(QMainWindow):
     def label_click(self,event):
         pass
 
-    def show_table(self):
+    def initial_update(self):
         options = self.query.compute_account_options(self.userID)
         if options is None:
             self.set_table(False)
@@ -180,6 +180,9 @@ class MainWindow(QMainWindow):
                 self.accountID = self.query.get_accountID(options[0], self.userID)
                 self.ui.account_name_label.setText(options[0])
 
+    def show_table(self):
+        
+        self.initial_update()
         accountID = self.query.get_accountID(self.account_name, self.userID)
         transactions = self.query.get_transactions(accountID)
         if transactions.empty:
