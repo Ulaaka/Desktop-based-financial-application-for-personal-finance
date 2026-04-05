@@ -105,7 +105,6 @@ class Account_selection_page(QtWidgets.QDialog):
         self.account_add_page = Account_add_page(currency_list, self)
         self.account_add_page.show()
 
-
 class Account_add_page(QtWidgets.QDialog):
     def __init__(self, currencies, parent):
         super().__init__(parent)
@@ -135,6 +134,7 @@ class Account_add_page(QtWidgets.QDialog):
         account_currency = self.ui.account_currency_combo.currentText()[:3]
         accountID = self.query.insert_account(self.userID, account_name, account_type, account_currency)
         self.parent().show_accounts()
+        self.parent().parent().show_table()
         self.close()
 
 class MainWindow(QMainWindow):
