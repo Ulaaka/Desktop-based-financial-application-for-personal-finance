@@ -12,7 +12,8 @@ class query_processor:
     """
 
     def __init__(self):
-        connection = database()
+        self.connection = database()
+        connection = self.connection
         self.db = connection.db
         self.cursor = connection.cursor
         # Stopwords in english dictionary
@@ -204,6 +205,7 @@ class query_processor:
     # Creates new account, and inserts information into the database
     def insert_into_accounts(self, userID, acc_name, acc_type, acc_currency):
         sql = f"INSERT INTO accounts (userID, account_name, account_type, account_currency) VALUES (%s, %s, %s, %s)"
+        self.cursor = self.connection.cursor
         self.cursor.execute(sql, ( userID, acc_name, acc_type, acc_currency))
         accountID = self.cursor.lastrowid
         self.db.commit()
@@ -329,6 +331,7 @@ class query_processor:
     # return total transactions made by the account
     def get_transactions(self, accountID):
         query = """SELECT * FROM transactions WHERE accountID = %s"""
+        self.cursor = self.connection.cursor
         self.cursor.execute(query, (accountID,))
         output = self.cursor.fetchall()
         header_columns = [column[0] for column in self.cursor.description]
@@ -540,6 +543,7 @@ class query_processor:
             FROM accounts
             WHERE userID = %s
         """
+        self.cursor = self.connection.cursor
         self.cursor.execute(query, (userID,))
         result = self.cursor.fetchall()
         return result if result else None

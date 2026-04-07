@@ -188,3 +188,10 @@ QLabel#account_name_label:hover{
     color: black;
     border-radius: 15px;
 }
+
+QLabel#no_account_label{
+    background-color: transparent;
+    color: black;
+    border-radius: 15px;
+}
+
