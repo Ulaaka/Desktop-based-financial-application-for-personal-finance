@@ -226,18 +226,16 @@ QPushButton#change_button {
     border-radius: 4px;
 }
 
-QPushButton#change_button:hover {
-    background-color: rgba(86, 101, 115, 0.1);
-}
-
-QPushButton#item_button {
+QPushButton#item_button{
     background-color: transparent;
     color: red;
     border-radius: 30px;
 }
 
-QPushButton#item_button:hover {
-    background-color: rgba(86, 101, 115, 0.1);
+QPushButton#view_button{
+    background-color: transparent;
+    color: blue;
+    border-radius: 30px;
 }
 
 QPushButton#proceed_button {
@@ -246,20 +244,19 @@ QPushButton#proceed_button {
     border-radius: 30px;
 }
 
-QPushButton#proceed_button:hover {
-    background-color: rgba(86, 101, 115, 0.1);
-}
-
 QPushButton#cancel_button {
     background-color: #fc2803;
     color: black;
     border-radius: 30px;
 }
 
+QPushButton#item_button,
+QPushButton#view_button,
+QPushButton#change_button,
+QPushButton#proceed_button,
 QPushButton#cancel_button:hover {
     background-color: rgba(86, 101, 115, 0.1);
 }
-
 
 /*  View  */
 

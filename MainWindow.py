@@ -67,7 +67,7 @@ class MainWindow(QMainWindow):
         else:
              self.set_files(True)
              tree_model = QStandardItemModel()
-             tree_model.setHorizontalHeaderLabels(["Name", "Size", "Kind", "Date Added", ""])
+             tree_model.setHorizontalHeaderLabels(["Name", "Size", "Kind", "Date Added", "", ""])
 
              for  tuple in files:
                 items = []
@@ -96,10 +96,20 @@ class MainWindow(QMainWindow):
 
              for row_index, _ in enumerate(files):
                 item_button = QPushButton("Remove")
+                view_button = QPushButton("View")
+                item_button.setObjectName("item_button")
+                view_button.setObjectName("view_button")
                 item_button.setFixedWidth(70)
+                view_button.setFixedWidth(70)
                 self.ui.treeView.setIndexWidget(tree_model.index(row_index, 4), item_button)
+                self.ui.treeView.setIndexWidget(tree_model.index(row_index, 5), view_button)
                 fileID = tree_model.data(tree_model.index(row_index, 0), Qt.UserRole)
                 item_button.clicked.connect(lambda click, id=fileID: self.delete_fileID(id))
+                # needs to be fized
+                view_button.clicked.connect(lambda clicked, id=fileID: self.view_file_with_ID(id))
+
+    def view_file_with_ID(self, id):
+        self.file_handle.view_file(fileID=id)
 
     def delete_fileID(self, fileID):
         print(fileID)

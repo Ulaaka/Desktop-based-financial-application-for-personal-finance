@@ -244,13 +244,15 @@ class cryptography:
         return file_ID
 
     # Decrypts the user file given filename or hashed_filename
-    def decrypt(self, enc_storage_path, key, accountID, filename=None, hashed_filename=None):
+    def decrypt(self, enc_storage_path, key, accountID, filename=None, hashed_filename=None, fileID=None):
         if filename:
             # even if the account name is changed, ID would stay the same
             hashed_name = self.query.get_hashed_name(accountID, name_file=filename)
-
-        if hashed_filename:
+        elif hashed_filename:
             hashed_name = hashed_filename
+        
+        elif fileID:
+            hashed_name = self.query.get_hashed_name(accountID, fileID=fileID)
 
         file_path = os.path.join(enc_storage_path,  hashed_name)
         with open(file_path, "rb") as file:

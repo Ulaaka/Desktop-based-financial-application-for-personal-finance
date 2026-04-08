@@ -351,9 +351,14 @@ class query_processor:
         return result if result else None
 
     # Returns the original name of the file from the hashed
-    def get_file_name_from_hashed(self, accountID, hashed_name):
-        new_sql = f"SELECT file_name FROM files WHERE accountID = '{accountID}' and hashed_name = '{hashed_name}'"
-        self.cursor.execute(new_sql)
+    def get_file_name(self, accountID, hashed_name=None, fileID=None):
+        if hashed_name:
+            new_sql = "SELECT file_name FROM files WHERE accountID = %s and hashed_name = %s"
+            select = hashed_name
+        elif fileID:
+            new_sql = "SELECT file_name FROM files WHERE accountID = %s and file_ID = %s"
+            select = fileID
+        self.cursor.execute(new_sql, (accountID, select))
         output = self.cursor.fetchone()
         return output[0] if output else None
 
@@ -393,6 +398,12 @@ class query_processor:
     def get_type_account_currency(self, account_name, userID):
         query = "SELECT account_type, account_currency FROM accounts WHERE account_name = %s AND userID = %s"
         self.cursor.execute(query, (account_name, userID))
+        result = self.cursor.fetchone()
+        return result if result else None
+    
+    def get_type_with_id(self, id):
+        query = "SELECT account_type FROM accounts WHERE file_ID = %s"
+        self.cursor.execute(query, (id, ))
         result = self.cursor.fetchone()
         return result if result else None
 

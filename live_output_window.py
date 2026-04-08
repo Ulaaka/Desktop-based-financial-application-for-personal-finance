@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QDialog
 from FILE_handling import file_handling
 from live_output_widget import Ui_live_output_window
 from BASE_Classes import cryptography
-
+from queries import query_processor
 class Live_output_window(QDialog):
     def __init__(self, parent, saved_print):
         super().__init__(parent)
@@ -15,6 +15,7 @@ class Live_output_window(QDialog):
         self.ui = Ui_live_output_window()
         self.crypto = cryptography()
         self.file_handle = file_handling(self.accountID, self.key)
+        self.query = query_processor()
 
         self.ui.setupUi(self)
         self.live_output_signals_connection()
@@ -34,13 +35,9 @@ class Live_output_window(QDialog):
     def link_click(self, event):
         flag = False
         pressed_file_name = event.toString()
-        sub_save_folder = os.path.join(config('SAVE_FOLDER'),f"account_{self.accountID}")
-        decrypted_text = self.crypto.decrypt(sub_save_folder, self.key, self.accountID,filename=pressed_file_name.split(":")[1])
-        if (pressed_file_name.split(".")[1] == "pdf"):
-            flag = True
-        temp_name = self.file_handle.show_decrypted_pdf(decrypted_text, pdf_flag=flag)
-        self.file_handle.temp_files.append(temp_name)
-        self.file_handle.open_temp_file(temp_name)
+        original_filename = pressed_file_name.split(":")[1]
+
+        self.file_handle.view_file(original_filename)
 
     # when the file window close
     def closeEvent(self, event):

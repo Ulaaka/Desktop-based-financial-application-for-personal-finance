@@ -3,6 +3,7 @@ from decouple import config
 from PyQt5.QtWidgets import QDialog
 from disclaimer_widget import Ui_Disclaimer
 from queries import query_processor
+from FILE_handling import file_handling
 
 class Disclaimer_window(QDialog):
     def __init__(self, fileID, parent):
@@ -10,29 +11,25 @@ class Disclaimer_window(QDialog):
         self.ui = Ui_Disclaimer()
         self.fileID = fileID
         self.accountID = parent.accountID
+        self.key = parent.key
         self.query = query_processor()
+        self.file_handle = file_handling(self.accountID,  self.key)
         self.ui.setupUi(self)
         self.signal_connect()
 
     def signal_connect(self):
+        self.setObjectName("disclaimer_widget")
         self.ui.proceed_button.clicked.connect(self.proceed_button_clicked)
         self.ui.cancel_button.clicked.connect(self.cancel_button_clicked)
-        self.setObjectName("disclaimer_widget")
+        self.ui.proceed_button.setObjectName("proceed_button")
 
     def proceed_button_clicked(self):
         hashed_name = self.query.get_hashed_name(self.accountID, fileID=self.fileID)
 
         self.query.delete_file(self.fileID)
-        self.delete_encrypted_file(self.accountID, hashed_name)
+        self.file_handle.delete_encrypted_file(self.accountID, hashed_name)
         self.parent().show_files()
         self.close()
 
     def cancel_button_clicked(self):
         self.close()
-
-    def delete_encrypted_file(self, accountID, hashed_name):
-        sub_save_folder = os.path.join(config('SAVE_FOLDER'),f"account_{accountID}")
-        for encrypted_file in os.listdir(sub_save_folder):
-            if (hashed_name == encrypted_file):
-                file_path = os.path.join(sub_save_folder, encrypted_file)
-                os.remove(file_path)

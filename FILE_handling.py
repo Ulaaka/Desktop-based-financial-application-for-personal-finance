@@ -18,7 +18,6 @@ class file_handling():
         self.accountID = accountID
         self.key = key
         self.crypto = cryptography()
-        self.query = query_processor()
         self.temp_files = []
 
     # Returns temporary decrypted text file of the file in a pdf format
@@ -31,6 +30,31 @@ class file_handling():
             tmp.write(decrypted_text)
             tmp.flush()
         return tmp.name
+
+    def view_file(self, original_filename=None, fileID=None):
+        query = query_processor()
+        sub_save_folder = os.path.join(config('SAVE_FOLDER'),f"account_{self.accountID}")
+
+        if fileID:
+            current_filename = query.get_file_name(self.accountID, fileID=fileID)
+            print(current_filename)
+        elif original_filename:
+            current_filename = original_filename
+            decrypted_text = self.crypto.decrypt(sub_save_folder, self.key, self.accountID,filename=original_filename)
+
+        decrypted_text = self.crypto.decrypt(sub_save_folder, self.key, self.accountID,filename=current_filename)
+        if (current_filename.split(".")[1] == "pdf"):
+            flag = True
+        temp_name = self.show_decrypted_pdf(decrypted_text, pdf_flag=flag)
+        self.temp_files.append(temp_name)
+        self.open_temp_file(temp_name)
+
+    def delete_encrypted_file(self, accountID, hashed_name):
+        sub_save_folder = os.path.join(config('SAVE_FOLDER'),f"account_{accountID}")
+        for encrypted_file in os.listdir(sub_save_folder):
+            if (hashed_name == encrypted_file):
+                file_path = os.path.join(sub_save_folder, encrypted_file)
+                os.remove(file_path)
 
     # Deletes the temporary pdf file
     def delete_temp_file(self, temp_name):
@@ -55,7 +79,7 @@ class file_handling():
                 with open(file_path, 'rb') as file:
                     if file.read() == decrypted:
                         # find the submitted existing file_name in the folder
-                        existing_name = self.query.get_file_name_from_hashed(self.accountID, encrypted_file)
+                        existing_name = self.query.get_file_name(self.accountID, hashed_name=encrypted_file)
                         found = True
                         # print(f"The file {filename} already exists as: {existing_name}")
                         output = f'\tThe file {filename} already exists as <a href="file:{existing_name}">{existing_name}</a>'
