@@ -1,5 +1,5 @@
-from PyQt5.QtWidgets import QDialog, QCompleter, QMessageBox
-from PyQt5.QtCore import Qt,pyqtSignal, QTimer
+from PyQt5.QtWidgets import QDialog, QCompleter, QMessageBox, QApplication
+from PyQt5.QtCore import Qt,pyqtSignal
 from account_selection_panel import account_selection_form
 from account_add_page import account_add_page_form
 from queries import query_processor
@@ -66,6 +66,7 @@ class Account_add_page(QDialog):
         super().__init__(parent)
         self.userID = parent.userID
         self.currencies = currencies
+
         self.ui = account_add_page_form()
 
         self.ui.setupUi(self)
@@ -87,7 +88,12 @@ class Account_add_page(QDialog):
         account_name = self.ui.account_name_type.text()
         account_type = self.ui.account_type_combo.currentText()
         account_currency = self.ui.account_currency_combo.currentText()[:3]
-        accountID = query.insert_account(self.userID, account_name, account_type, account_currency)
-        self.parent().parent().update_account(account_name, accountID)
-        self.close()
+        if account_name and account_type and account_currency:
+            accountID = query.insert_account(self.userID, account_name, account_type, account_currency)
+            self.parent().parent().update_account(account_name, accountID)
+            self.close()
+        else:
+            self.close()
+            QMessageBox.warning(self.parent().parent(), 'Error', 'Please enter all information')
+            return
 

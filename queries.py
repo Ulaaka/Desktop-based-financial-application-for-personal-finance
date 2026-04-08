@@ -400,7 +400,7 @@ class query_processor:
         self.cursor.execute(query, (account_name, userID))
         result = self.cursor.fetchone()
         return result if result else None
-    
+
     def get_type_with_id(self, id):
         query = "SELECT account_type FROM accounts WHERE file_ID = %s"
         self.cursor.execute(query, (id, ))
@@ -417,6 +417,11 @@ class query_processor:
     def delete_file(self, file_ID):
         query = "DELETE FROM files WHERE file_ID = %s"
         self.cursor.execute(query, (file_ID, ))
+        self.db.commit()
+
+    def delete_account(self, accountID):
+        query = "DELETE FROM accounts WHERE accountID = %s"
+        self.cursor.execute(query, (accountID, ))
         self.db.commit()
 
     # Returns the list of words from the description of the selected transaction

@@ -18,6 +18,7 @@ class file_handling():
         self.accountID = accountID
         self.key = key
         self.crypto = cryptography()
+        self.query = query_processor()
         self.temp_files = []
 
     # Returns temporary decrypted text file of the file in a pdf format

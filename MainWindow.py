@@ -36,6 +36,8 @@ class MainWindow(QMainWindow):
 
     def label_click(self,event):
         current_account = self.ui.account_name_label.text()
+        if current_account == "Not selected":
+            return
         Account_control_page(current_account, self)
 
     def manage_account_page(self, current_account):
@@ -98,8 +100,8 @@ class MainWindow(QMainWindow):
                 view_button = QPushButton("View")
                 item_button.setObjectName("item_button")
                 view_button.setObjectName("view_button")
-                item_button.setFixedWidth(70)
-                view_button.setFixedWidth(70)
+                #item_button.setFixedWidth(70)
+                #view_button.setFixedWidth(70)
                 self.ui.treeView.setIndexWidget(tree_model.index(row_index, 4), item_button)
                 self.ui.treeView.setIndexWidget(tree_model.index(row_index, 5), view_button)
                 fileID = tree_model.data(tree_model.index(row_index, 0), Qt.UserRole)

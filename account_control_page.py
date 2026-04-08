@@ -12,6 +12,7 @@ class Account_control_page(QWidget):
         self.currencies = parent.currency_list
         self.objective = 0
         self.query = query_processor()
+        self.accountID = parent.accountID
         self.account_control_signals_connect()
 
     def account_control_signals_connect(self):
@@ -26,6 +27,7 @@ class Account_control_page(QWidget):
         currency_search.setCompleter(completer)
 
         parent_window.ui.change_button.clicked.connect(self.objective_toggler)
+        parent_window.ui.delete_account.clicked.connect(self.delete_acc)
         self.show_account_control_page()
 
     def show_account_control_page(self):
@@ -56,6 +58,19 @@ class Account_control_page(QWidget):
         parent_window.ui.comboBox.setEnabled(flag)
         parent_window.ui.comboBox_2.setEnabled(flag)
 
+    def delete_acc(self):
+        parent_window = self._parent
+        parent_window.ui.stackedWidget.setCurrentWidget(parent_window.ui.home_page)
+        options = self.query.compute_account_options(self.userID).remove(self.current_account)
+        if options:
+            accountID = self.query.get_accountID(options[0], self.userID)
+            parent_window.update_account(options[0], accountID)
+        else:
+            parent_window.update_account(None, None)
+
+        self.query.delete_account(self.accountID)
+        parent_window.manage_home_page()
+
     def objective_toggler(self):
         if (self.objective == 1):
             self.get_answer()
@@ -79,8 +94,7 @@ class Account_control_page(QWidget):
             QMessageBox.warning(self, 'Error', 'Account Name section cant be empty')
             return
 
-        accountID = self.query.get_accountID(self.current_account, self.userID)
-        self.query.update_account(account_name, account_type, account_currency, accountID)
-        parent_window.update_account(account_name, accountID)
+        self.query.update_account(account_name, account_type, account_currency, self.accountID)
+        parent_window.update_account(account_name, self.accountID)
         self.current_account = account_name
         self.show_account_control_page()

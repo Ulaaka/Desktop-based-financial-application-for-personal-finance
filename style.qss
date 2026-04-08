@@ -66,7 +66,7 @@ QPushButton#pushButton_4:hover {
 QPushButton#exit_button_1,
 QPushButton#exit_button_2 {
     border: none;
-    color: #788596;
+    color: white;
     text-align: left;
     padding: 8px 0 8px 15px;
 }
@@ -74,7 +74,7 @@ QPushButton#exit_button_2 {
 QPushButton#exit_button_1:hover,
 QPushButton#exit_button_2:hover {
     background-color: rgba(220, 53, 69, 0.2);
-    color: #dc3545;
+    color: red;
 }
 
 
@@ -149,6 +149,15 @@ QLineEdit#account_name_type {
     font-size: 14px;
 }
 
+QLineEdit#lineEdit_2 {
+    background-color: transparent;
+    color: black;
+    border: 2px solid black;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+
 QLineEdit#input_field,
 QLineEdit#account_name_type:focus {
     border: 1px solid white;
@@ -172,17 +181,10 @@ QLineEdit#digit_box:focus {
     background: white;
 }
 
-QLineEdit#lineEdit_2 {
-    background-color: transparent;
-    color: black;
-    border: 2px solid black;
-    border-radius: 4px;
-    padding: 4px;
-}
-
 /*  Combo Box */
 
-QComboBox#comboBox {
+QComboBox#comboBox,
+QComboBox#comboBox_2{
     background-color: transparent;
     color: black;
     border: 2px solid black;
@@ -190,13 +192,6 @@ QComboBox#comboBox {
     padding: 4px;
 }
 
-QComboBox#comboBox_2 {
-    background-color: transparent;
-    color: black;
-    border: 2px solid black;
-    border-radius: 4px;
-    padding: 4px;
-}
 
 QComboBox#comboBox_2 QLineEdit {
     background-color: transparent;
@@ -221,71 +216,68 @@ QPushButton#upload_file_button:hover {
 
 QPushButton#change_button {
     background-color: #313a46;
-    color: black;
+    color: white;
     border: 2px solid black;
     border-radius: 4px;
 }
 
+QPushButton#change_button:hover{
+    background-color: rgba(86, 101, 115, 0.1);
+    color : black;
+}
+
 QPushButton#item_button{
-    background-color: transparent;
+    background-color: white;
     color: red;
     border-radius: 30px;
 }
 
 QPushButton#view_button{
-    background-color: transparent;
-    color: blue;
+    background-color: white;
+    color: green;
     border-radius: 30px;
 }
 
+QPushButton#delete_account{
+    background-color: #313a46;
+    color: white;
+    border: 2px solid black;
+    border-radius: 4px;
+}
+
+QPushButton#item_button:hover,
+QPushButton#view_button:hover,
+QPushButton#proceed_button:hover,
+QPushButton#cancel_button:hover,
+QPushButton#delete_account:hover {
+    background-color: rgba(86, 101, 115, 0.1);
+}
+
 QPushButton#proceed_button {
-    background-color: #4CAF50;
+    background-color: green;
     color: black;
     border-radius: 30px;
 }
 
-QPushButton#cancel_button {
+QPushButton#cancel_button{
     background-color: #fc2803;
     color: black;
     border-radius: 30px;
 }
 
-QPushButton#item_button,
-QPushButton#view_button,
-QPushButton#change_button,
-QPushButton#proceed_button,
-QPushButton#cancel_button:hover {
-    background-color: rgba(86, 101, 115, 0.1);
-}
-
 /*  View  */
 
-QTableView#tableView {
-    color: black;
-    background-color: transparent;
-}
-
-QTreeView#treeView {
-    background-color: transparent;
-    color: black;
-}
-
+QTableView#tableView,
+QTreeView#treeView,
 QTextBrowser#textBrowser {
-    background-color: transparent;
     color: black;
-    border-radius: 15px;
+    background-color: transparent;
 }
 
 /*  Dialog  */
 
-QWidget#live_output_window {
-    background-color: #fff;
-}
-
-QWidget#disclaimer_widget {
-    background-color: #fff;
-}
-
-QWidget#button_widget_disclaimer {
+QWidget#live_output_window,
+QWidget#disclaimer_widget,
+QWidget#button_widget_disclaimer{
     background-color: #fff;
 }

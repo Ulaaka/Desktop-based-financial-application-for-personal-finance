@@ -21,7 +21,6 @@ class Disclaimer_window(QDialog):
         self.setObjectName("disclaimer_widget")
         self.ui.proceed_button.clicked.connect(self.proceed_button_clicked)
         self.ui.cancel_button.clicked.connect(self.cancel_button_clicked)
-        self.ui.proceed_button.setObjectName("proceed_button")
 
     def proceed_button_clicked(self):
         hashed_name = self.query.get_hashed_name(self.accountID, fileID=self.fileID)
