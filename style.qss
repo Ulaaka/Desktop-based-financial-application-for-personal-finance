@@ -135,7 +135,7 @@ QLabel#user_created_value,
 QLabel#user_accounts_label,
 QLabel#user_accounts_value,
 QLabel#no_file_label,
-QLabel#confirmation_label.
+QLabel#confirmation_label,
 QLabel#timer_label {
     background-color: transparent;
     color: black;

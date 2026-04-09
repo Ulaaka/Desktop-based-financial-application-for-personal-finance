@@ -92,8 +92,7 @@ class Profile_page(QWidget):
         self.mail_button_state = not state
         self.activate(self.mail_button_state, "mail")
 
-        # pisda 
-        code = system_functions().send_reset_digits(6, "username")
+        code = system_functions().send_reset_digits(6, userID=self.userID)
         confirmation_window = Change_confirmation_page(code, self)
         global_pos = parent_window.ui.email_change_button.mapToGlobal(QPoint(0,0))
         confirmation_window.move(global_pos.x(), global_pos.y() + parent_window.ui.email_change_button.height())

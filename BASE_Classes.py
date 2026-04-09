@@ -262,5 +262,3 @@ class cryptography:
         decrypted = fernet.decrypt(data)
 
         return decrypted
-
-

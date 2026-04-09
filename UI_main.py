@@ -133,7 +133,7 @@ class login_page(QWidget):
             )
             return
 
-        self.random_digits = self.system.send_reset_digits(6, username_local)
+        self.random_digits = self.system.send_reset_digits(6, username=username_local)
         if self.random_digits:
             self.controller.show_validation_page()
         else:
@@ -336,10 +336,9 @@ class validation_page(QWidget):
 
         self.timer_manager = manage_seconds_qt(label=self.timerLabel, timer=self.timer, duration=self.duration, expire_func=self.expire_func)
 
-
     def expire_func(self):
         self.login_page.random_digits = self.system.send_reset_digits(
-            6, self.login_page.username.text()
+            6, username=self.login_page.username.text()
         )
         for square in self.squares:
             square.clear()

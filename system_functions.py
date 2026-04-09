@@ -3,6 +3,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from database_connection import database
+from queries import query_processor
 
 class system_functions:
 
@@ -13,6 +14,7 @@ class system_functions:
     def __init__(self):
         connection = database()
         self.db = connection.db
+        self.query = query_processor()
         self.cursor = connection.cursor
 
     # Generates random digits for user authentication for 2FA
@@ -28,9 +30,13 @@ class system_functions:
     # Sends the random digits the users email
     def send_reset_digits(self, digits_size, username=None, userID=None):
         try:
-            email_query = "SELECT email_address FROM users WHERE username = %s"
-            self.cursor.execute(email_query, (username, ))
-            user_email = self.cursor.fetchone()[0]
+            if username:
+                email_query = "SELECT email_address FROM users WHERE username = %s"
+                self.cursor.execute(email_query, (username, ))
+                user_email = self.cursor.fetchone()[0]
+
+            if userID:
+                user_email = self.query.get_user_info(userID)[1]
 
             number = self.generate_random_digits(digits_size)
             subject = "Reset Password"
