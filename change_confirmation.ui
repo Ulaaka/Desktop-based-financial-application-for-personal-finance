@@ -110,6 +110,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QLabel" name="timer_label">
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QWidget" name="widget_4" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
@@ -140,7 +150,7 @@
         <property name="sizeHint" stdset="0">
          <size>
           <width>107</width>
-          <height>20</height>
+          <height>15</height>
          </size>
         </property>
        </spacer>

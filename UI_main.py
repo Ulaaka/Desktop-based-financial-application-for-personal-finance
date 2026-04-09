@@ -266,7 +266,7 @@ class validation_page(QWidget):
         super().__init__()
         self.duration = 90
         self.time_left_int = self.duration
-        self.myTimer = QtCore.QTimer(self)
+        self.timer = QtCore.QTimer(self)
         self.system = system_functions()
         self.controller = controller
         self.db = db
@@ -334,8 +334,7 @@ class validation_page(QWidget):
         layout.addWidget(self.timerLabel)
         layout.addStretch()
 
-
-        self.timer_manager = manage_seconds_qt(label=self.timerLabel, timer=self.myTimer, duration=self.duration, expire_func=self.expire_func)
+        self.timer_manager = manage_seconds_qt(label=self.timerLabel, timer=self.timer, duration=self.duration, expire_func=self.expire_func)
 
 
     def expire_func(self):

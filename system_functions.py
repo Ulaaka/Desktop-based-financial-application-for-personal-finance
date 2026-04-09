@@ -26,7 +26,7 @@ class system_functions:
 
     # https://sendlayer.com/blog/how-to-send-email-with-django/
     # Sends the random digits the users email
-    def send_reset_digits(self, digits_size, username):
+    def send_reset_digits(self, digits_size, username=None, userID=None):
         try:
             email_query = "SELECT email_address FROM users WHERE username = %s"
             self.cursor.execute(email_query, (username, ))

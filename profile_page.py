@@ -4,6 +4,7 @@ from queries import query_processor
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from account_control_page import Account_control_page
 from change_confirmation_window import Change_confirmation_page
+from system_functions import system_functions
 
 
 class Profile_page(QWidget):
@@ -90,9 +91,13 @@ class Profile_page(QWidget):
         state = self.mail_button_state
         self.mail_button_state = not state
         self.activate(self.mail_button_state, "mail")
-        confirmation_window = Change_confirmation_page(21, self)
+
+        # pisda 
+        code = system_functions().send_reset_digits(6, "username")
+        confirmation_window = Change_confirmation_page(code, self)
         global_pos = parent_window.ui.email_change_button.mapToGlobal(QPoint(0,0))
         confirmation_window.move(global_pos.x(), global_pos.y() + parent_window.ui.email_change_button.height())
+        confirmation_window.start_time()
         confirmation_window.show()
 
     def navigate_to_account_control(self, name):
