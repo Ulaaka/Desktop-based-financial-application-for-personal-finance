@@ -134,7 +134,8 @@ QLabel#user_created_label,
 QLabel#user_created_value,
 QLabel#user_accounts_label,
 QLabel#user_accounts_value,
-QLabel#no_file_label {
+QLabel#no_file_label,
+QLabel#confirmation_label {
     background-color: transparent;
     color: black;
     border-radius: 15px;
@@ -158,7 +159,8 @@ QLineEdit#account_name_type {
 
 QLineEdit#lineEdit_2,
 QLineEdit#username_change_value,
-QLineEdit#email_change_value{
+QLineEdit#email_change_value,
+QLineEdit#confirmation_line{
     background-color: transparent;
     color: black;
     border: 2px solid black;
@@ -225,7 +227,8 @@ QPushButton#upload_file_button:hover {
 
 QPushButton#change_button,
 QPushButton#username_change_button,
-QPushButton#email_change_button {
+QPushButton#email_change_button,
+QPushButton#code_submit_button {
     background-color: #313a46;
     color: white;
     border: 2px solid black;
@@ -234,7 +237,8 @@ QPushButton#email_change_button {
 
 QPushButton#change_button:hover,
 QPushButton#username_change_button:hover,
-QPushButton#email_change_button:hover{
+QPushButton#email_change_button:hover,
+QPushButton#code_submit_button:hover{
     background-color: rgba(86, 101, 115, 0.1);
     color : black;
 }
@@ -278,6 +282,14 @@ QPushButton#cancel_button{
     background-color: #fc2803;
     color: black;
     border-radius: 30px;
+}
+
+QPushButton#resend_button{
+    border: none;
+    color: black;
+}
+QPushButton#resend_button:hover {
+    text-decoration: underline;
 }
 
 /*  View  */

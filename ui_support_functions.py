@@ -73,9 +73,32 @@ class ui_support_functions:
                 }}
             '''
             return line
+    
 
-    def secs_to_minsec(secs: int):
-        mins = secs // 60
-        secs = secs % 60
-        minsec = f'{mins:02}:{secs:02}'
-        return minsec
+
+class manage_seconds_qt():
+    def __init__(self, label, timer, duration, expire_func=None):
+        self.duration = duration
+        self.timer = timer
+        self.label = label
+        self.expire_func = expire_func
+
+    def begin_timer(self):
+        self.remaining = self.duration
+        self.timer.timeout.connect(self.time_out)
+        self.timer.start(1000)
+
+    def time_out(self):
+        self.remaining -= 1
+        if self.remaining == 0:
+            self.remaining = self.duration
+            if self.expire_func:
+                self.expire_func()
+        self.update_label()
+
+    def update_label(self):
+        time = self.convert_secs(self.remaining)
+        self.label.setText(time)
+
+    def convert_secs(seconds):
+        return f'{seconds // 60:02}:{seconds % 60:02}'

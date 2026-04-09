@@ -188,7 +188,7 @@ class query_processor:
         if (account_name):
             where_query+=f" and A.account_name = '{account_name}'"
 
-        tail_query = f" GROUP BY T.description HAVING count_transaction > 3 ORDER BY total_sent DESC"
+        tail_query = " GROUP BY T.description HAVING count_transaction > 3 ORDER BY total_sent DESC"
 
         query = head_query + where_query + tail_query
         self.cursor.execute(query)
@@ -200,7 +200,7 @@ class query_processor:
     # ============================
     # Creates new user, and inserts information into the database
     def insert_into_users(self, username, hashed_password, email):
-        sql = f"INSERT INTO users (username, hashed_password, email_address) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO users (username, hashed_password, email_address) VALUES (%s, %s, %s)"
         self.cursor.execute(sql, (username, hashed_password, email))
         userID = self.cursor.lastrowid
         self.db.commit()
@@ -208,7 +208,7 @@ class query_processor:
 
     # Creates new account, and inserts information into the database
     def insert_into_accounts(self, userID, acc_name, acc_type, acc_currency):
-        sql = f"INSERT INTO accounts (userID, account_name, account_type, account_currency) VALUES (%s, %s, %s, %s)"
+        sql = "INSERT INTO accounts (userID, account_name, account_type, account_currency) VALUES (%s, %s, %s, %s)"
         self.cursor = self.connection.cursor
         self.cursor.execute(sql, ( userID, acc_name, acc_type, acc_currency))
         accountID = self.cursor.lastrowid
@@ -223,7 +223,7 @@ class query_processor:
 
     # Inserts new category into the database
     def insert_into_categories(self, userID, category_sentence, category_list, category_name):
-        query = f"INSERT INTO categories (userID, category_sentence, category_list, category_name) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO categories (userID, category_sentence, category_list, category_name) VALUES (%s, %s, %s, %s)"
         self.cursor.execute(query, (userID, category_sentence, json.dumps(category_list), category_name))
         categoryID = self.cursor.lastrowid
         self.db.commit()
@@ -259,7 +259,7 @@ class query_processor:
         if result is not None:
             try:
                 categoryID = result[0]
-                query = f"""
+                query = """
                     UPDATE categories
                     SET category_name = %s
                     WHERE categoryID = %s
@@ -277,7 +277,7 @@ class query_processor:
         """
         All data relating to the user is deleted
         """
-        sql = f"DELETE FROM users WHERE username = %s"
+        sql = "DELETE FROM users WHERE username = %s"
         self.cursor.execute(sql, (username,))
         self.db.commit()
 
@@ -310,14 +310,14 @@ class query_processor:
         return output if output else None
     # Returns userID
     def get_userID(self, username):
-        sql = f"SELECT userID FROM users WHERE username = %s"
+        sql = "SELECT userID FROM users WHERE username = %s"
         self.cursor.execute(sql, (username,))
         output = self.cursor.fetchone()
         return output[0] if output else None
 
     # Returns accountID
     def get_accountID(self, account_name, userID):
-        sql = f"SELECT accountID FROM accounts WHERE account_name = %s and userID = %s"
+        sql = "SELECT accountID FROM accounts WHERE account_name = %s and userID = %s"
         self.cursor.execute(sql, (account_name, userID))
         output = self.cursor.fetchone()
         return output[0] if output else None
@@ -346,7 +346,7 @@ class query_processor:
         return df
 
     def get_hashed_password(self, username):
-        sql = f"SELECT hashed_password FROM users WHERE username = %s"
+        sql = "SELECT hashed_password FROM users WHERE username = %s"
         self.cursor = self.connection.cursor
         self.cursor.execute(sql, (username, ))
         result = self.cursor.fetchone()
@@ -391,10 +391,27 @@ class query_processor:
         self.cursor.execute(query, parameter)
         self.db.commit()
 
-    def update_username(self, userID, new_username):
-        query = "UPDATE users SET username = %s WHERE userID = %s"
-        self.cursor.execute(query, (new_username, userID))
-        self.db.commit()
+    def update_user(self, userID, new_username=None, new_email=None):
+        parameter = []
+        top_query = "UPDATE users SET"
+        bottom_query = " WHERE userID = %s"
+        if new_username:
+            top_query+=" username = %s"
+            parameter.append(new_username)
+
+        if new_username:
+            top_query+=", email_address = %s"
+            parameter.append(new_email)
+
+        query = top_query + bottom_query
+        parameter.append(userID)
+
+        if len(parameter) != 0:
+            self.cursor.execute(query, parameter)
+            self.db.commit()
+        else:
+            print("could not update the user information")
+
 
     # Shows existing files IDs and filename submitted in the account
     def get_files(self, accountID):

@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import  QWidget, QPushButton
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from queries import query_processor
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from account_control_page import Account_control_page
+from change_confirmation_window import Change_confirmation_page
 
 
 class Profile_page(QWidget):
@@ -80,15 +81,19 @@ class Profile_page(QWidget):
 
         if (self.username_button_state is False):
             account_name = parent_window.ui.username_change_value.text()
-            self.query.update_username(self.userID, account_name)
+            self.query.update_user(self.userID, new_username=account_name)
             self.show_profile_page()
 
 
     def change_user_mail(self):
+        parent_window = self._parent
         state = self.mail_button_state
         self.mail_button_state = not state
         self.activate(self.mail_button_state, "mail")
-
+        confirmation_window = Change_confirmation_page(21, self)
+        global_pos = parent_window.ui.email_change_button.mapToGlobal(QPoint(0,0))
+        confirmation_window.move(global_pos.x(), global_pos.y() + parent_window.ui.email_change_button.height())
+        confirmation_window.show()
 
     def navigate_to_account_control(self, name):
         parent_window = self._parent

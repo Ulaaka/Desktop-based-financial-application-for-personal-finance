@@ -8,7 +8,7 @@ from qtwidgets import PasswordEdit
 from decouple import config
 from database_connection import database
 from BASE_Classes import password_class, cryptography
-from system_functions import system_functions
+from system_functions import system_functions, manage_seconds_qt
 from queries import query_processor
 from MainWindow import MainWindow
 from ui_support_functions import ui_support_functions
@@ -134,13 +134,12 @@ class login_page(QWidget):
             return
 
         self.random_digits = self.system.send_reset_digits(6, username_local)
-        self.controller.show_validation_page()
-        """        QMessageBox.information(
-            self,
-            'Password Reset',
-            f'A password reset link has been sent to the email associated with username: {username_local}'
-        )"""
-
+        if self.random_digits:
+            self.controller.show_validation_page()
+        else:
+            # needs to make it more sophisticated
+            QMessageBox.warning(self, 'Error', 'The user Does Not Exist')
+            return
 
 class sign_up_page(QWidget):
 
@@ -335,7 +334,17 @@ class validation_page(QWidget):
         layout.addWidget(self.timerLabel)
         layout.addStretch()
 
-    # needs to be changed
+
+        self.timer_manager = manage_seconds_qt(label=self.timerLabel, timer=self.myTimer, duration=self.duration, expire_func=self.expire_func)
+
+
+    def expire_func(self):
+        self.login_page.random_digits = self.system.send_reset_digits(
+            6, self.login_page.username.text()
+        )
+        for square in self.squares:
+            square.clear()
+
     def to_next_box(self, idx, _):
         if idx < 5:
             self.squares[idx + 1].setFocus()
@@ -353,32 +362,15 @@ class validation_page(QWidget):
         if (self.login_page.random_digits == entered):
             self.controller.show_reset_password()
         else:
-            QMessageBox.information(
+            QMessageBox.warning(
                 self,
                 'mismatch',
                 'Codes dont not match"'
             )
             return
 
-    # needs to be changed
-    def startTimer(self):
-        self.time_left_int = self.duration
-        self.myTimer.timeout.connect(self.timerTimeout)
-        self.myTimer.start(1000)
-
-    def timerTimeout(self):
-        self.time_left_int -= 1
-
-        if self.time_left_int == 0:
-            self.time_left_int = self.duration
-            self.login_page.random_digits = self.system.send_reset_digits(6, self.login_page.username.text())
-            for i in range(6):
-                self.squares[i].clear()
-        self.update_gui()
-
-    def update_gui(self):
-        minsec = ui_support_functions.secs_to_minsec(self.time_left_int)
-        self.timerLabel.setText(minsec)
+    def start_time(self):
+        self.timer_manager.begin_timer()
 
 class reset_password(QWidget):
 
@@ -533,7 +525,7 @@ class MainApp(QMainWindow):
     def show_validation_page(self):
         self.stacked_widget.setCurrentWidget(self.validation_page)
         self.setMaximumSize(400, 500)
-        self.validation_page.startTimer()
+        self.validation_page.start_time()
 
     def show_reset_password(self):
         self.stacked_widget.setCurrentWidget(self.reset_password)
