@@ -3,11 +3,12 @@ from PyQt5.QtCore import QAbstractTableModel, Qt
 from queries import query_processor
 # https://www.pythonguis.com/faq/editing-pyqt6-tableview/
 class ListModel(QAbstractTableModel):
-    def __init__(self, data, parent):
+    def __init__(self, data, parent, home_page):
         super().__init__(parent)
         self._data = data
         self.query = query_processor()
         self.userID = parent.userID
+        self.home_page = home_page
 
     def rowCount(self, index):
         return self._data.shape[0]
@@ -36,13 +37,13 @@ class ListModel(QAbstractTableModel):
             if column == 6:
                 # applies changes to the closest transactions
                 self.query.change_category(self.userID, value, transactionID)
-                self.parent().show_table()
+                self.home_page.show_table()
                 # if does not want to
                 # update_category()
             if column == 5:
                 # 
                 if self.query.change_description_and_update(value, transactionID):
-                    self.parent().show_table()
+                    self.home_page.show_table()
             return True
         return False
 

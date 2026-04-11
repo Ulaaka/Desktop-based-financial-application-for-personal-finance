@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QPushButton
+from PyQt5.QtWidgets import QPushButton, QComboBox
 from PyQt5.QtCore import Qt, QDate, QSortFilterProxyModel
 from queries import query_processor
 from Table_View import ListModel
@@ -27,9 +27,8 @@ class Home_page():
                 else:
                     self.filter_transaction = self.transactions[self.transactions.iloc[:, 3].dt.date.between(parent_window.start_date, parent_window.end_date)]
 
-
                 # -- TABLE LOADING -- 
-                self.model = ListModel(self.filter_transaction, parent_window)
+                self.model = ListModel(self.filter_transaction, parent_window, self)
                 self.data = self.filter_transaction
 
                 # Set the search filter for the table
@@ -47,14 +46,15 @@ class Home_page():
                 for i in hidden_columns:
                     parent_window.ui.tableView.setColumnHidden(i, True)
 
-                # Add the remove buttons in the extra column
                 for row_index in range(len(self.filter_transaction)):
                     transaction_id = self.filter_transaction.iloc[row_index].iloc[0]
                     remove_button = QPushButton("Remove")
                     remove_button.setObjectName("item_button")
-                    index = proxy_model.mapFromSource(self.model.index(row_index, 9))
-                    parent_window.ui.tableView.setIndexWidget(index, remove_button)
-                    remove_button.clicked.connect(lambda clicked, id=transaction_id, row=row_index: self.handle_remove_button(id))
+                    index_button = proxy_model.mapFromSource(self.model.index(row_index, 9))
+                    # add remove button
+                    parent_window.ui.tableView.setIndexWidget(index_button, remove_button)
+                    remove_button.clicked.connect(lambda clicked, id=transaction_id: self.handle_remove_button(id))
+
 
     def set_select_dates(self):
         parent_window = self._parent

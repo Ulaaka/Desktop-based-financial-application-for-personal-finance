@@ -1,10 +1,11 @@
 import os, sys, certifi, django
 from functools import partial
-from PyQt5 import QtCore
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import *
+
+from PyQt5.QtWidgets import  QWidget, QMainWindow, QApplication, QStackedWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QFont, QColor, QPalette
 from qtwidgets import PasswordEdit
+
 from decouple import config
 from database_connection import database
 from BASE_Classes import password_class, cryptography
@@ -266,7 +267,7 @@ class validation_page(QWidget):
         super().__init__()
         self.duration = 90
         self.time_left_int = self.duration
-        self.timer = QtCore.QTimer(self)
+        self.timer = QTimer(self)
         self.system = system_functions()
         self.controller = controller
         self.db = db
@@ -476,8 +477,7 @@ class reset_password(QWidget):
 
            self.controller.show_login()
 
-
-class MainApp(QMainWindow):
+class User_authentication(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -545,7 +545,7 @@ if __name__ == "__main__":
         style = styling.read()
 
     app.setStyleSheet(style)
-    window = MainApp()
+    window = User_authentication()
     window.show()
 
     sys.exit(app.exec())

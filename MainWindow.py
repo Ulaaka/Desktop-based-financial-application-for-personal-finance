@@ -12,6 +12,7 @@ from profile_page import Profile_page
 from upload_Page import Upload_page
 from files_page import Files_page
 from home_page import Home_page
+
 class MainWindow(QMainWindow):
     def __init__(self, controller , key, userID):
         super(MainWindow, self).__init__()
