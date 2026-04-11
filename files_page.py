@@ -35,7 +35,7 @@ class Files_page():
     
     def view_file_with_ID(self, id):
         parent_window = self._parent
-        file_handle = file_handling(parent_window.accountID, parent_window.key)
+        file_handle = file_handling(parent_window.userID, parent_window.accountID, parent_window.key)
         file_handle.view_file(fileID=id)
 
     def delete_file_wht_ID(self, fileID):
@@ -44,7 +44,7 @@ class Files_page():
 
     def files_exist(self):
         parent_window = self._parent
-        file_handle = file_handling(parent_window.accountID, parent_window.key)
+        file_handle = file_handling(parent_window.userID, parent_window.accountID, parent_window.key)
         self.tree_model = QStandardItemModel()
         self.tree_model.setHorizontalHeaderLabels(["Name", "Size", "Kind", "Date Added", "", ""])
 
