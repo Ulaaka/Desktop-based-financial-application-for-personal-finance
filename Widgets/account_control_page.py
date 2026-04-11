@@ -1,8 +1,7 @@
 from PyQt5.QtWidgets import QCompleter, QWidget, QMessageBox
 from PyQt5.QtCore import Qt
 from queries import query_processor
-import pandas as pd
-from deletion_disclaimer_window import Deletion_disclaimer_window
+from Widgets.deletion_disclaimer_window import Deletion_disclaimer_window
 
 class Account_control_page(QWidget):
     def __init__(self, current_account, parent):

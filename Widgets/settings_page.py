@@ -3,9 +3,9 @@ from PyQt5.QtCore import QPoint, QSortFilterProxyModel, Qt
 
 from queries import query_processor
 from BASE_Classes import password_class
-from change_confirmation_window import Change_confirmation_page
-from Table_View import ListModelCategory
-from home_page import Home_page
+from Widgets.change_confirmation_window import Change_confirmation_page
+from Widgets.Table_View import ListModelCategory
+from Widgets.home_page import Home_page
 import numpy as np
 class Change_password_page():
     def __init__(self, parent):

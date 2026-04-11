@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import  QPushButton
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from disclaimer_window import Disclaimer_window
+from Widgets.disclaimer_window import Disclaimer_window
 from queries import query_processor
 from FILE_handling import file_handling
 

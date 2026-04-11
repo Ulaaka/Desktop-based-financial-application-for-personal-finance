@@ -1,4 +1,4 @@
-from change_confirmation import Ui_change_confirmation
+from Widgets.change_confirmation import Ui_change_confirmation
 from PyQt5.QtWidgets import QDialog
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal
 from system_functions import manage_seconds_qt, system_functions

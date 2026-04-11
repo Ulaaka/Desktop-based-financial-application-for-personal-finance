@@ -1,7 +1,5 @@
-import os
-from decouple import config
 from PyQt5.QtWidgets import QDialog
-from disclaimer_widget import Ui_Disclaimer
+from Widgets.disclaimer_widget import Ui_Disclaimer
 from queries import query_processor
 from FILE_handling import file_handling
 

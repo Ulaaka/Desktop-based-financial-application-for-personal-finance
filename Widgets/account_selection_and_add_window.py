@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import QDialog, QCompleter, QMessageBox
 from PyQt5.QtCore import Qt,pyqtSignal, QPoint
-from account_selection_panel import account_selection_form
-from account_add_page import account_add_page_form
+from Widgets.account_selection_panel import account_selection_form
+from Widgets.account_add_page import account_add_page_form
 from queries import query_processor
 
 

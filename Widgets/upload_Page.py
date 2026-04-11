@@ -1,9 +1,9 @@
 import sys, shutil
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
-from live_output_window import Live_output_window
+from Widgets.live_output_window import Live_output_window
 from FILE_handling import file_handling
-from stream import Stream
-from thread_worker import Thread_worker
+from Widgets.stream import Stream
+from Widgets.thread_worker import Thread_worker
 
 class Upload_page():
     def __init__(self, parent):

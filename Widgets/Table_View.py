@@ -1,4 +1,3 @@
-import pandas as pd
 from PyQt5.QtCore import QAbstractTableModel, Qt
 from queries import query_processor
 # https://www.pythonguis.com/faq/editing-pyqt6-tableview/

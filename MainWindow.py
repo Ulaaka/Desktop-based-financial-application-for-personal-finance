@@ -5,14 +5,14 @@ from PyQt5.QtCore import QPoint
 from queries import query_processor
 from FILE_handling import file_handling
 
-from financial_app import Ui_MainWindow
-from account_selection_and_add_window import Account_selection_page
-from account_control_page import Account_control_page
-from profile_page import Profile_page
-from upload_Page import Upload_page
-from files_page import Files_page
-from home_page import Home_page
-from settings_page import Change_password_page, Delete_user_account, Change_category
+from Widgets.financial_app import Ui_MainWindow
+from Widgets.account_selection_and_add_window import Account_selection_page
+from Widgets.account_control_page import Account_control_page
+from Widgets.profile_page import Profile_page
+from Widgets.upload_Page import Upload_page
+from Widgets.files_page import Files_page
+from Widgets.home_page import Home_page
+from Widgets.settings_page import Change_password_page, Delete_user_account, Change_category
 
 class MainWindow(QMainWindow):
     def __init__(self, controller , key, userID):

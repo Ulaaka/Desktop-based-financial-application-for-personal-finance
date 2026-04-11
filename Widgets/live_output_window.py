@@ -2,7 +2,7 @@ import sys, os
 from decouple import config
 from PyQt5.QtWidgets import QDialog
 from FILE_handling import file_handling
-from live_output_widget import Ui_live_output_window
+from Widgets.live_output_widget import Ui_live_output_window
 from BASE_Classes import cryptography
 from queries import query_processor
 class Live_output_window(QDialog):

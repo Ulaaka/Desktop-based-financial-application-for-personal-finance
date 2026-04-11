@@ -2,10 +2,8 @@ from PyQt5.QtWidgets import  QWidget, QPushButton
 from PyQt5.QtCore import Qt, QPoint
 from queries import query_processor
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from account_control_page import Account_control_page
-from change_confirmation_window import Change_confirmation_page
-from system_functions import system_functions
-
+from Widgets.account_control_page import Account_control_page
+from Widgets.change_confirmation_window import Change_confirmation_page
 
 class Profile_page(QWidget):
     def __init__(self, current_account, parent):

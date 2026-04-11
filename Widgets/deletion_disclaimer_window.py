@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QDialog
-from disclaimer_widget import Ui_Disclaimer
+from Widgets.disclaimer_widget import Ui_Disclaimer
 from queries import query_processor
 
 class Deletion_disclaimer_window(QDialog):

@@ -1,9 +1,9 @@
 from PyQt5.QtWidgets import QPushButton, QComboBox
 from PyQt5.QtCore import Qt, QDate, QSortFilterProxyModel
 from queries import query_processor
-from Table_View import ListModel
+from Widgets.Table_View import ListModel
 from system_functions import system_functions
-from thread_worker import Thread_worker
+from Widgets.thread_worker import Thread_worker
 class Home_page():
     def __init__(self, parent):
         self._parent = parent

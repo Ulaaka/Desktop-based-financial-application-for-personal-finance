@@ -14,7 +14,6 @@ from queries import query_processor
 from MainWindow import MainWindow
 from ui_support_functions import ui_support_functions
 
-
 class login_page(QWidget):
     def __init__(self, controller, db, cursor):
         super().__init__()
@@ -545,7 +544,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # reading style file
-    with open('style.qss', 'r') as styling:
+    style_path = os.path.join(os.path.dirname(__file__), "style_resource", "style.qss")
+    with open(style_path, 'r') as styling:
         style = styling.read()
 
     app.setStyleSheet(style)
