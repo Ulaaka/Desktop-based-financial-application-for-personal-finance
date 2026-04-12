@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):
         self.file_manager = Files_page(self)
         self.account_manager = Account_selection_page(self)
         self.query = query_processor()
+        self.category_change_handle = Change_category(self)
 
         self.ui.setupUi(self)
         self.MainWindow_signals_connection()
@@ -124,6 +125,9 @@ class MainWindow(QMainWindow):
 
         self.ui.tableView.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.ui.treeView.header().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.category_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.ui.category_table.verticalHeader().setVisible(False)
+        self.ui.stackedWidget_2.setCurrentWidget(self.ui.category_table_page)
 
         self.ui.start_date_edit.editingFinished.connect(lambda: self.home_manager.get_filter_date(start=True))
         self.ui.end_date_edit.editingFinished.connect(lambda: self.home_manager.get_filter_date(start=False))
@@ -132,7 +136,6 @@ class MainWindow(QMainWindow):
     
     def change_category_handle(self):
         self.ui.settings_stack.setCurrentWidget(self.ui.category_change_page)
-        self.category_change_handle = Change_category(self)
         self.category_change_handle.show_category_table()
 
     def change_password_handle(self):

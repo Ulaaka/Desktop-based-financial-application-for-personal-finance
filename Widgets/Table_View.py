@@ -5,7 +5,6 @@ class ListModel(QAbstractTableModel):
     def __init__(self, data, parent, home_page):
         super().__init__(parent)
         self._data = data
-        self.query = query_processor()
         self._parent = parent
         self.userID = parent.userID
         self.home_page = home_page
@@ -28,6 +27,7 @@ class ListModel(QAbstractTableModel):
                 return str(value)
 
     def setData(self, index, value, role):
+        query = query_processor()
         main_window = self._parent
         if role == Qt.ItemDataRole.EditRole:
             column =int(index.column())
@@ -36,13 +36,10 @@ class ListModel(QAbstractTableModel):
             self._data.iloc[index.row(), index.column()] = value
             # change category
             if column == 6:
-                # applies changes to the closest transactions
-                self.query.change_category(self.userID, main_window.accountID, value, transactionID)
+                query.change_category_transaction(self.userID, main_window.accountID, value, transactionID)
                 self.home_page.show_table()
-                # if does not want to
-                # update_category()
             if column == 5:
-                if self.query.change_description_and_update(main_window.userID, main_window.accountID, value, transactionID):
+                if query.change_transaction_description_and_update(main_window.userID, main_window.accountID, value, transactionID):
                     self.home_page.show_table()
             return True
         return False
@@ -64,14 +61,14 @@ class ListModel(QAbstractTableModel):
             | Qt.ItemFlag.ItemIsEditable
         )
 
+
 class ListModelCategory(QAbstractTableModel):
-    def __init__(self, data, parent, home_page):
+    def __init__(self, data, parent, category_page):
         super().__init__(parent)
         self._data = data
-        self.query = query_processor()
         self._parent = parent
         self.userID = parent.userID
-        self.home_page = home_page
+        self.category_page = category_page
         self.description = None
         self.name = None
 
@@ -96,6 +93,7 @@ class ListModelCategory(QAbstractTableModel):
                 return str(value)
 
     def setData(self, index, value, role):
+        query = query_processor()
         main_window = self._parent
         if role == Qt.ItemDataRole.EditRole:
 
@@ -110,12 +108,22 @@ class ListModelCategory(QAbstractTableModel):
                     self.description = value
                 elif column == 3:
                     self.name = value
+            else:
+                if column == 2:
+                    description = value
+                    name = self._data.iloc[row, column+1]
+                    close_transaction_ids, word_list = query.find_close_transactions(description, main_window.accountID)
+                    query.change_category_description(description, word_list, name, categoryID)
+                    query.update_category(name, close_transaction_ids)
+                    self.category_page.show_category_table()
 
-            if column == 2:
-                pass
-
-            if column == 3:
-                pass
+                elif column == 3:
+                    name = value
+                    description = self._data.iloc[row, column-1]
+                    close_transaction_ids, word_list = query.find_close_transactions(description, main_window.accountID)
+                    query.change_category_name(name, categoryID)
+                    query.update_category(name, close_transaction_ids)
+                    self.category_page.show_category_table()
 
             return True
         return False

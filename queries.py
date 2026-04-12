@@ -253,27 +253,31 @@ class query_processor:
             accountID = self.insert_into_accounts(userID, acc_name, acc_type, acc_currency)
         return accountID
 
-    # New category insertion/update with check of if the category already exists
     def insert_category(self, userID, accountID, category_sentence, category_list, category_name):
-        result = self.get_category(userID, accountID, category_list)
-        print(f"returned category: {result}")
-        if result is not None:
-            try:
-                categoryID = result[0]
-                query = """
-                    UPDATE categories
-                    SET category_name = %s
-                    WHERE categoryID = %s
-                """
-                self.cursor.execute(query, (category_name, categoryID))
-                self.db.commit()
-                print("updated category")
-            except:
-                print(f"could not update the category:{categoryID}")
-        else:
+        exist = True
+        categoryID = self.get_matching_category(accountID, category_list)
+        if categoryID is None:
+            exist = False
             categoryID = self.insert_into_categories(userID, accountID, category_sentence, category_list, category_name)
-            print("inserted category")
-        return categoryID
+        return categoryID, exist
+
+    def change_category_name(self, category_name, categoryID):
+            query = """
+                UPDATE categories
+                SET category_name = %s
+                WHERE categoryID = %s
+            """
+            self.cursor.execute(query, (category_name, categoryID))
+            self.db.commit()
+
+    def change_category_description(self, category_sentence, category_list, category_name, categoryID):
+            query = """
+                UPDATE categories
+                SET category_sentence = %s, category_list = %s, category_name = %s
+                WHERE categoryID = %s
+            """
+            self.cursor.execute(query, (category_sentence, json.dumps(category_list), category_name, categoryID))
+            self.db.commit()
 
     # Deleted the user, resulting in cascading effect
     def delete_user(self, userID):
@@ -296,15 +300,14 @@ class query_processor:
             df = pd.DataFrame(result, columns=header_columns)
             return df
 
-    # Returns the category based on the tokens of words in the list
-    def get_category(self, userID, accountID, category_list):
+    # after category is deleted, finds the next best category to replace it
+    def get_next_best_category(self, userID, accountID, category_list):
         # https://stackoverflow.com/a/37662298
         # https://dev.mysql.com/doc/refman/8.4/en/json-search-functions.html
 
         try:
             result = self.get_category_info(userID, accountID)
             category_dictionary = {tuple(json.loads(category_list)): (categoryID, category_name) for categoryID, category_list, _, category_name in result}
-
             priority_list = [(len([item for item in category_list if item in i]), len(i)) for i in category_dictionary]
             max_category = max(priority_list, key=lambda x: (x[0], -x[1]))
             if max_category[0] == 0:
@@ -314,10 +317,17 @@ class query_processor:
             key = list(category_dictionary)[position]
 
             output = category_dictionary[key]
-
+            # (categoryID, category_name)
             return output
         except:
             return None
+    # get marching category
+    def get_matching_category(self, accountID,  word_list):
+        query = "SELECT categoryID from categories WHERE category_list = %s and accountID = %s"
+        self.cursor.execute(query, (json.dumps(word_list), accountID))
+        output = self.cursor.fetchone()
+        return output[0] if output else None
+
 
     # Returns userID
     def get_userID(self, username):
@@ -519,7 +529,6 @@ class query_processor:
 
         plus_list, word_list = self.return_word_list(description)
         parameters.extend([' '.join(plus_list)])
-
         query = "SELECT transactionID, description FROM transactions WHERE accountID = %s and MATCH(description) AGAINST(%s IN NATURAL LANGUAGE MODE)"
         self.cursor.execute(query, parameters)
 
@@ -528,30 +537,29 @@ class query_processor:
 
         return selective_ids, word_list
 
-    # Updates the category of the transaction
     def update_category(self, category, transactionID):
-        parameter = [category]
         if not isinstance(transactionID, list):
             transactionID = [transactionID]
+
+        if not transactionID:
+            return
 
         s_list = []
         for i in range(len(transactionID)):
             s_list.append("%s")
-
         s_string = ', '.join(s_list)
 
-        try:
-            query = f"""
-                UPDATE transactions
-                SET category = %s
-                WHERE transactionID IN ({s_string})
-            """
+        query = f"""
+            UPDATE transactions
+            SET category = %s
+            WHERE transactionID IN ({s_string})
+        """
 
-            parameter.extend([transactionID])
-            self.cursor.execute(query, parameter)
-            self.db.commit()
-        except:
-            return
+        parameters = [category] + transactionID
+
+        self.cursor.execute(query, parameters)
+        self.db.commit()
+
 
     # Returns the description of the transaction given the transaction ID
     def return_description_given_transactionID(self, transactionID):
@@ -560,7 +568,6 @@ class query_processor:
             FROM transactions
             WHERE transactionID = %s
         """
-
         self.cursor.execute(description_query, (transactionID, ))
 
         # the description of the transaction
@@ -569,17 +576,14 @@ class query_processor:
 
     # needs to search for similar description to apply the same category in the database
     # Updates the category of the selected transaction and its close transactions
-    def change_category(self, userID, accountID, category, transactionID):
-        # update the current transaction
-        # transaction ID must be correct since its working
+    def change_category_transaction(self, userID, accountID, category, transactionID):
         self.update_category(category, transactionID)
         description = self.return_description_given_transactionID(transactionID)
-        # this certainly work
-        close_transaction_ids = self.find_close_transactions(description, accountID)
-
-        categoryID = self.insert_category(userID, accountID, description, close_transaction_ids[1], category)
-
-        self.update_category(category, close_transaction_ids[0])
+        close_transaction_ids, world_list = self.find_close_transactions(description, accountID)
+        categoryID, exist = self.insert_category(userID, accountID, description, world_list, category)
+        if exist:
+            self.change_category_name(category, categoryID)
+        self.update_category(category, close_transaction_ids)
 
     # Returns the most used category names
     def get_categories(self, userID):
@@ -595,10 +599,11 @@ class query_processor:
         result = self.cursor.fetchall()
         return result if result else None
 
-    # Returns the updated category
+    # Returns the updated category for new transactions
+    # finds the closest matching category
     def return_updated_category(self, userID, accountID,  description):
         word_list = self.return_word_list(description)[1]
-        output = self.get_category(userID, accountID, word_list)
+        output = self.get_next_best_category(userID, accountID, word_list)
         if (output is None):
             category = "Undefined"
         else:
@@ -617,15 +622,18 @@ class query_processor:
         result = self.cursor.fetchall()
         return result if result else None
 
-    # Associate the description with the category name, and its close transactions
-    def add_description_into_list_category(self, userID, accountID, description, category_name):
-        close_transaction_ids = self.find_close_transactions(description, accountID)
-        categoryID = self.insert_category(userID, accountID, description, close_transaction_ids[1], category_name)
-        self.update_category(category_name, close_transaction_ids[0])
+    # add new category and update
+    def add_category_update(self, userID, accountID, description, category_name):
+        close_transaction_ids, word_list = self.find_close_transactions(description, accountID)
+        categoryID, exist = self.insert_category(userID, accountID, description, word_list, category_name)
+        if exist:
+            self.change_category_name(category_name, categoryID)
+
+        self.update_category(category_name, close_transaction_ids)
         return categoryID if categoryID else None
 
     # after the description list is shown, the user can remove category
-    def remove_description_from_list_category(self, categoryID):
+    def delete_category(self, categoryID):
         query_delete = """
             DELETE FROM categories
             WHERE categoryID = %s"""
@@ -635,14 +643,14 @@ class query_processor:
 
     # use the category name of the removed description of the category
     # when category is deleted, updates the transactions
-    def update_transaction_after_deletion_description(self, userID, accountID, categoryID):
+    def update_transaction_after_deletion_description(self, userID, accountID, category_name):
         query = """
             SELECT transactionID, description
             FROM transactions
-            WHERE categoryID = %s
+            WHERE category = %s
         """
 
-        self.cursor.execute(query, (categoryID, ))
+        self.cursor.execute(query, (category_name, ))
         result = self.cursor.fetchall()
         if result:
             for (i, j)in result:
@@ -650,7 +658,7 @@ class query_processor:
                 self.update_category(new_category, i)
 
     # Changes the description of the transaction, needs to change the category after that
-    def change_description_and_update(self, userID, accountID,  new_description, transactionID):
+    def change_transaction_description_and_update(self, userID, accountID,  new_description, transactionID):
         query = """
             UPDATE transactions
             SET description = %s
@@ -659,7 +667,6 @@ class query_processor:
 
         self.cursor.execute(query, (new_description, transactionID))
         self.db.commit()
-
         new_category = self.return_updated_category(userID, accountID, new_description)
         self.update_category(new_category, transactionID)
 

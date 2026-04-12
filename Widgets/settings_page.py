@@ -124,30 +124,22 @@ class Change_category():
     def __init__(self, parent):
         self._parent = parent
         self.home_page = Home_page(parent)
-        self.query = query_processor()
-        self.signals_connect()
-
-    def signals_connect(self):
-        parent_window = self._parent
-        parent_window.ui.category_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-        parent_window.ui.category_table.verticalHeader().setVisible(False)
-        parent_window.ui.stackedWidget_2.setCurrentWidget(parent_window.ui.category_table_page)
 
     def show_category_table(self):
+        query = query_processor()
         parent_window = self._parent
         if not parent_window.accountID:
             QMessageBox.warning(parent_window, "error", "Please create an account first")
             return
 
-        self.categories = self.query.get_category_info(parent_window.userID, parent_window.accountID, asDF=True)
+        categories = query.get_category_info(parent_window.userID, parent_window.accountID, asDF=True)
         # add extra row to allow for category add
-        self.categories.loc[len(self.categories)] = [-1, "", "", ""]
-
+        categories.loc[len(categories)] = [-1, "", "", ""]
         self.set_category_table(True)
 
         # -- TABLE LOADING -- 
-        self.model = ListModelCategory(self.categories, parent_window, self)
-        self.data = self.categories
+        self.model = ListModelCategory(categories, parent_window, self)
+        self.data = categories
 
         # Set the search filter for the table
         # inspired from:  https://www.youtube.com/watch?v=53bZSTSLUqI
@@ -156,23 +148,15 @@ class Change_category():
         proxy_model.setSourceModel(self.model)
         proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
         proxy_model.setFilterKeyColumn(2)
-        parent_window.ui.category_line.textChanged.connect(lambda text: self.filtered_search(text, proxy_model))
+        parent_window.ui.category_line.textChanged.connect(lambda text: self.filtered_search(text, proxy_model, categories))
         parent_window.ui.category_table.setModel(proxy_model)
 
-        self.load_buttons(proxy_model)
+        self.load_buttons(proxy_model, categories)
         # hide the id, list columns
         hidden_columns = [0, 1]
         for i in hidden_columns:
             parent_window.ui.category_table.setColumnHidden(i, True)
 
-    def hand_add_button(self):
-        parent_window = self._parent
-        description = self.model.description
-        name = self.model.name
-
-        categoryID = self.query.add_description_into_list_category(parent_window.userID, parent_window.accountID, description, name)
-        self.show_category_table()
-        self.home_page.show_table()
 
     def set_category_table(self, flag):
         parent_window = self._parent
@@ -181,29 +165,44 @@ class Change_category():
         else:
             parent_window.ui.settings_stack.setCurrentWidget(parent_window.ui.page_4)
 
-    def handle_remove_button(self, categoryID):
+
+    def handle_add_button(self):
         query = query_processor()
-        query.remove_description_from_list_category(categoryID)
-        query.update_transaction_after_deletion_description(categoryID)
+        parent_window = self._parent
+        description = self.model.description
+        name = self.model.name
+
+        query.add_category_update(parent_window.userID, parent_window.accountID, description, name)
         self.show_category_table()
         self.home_page.show_table()
 
-    def filtered_search(self, text, proxy):
-        proxy.setFilterRegExp(text)
-        self.load_buttons(proxy)
+    def handle_remove_button(self, categoryID, category_name):
+        parent_window = self._parent
+        query = query_processor()
+        query.delete_category(int(categoryID))
+        query.update_transaction_after_deletion_description(parent_window.userID, parent_window.accountID, str(category_name))
+        self.show_category_table()
+        self.home_page.show_table()
 
-    def load_buttons(self, proxy):
+    def filtered_search(self, text, proxy, categories):
+        proxy.setFilterRegExp(text)
+        self.load_buttons(proxy, categories)
+
+    def load_buttons(self, proxy, categories):
         parent_window = self._parent
         for row_index in range(proxy.rowCount()):
             index_button = proxy.index(row_index, proxy.columnCount() - 1)
-            category_id = self.categories.iloc[row_index].iloc[0]
-            if (len(self.categories) == 1 or row_index >= len(self.categories) - 1):
+            source_model = proxy.sourceModel()
+            source_index = proxy.mapToSource(index_button)
+            category_id = source_model._data.iloc[source_index.row(), 0]
+            category_name = source_model._data.iloc[source_index.row(), 3]
+            if (proxy.rowCount() == 1 or row_index >= proxy.rowCount() - 1):
                 add_button = QPushButton("Add")
                 add_button.setObjectName("view_button")
                 parent_window.ui.category_table.setIndexWidget(index_button, add_button)
-                add_button.clicked.connect(lambda : self.hand_add_button())
+                add_button.clicked.connect(lambda : self.handle_add_button())
             else:
                 remove_button = QPushButton("Remove")
                 remove_button.setObjectName("item_button")
                 parent_window.ui.category_table.setIndexWidget(index_button, remove_button)
-                remove_button.clicked.connect(lambda clicked, id=category_id: self.handle_remove_button(id))
+                remove_button.clicked.connect(lambda clicked, id=category_id, name = category_name: self.handle_remove_button(id, name))

@@ -16,6 +16,7 @@ class Home_page():
                 return
 
             self.transactions = query.get_transactions(parent_window.accountID)
+            print(len(self.transactions))
             if len(self.transactions) == 0:
                 self.set_table(False)
                 parent_window.ui.no_account_label.setText(f"No transaction found for '{parent_window.account_name}'")
@@ -55,15 +56,16 @@ class Home_page():
 
     def load_buttons(self, proxy):
         parent_window = self._parent
-
         for row_index in range(proxy.rowCount()):
-            transaction_id = self.filter_transaction.iloc[row_index].iloc[0]
+            index_button = proxy.index(row_index, proxy.columnCount() - 1)
+            source_index = proxy.mapToSource(index_button)
+            source_model = proxy.sourceModel()
+            transaction_id = source_model._data.iloc[source_index.row(), 0]
             remove_button = QPushButton("Remove")
             remove_button.setObjectName("item_button")
-            index_button = proxy.index(row_index, proxy.columnCount() - 1)
-            # add remove button
             parent_window.ui.tableView.setIndexWidget(index_button, remove_button)
-            remove_button.clicked.connect(lambda clicked, id=transaction_id: self.handle_remove_button(id))
+            remove_button.clicked.connect(
+                lambda checked, id=transaction_id: self.handle_remove_button(id))
 
     def set_select_dates(self):
         parent_window = self._parent
