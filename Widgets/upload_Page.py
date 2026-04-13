@@ -27,15 +27,13 @@ class Upload_page():
                 balance = 0
             #transaction_list.append((accountID, self.file_ID, self.change_to_date(row[0]), row[1], row[2], category, Decimal(row[3]),  Decimal(row[4])))
             category = query.return_updated_category(parent_window.userID, parent_window.accountID, description)
-            transaction_list = [(parent_window.accountID, None, date, type, description, category, amount, balance)]
-            print(transaction_list)
+            transaction_list = [(parent_window.accountID, 1, date, type, description, category, amount, balance)]
             query.insert_into_transactions(transaction_list)
             self.home_page.show_table()
         else:
             QMessageBox.warning(
             parent_window, "Error", "Password fill the required fields")
             return
-
 
     def upload_file(self):
         parent_window = self._parent

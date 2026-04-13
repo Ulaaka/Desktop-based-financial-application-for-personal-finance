@@ -113,6 +113,7 @@ class MainWindow(QMainWindow):
 
         self.ui.account_button.clicked.connect(self.account_page_handler)
         self.ui.upload_file_button.clicked.connect(self.upload_manager.upload_file)
+
         self.ui.upload_file_button.clicked.connect(self.home_manager.set_select_dates)
 
         self.ui.change_category_button.clicked.connect(self.change_category_handle)

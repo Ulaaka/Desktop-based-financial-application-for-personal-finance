@@ -16,15 +16,20 @@ class Home_page():
                 return
 
             self.transactions = query.get_transactions(parent_window.accountID)
-            print(len(self.transactions))
             if len(self.transactions) == 0:
                 self.set_table(False)
                 parent_window.ui.no_account_label.setText(f"No transaction found for '{parent_window.account_name}'")
             else:
                 self.set_table(True)
-                self.set_select_dates()
 
-                if (parent_window.start_date < self.min_date and parent_window.end_date > self.max_date):
+                min_date, max_date = self.set_select_dates()
+
+                if min_date is not None and max_date is not None:
+                    parent_window.start_date = min_date
+                    parent_window.end_date = max_date
+
+
+                if (parent_window.start_date < min_date and parent_window.end_date > max_date):
                     return
                 else:
                     self.filter_transaction = self.transactions[self.transactions.iloc[:, 3].dt.date.between(parent_window.start_date, parent_window.end_date)]
@@ -75,19 +80,16 @@ class Home_page():
         date_list = self.transactions.iloc[:, 3].tolist()
 
         if len(date_list) == 0:
-            self.min_date = None
-            self.max_date = None
+            min_date = None
+            max_date = None
             return
 
-        self.min_date = min(date_list).date()
-        self.max_date = max(date_list).date()
+        min_date = min(date_list).date()
+        max_date = max(date_list).date()
 
-        if parent_window.start_date is None and parent_window.end_date is None:
-            parent_window.start_date = self.min_date
-            parent_window.end_date = self.max_date
-
-        parent_window.ui.start_date_edit.setDate(QDate(parent_window.start_date.year, parent_window.start_date.month, parent_window.start_date.day))
-        parent_window.ui.end_date_edit.setDate(QDate(parent_window.end_date.year, parent_window.end_date.month, parent_window.end_date.day))
+        parent_window.ui.start_date_edit.setDate(QDate(min_date.year, min_date.month, min_date.day))
+        parent_window.ui.end_date_edit.setDate(QDate(max_date.year, max_date.month, max_date.day))
+        return min_date, max_date
 
     def handle_remove_button(self, id):
         query = query_processor()
