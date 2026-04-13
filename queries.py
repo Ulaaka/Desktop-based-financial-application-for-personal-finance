@@ -307,9 +307,7 @@ class query_processor:
         try:
             result = self.get_category_info(userID, accountID)
             category_dictionary = {tuple(json.loads(category_list)): (categoryID, category_name) for categoryID, category_list, _, category_name in result}
-            print(category_dictionary)
             priority_list = [(len([item for item in category_list if item in i]), len(i)) for i in category_dictionary]
-            print(priority_list)
             max_category = max(priority_list, key=lambda x: (x[0], -x[1]))
             if max_category[0] == 0:
                 return None
@@ -318,7 +316,6 @@ class query_processor:
             key = list(category_dictionary)[position]
 
             output = category_dictionary[key]
-            print(output)
             # (categoryID, category_name)
             return output
         except:

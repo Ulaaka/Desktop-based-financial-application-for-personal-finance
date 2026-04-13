@@ -81,7 +81,6 @@ class MainWindow(QMainWindow):
         self.ui.account_name_label.setText(option)
         self.home_manager.show_table()
 
-
     def update_account(self, new_account_name, new_accountID):
         self.account_name = new_account_name
         self.accountID = new_accountID
