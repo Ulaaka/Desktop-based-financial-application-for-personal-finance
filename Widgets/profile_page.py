@@ -1,9 +1,10 @@
-from PyQt5.QtWidgets import  QWidget, QPushButton
+from PyQt5.QtWidgets import  QWidget, QPushButton, QMessageBox
 from PyQt5.QtCore import Qt, QPoint
 from queries import query_processor
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from Widgets.account_control_page import Account_control_page
 from Widgets.change_confirmation_window import Change_confirmation_page
+from BASE_Classes import password_class
 
 class Profile_page(QWidget):
     def __init__(self, current_account, parent):
@@ -14,6 +15,7 @@ class Profile_page(QWidget):
         self.username_button_state = False
         self.mail_button_state = False
         self.query = query_processor()
+        self.password_manager = password_class()
         self.profile_signals_connect()
         self.show_profile_page()
 
@@ -102,6 +104,10 @@ class Profile_page(QWidget):
 
         if (self.mail_button_state is False):
             email = parent_window.ui.email_change_value.text()
+            valid_email = self.password_manager.check_email_validity(email)
+            if not valid_email:
+                QMessageBox.warning(parent_window, "Error", "Entered email is not valid")
+                return
             self.query.update_user(self.userID, new_email=email)
             self.show_profile_page()
 

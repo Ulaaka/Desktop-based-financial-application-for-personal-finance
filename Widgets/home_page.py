@@ -24,10 +24,12 @@ class Home_page():
 
                 min_date, max_date = self.set_select_dates()
 
-                if min_date is not None and max_date is not None:
+                if parent_window.start_date is None and parent_window.end_date is  None:
                     parent_window.start_date = min_date
                     parent_window.end_date = max_date
 
+                parent_window.ui.start_date_edit.setDate(QDate(parent_window.start_date.year, parent_window.start_date.month, parent_window.start_date.day))
+                parent_window.ui.end_date_edit.setDate(QDate(parent_window.end_date.year, parent_window.end_date.month, parent_window.end_date.day))
 
                 if (parent_window.start_date < min_date and parent_window.end_date > max_date):
                     return
@@ -86,9 +88,6 @@ class Home_page():
 
         min_date = min(date_list).date()
         max_date = max(date_list).date()
-
-        parent_window.ui.start_date_edit.setDate(QDate(min_date.year, min_date.month, min_date.day))
-        parent_window.ui.end_date_edit.setDate(QDate(max_date.year, max_date.month, max_date.day))
         return min_date, max_date
 
     def handle_remove_button(self, id):
@@ -107,7 +106,6 @@ class Home_page():
         elif ("PDF" in download_type):
             self.worker = Thread_worker(lambda: system.create_pdf(parent_window.account_name, self.filter_transaction))
             self.worker.start()
-
 
     def get_filter_date(self, start=None):
         parent_window =self._parent

@@ -16,11 +16,21 @@ class Upload_page():
     def add_transaction(self):
         parent_window = self._parent
         query = query_processor()
-        date = parent_window.ui.transaction_date_edit.date().toPyDate()
-        type = parent_window.ui.transaction_type_combo.currentText()
-        description = parent_window.ui.description_text.toPlainText()
-        amount = int(parent_window.ui.amount_transaction_line.text())
-        balance = int(parent_window.ui.balance_transaction_line.text())
+        if parent_window.accountID is None:
+            QMessageBox.warning(
+            parent_window, "Error", "Please create an account first")
+            return
+
+        try:
+            date = parent_window.ui.transaction_date_edit.date().toPyDate()
+            type = parent_window.ui.transaction_type_combo.currentText()
+            description = parent_window.ui.description_text.toPlainText()
+            amount = int(parent_window.ui.amount_transaction_line.text())
+            balance = int(parent_window.ui.balance_transaction_line.text())
+        except:
+            QMessageBox.warning(
+            parent_window, "Error", "Password fill the required fields")
+            return
 
         if date and type and description and amount:
             if not balance:
@@ -30,10 +40,6 @@ class Upload_page():
             transaction_list = [(parent_window.accountID, 1, date, type, description, category, amount, balance)]
             query.insert_into_transactions(transaction_list)
             self.home_page.show_table()
-        else:
-            QMessageBox.warning(
-            parent_window, "Error", "Password fill the required fields")
-            return
 
     def upload_file(self):
         parent_window = self._parent
