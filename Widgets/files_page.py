@@ -8,10 +8,11 @@ from FILE_handling import file_handling
 class Files_page():
     def __init__(self, parent):
         self._parent = parent
+        self.files_signals_connect()
+        self.show_files()
 
     def files_signals_connect(self):
         self._parent.ui.files_treeView.header().setSectionResizeMode(QHeaderView.Stretch)
-
 
     def show_files(self):
         parent_window = self._parent

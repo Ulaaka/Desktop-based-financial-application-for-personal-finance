@@ -1,5 +1,5 @@
 import sys, pycountry
-from PyQt5.QtWidgets import QMainWindow, QApplication, QHeaderView
+from PyQt5.QtWidgets import QMainWindow, QApplication
 from PyQt5.QtCore import QPoint, QDate
 
 from queries import query_processor
