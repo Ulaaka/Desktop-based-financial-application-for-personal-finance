@@ -28,7 +28,6 @@ class Files_page():
         else:
              self.set_files(True)
              self.files_exist()
-
              for row_index in range(len(self.files)):
                 item_button = QPushButton("Remove")
                 view_button = QPushButton("View")

@@ -168,7 +168,8 @@ class MainWindow(QMainWindow):
 
     def profile_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.profile_page)
-        self.profile_manager.show()
+        self.profile_manager.show_profile_page()
+
 
     def settings_page_show(self):
         self.ui.stackedWidget.setCurrentWidget(self.ui.settings_page)

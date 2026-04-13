@@ -891,7 +891,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="home_page">
              <property name="sizePolicy">
@@ -1107,19 +1107,29 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <widget class="QLabel" name="label_8">
-              <property name="geometry">
-               <rect>
-                <x>320</x>
-                <y>250</y>
-                <width>58</width>
-                <height>16</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>stats</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="2,6">
+              <item>
+               <widget class="QScrollArea" name="scrollArea">
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>203</width>
+                   <height>470</height>
+                  </rect>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_29"/>
+                </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="QWidget" name="widget_40" native="true"/>
+              </item>
+             </layout>
             </widget>
             <widget class="QWidget" name="upload_page">
              <property name="sizePolicy">
@@ -2862,7 +2872,7 @@
                        </sizepolicy>
                       </property>
                       <property name="currentIndex">
-                       <number>2</number>
+                       <number>3</number>
                       </property>
                       <widget class="QWidget" name="delete_user_account_page">
                        <property name="sizePolicy">

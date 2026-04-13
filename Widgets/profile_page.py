@@ -14,7 +14,6 @@ class Profile_page(QWidget):
         self._parent = parent
         self.username_button_state = False
         self.mail_button_state = False
-        self.query = query_processor()
         self.password_manager = password_class()
         self.profile_signals_connect()
         self.show_profile_page()
@@ -25,12 +24,13 @@ class Profile_page(QWidget):
         parent_window.ui.email_change_button.clicked.connect(self.change_user_mail)
 
     def show_profile_page(self):
+        query = query_processor()
         tree_model = QStandardItemModel()
         tree_model.setHorizontalHeaderLabels(["Account Name", ""])
         parent_window = self._parent
-        result = self.query.get_user_info(self.userID)
+        result = query.get_user_info(self.userID)
 
-        result_accounts = self.query.get_number_of_accounts(self.userID)
+        result_accounts = query.get_number_of_accounts(self.userID)
 
         parent_window.ui.username_change_value.setText(result[0])
         parent_window.ui.email_change_value.setText(result[1])
@@ -76,6 +76,7 @@ class Profile_page(QWidget):
                 value.setStyleSheet("border: 2px solid black;")
 
     def change_username(self):
+        query = query_processor()
         parent_window = self._parent
         state = self.username_button_state
         self.username_button_state = not state
@@ -83,11 +84,12 @@ class Profile_page(QWidget):
 
         if (self.username_button_state is False):
             account_name = parent_window.ui.username_change_value.text()
-            self.query.update_user(self.userID, new_username=account_name)
+            query.update_user(self.userID, new_username=account_name)
             self.show_profile_page()
 
 
     def change_user_mail(self):
+        query = query_processor()
         parent_window = self._parent
         state = self.mail_button_state
         self.mail_button_state = not state
@@ -106,12 +108,13 @@ class Profile_page(QWidget):
             if not valid_email:
                 QMessageBox.warning(parent_window, "Error", "Entered email is not valid")
                 return
-            self.query.update_user(self.userID, new_email=email)
+            query.update_user(self.userID, new_email=email)
             self.show_profile_page()
 
     def navigate_to_account_control(self, name):
+        query = query_processor()
         parent_window = self._parent
-        accountID = self.query.get_accountID(name, self.userID)
+        accountID = query.get_accountID(name, self.userID)
         parent_window.update_parent(name, accountID)
         account_control = Account_control_page(name, parent_window)
         account_control.show()
