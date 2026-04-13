@@ -1,5 +1,6 @@
 import sys, shutil
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtCore import QDate
 from Widgets.live_output_window import Live_output_window
 from FILE_handling import file_handling
 from Widgets.stream import Stream
@@ -7,11 +8,13 @@ from Widgets.thread_worker import Thread_worker
 from decouple import config
 from queries import query_processor
 from Widgets.home_page import Home_page
-
+from datetime import date
 class Upload_page():
     def __init__(self, parent):
         self._parent = parent
         self.home_page = Home_page(parent)
+        self.current_date = date.today()
+
 
     def add_transaction(self):
         parent_window = self._parent
@@ -22,7 +25,7 @@ class Upload_page():
             return
 
         try:
-            date = parent_window.ui.transaction_date_edit.date().toPyDate()
+            date_input = parent_window.ui.transaction_date_edit.date().toPyDate()
             type = parent_window.ui.transaction_type_combo.currentText()
             description = parent_window.ui.description_text.toPlainText()
             amount = int(parent_window.ui.amount_transaction_line.text())
@@ -32,14 +35,28 @@ class Upload_page():
             parent_window, "Error", "Password fill the required fields")
             return
 
-        if date and type and description and amount:
+        if date_input and type and description and amount:
             if not balance:
                 balance = 0
+            if date_input > self.current_date:
+                self.clear_fields()
+                QMessageBox.warning(
+                parent_window, "Error", "Entered date is not valid")
+                return
+
             #transaction_list.append((accountID, self.file_ID, self.change_to_date(row[0]), row[1], row[2], category, Decimal(row[3]),  Decimal(row[4])))
             category = query.return_updated_category(parent_window.userID, parent_window.accountID, description)
-            transaction_list = [(parent_window.accountID, 1, date, type, description, category, amount, balance)]
+            transaction_list = [(parent_window.accountID, 1, date_input, type, description, category, amount, balance)]
             query.insert_into_transactions(transaction_list)
+            self.clear_fields()
             self.home_page.show_table()
+
+    def clear_fields(self):
+        parent_window = self._parent
+        parent_window.ui.transaction_date_edit.setDate(QDate(self.current_date .year, self.current_date .month, self.current_date .day))
+        parent_window.ui.description_text.clear()
+        parent_window.ui.amount_transaction_line.clear()
+        parent_window.ui.balance_transaction_line.clear()
 
     def upload_file(self):
         parent_window = self._parent
