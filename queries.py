@@ -534,50 +534,47 @@ class query_processor:
     # at least one of the transfer_toggle and max_toggle should be included
     # grouping by the type of transaction is useful too
     def total_transfer_or_extreme_value(self, userID, accountID, transfer_toggle=None, max_toggle=None, date_lower=None, date_upper=None):
-        try:
             # string to datetime conversion, could get useful
-            parameter = [userID]
+        parameter = [userID, accountID]
+        print(userID,accountID)
+        toggle = "SUM"
+        base_query = f"SELECT {toggle}(T.amount)" 
 
-            toggle = "SUM"
-            base_query = f"SELECT {toggle}(T.amount)" 
+        body_query = """
+                FROM users U
+                JOIN accounts A ON A.userID = U.userID
+                JOIN transactions T ON T.accountID = A.accountID
+                WHERE U.userID = %s and A.accountID = %s
+        """
 
-            body_query = """
-                    FROM users U
-                    JOIN accounts A ON A.userID = U.userID
-                    JOIN transactions T ON T.accountID = A.accountID
-                    WHERE U.userID = %s
-            """
+        if (max_toggle is not None):
+            toggle = "MAX" if max_toggle else "MIN"
 
-            if (max_toggle is not None):
-                toggle = "MAX" if max_toggle else "MIN"
+        if (max_toggle is not None or transfer_toggle is not None):
+            base_query =  f"SELECT ABS({toggle}(T.amount))" 
 
-            if (max_toggle is not None or transfer_toggle is not None):
-                base_query =  f"SELECT ABS({toggle}(T.amount))" 
+        query = base_query + body_query
 
-            query = base_query + body_query
+        if (transfer_toggle is not None):
+            toggle = ">" if transfer_toggle else "<"
+            query+=f" and T.amount {toggle} 0"
 
-            if (transfer_toggle is not None):
-                toggle = ">" if transfer_toggle else "<"
-                query+=f" and T.amount {toggle} 0"
+        if (date_lower):
+            query += " and T.transaction_date >= %s"
+            print(date_lower)
+            parameter.append(date_lower)
 
-            if (accountID is not None):
-                query+= " and A.accountID = %s"
-                parameter.append(accountID)
+        if (date_upper):
+            query += " and T.transaction_date <= %s"
+            print(date_upper)
+            parameter.append(date_upper)
 
-            if (date_lower):
-                query += " and T.transaction_date >= %s"
-                parameter.append(date_lower)
+        self.cursor.execute(query, tuple(parameter))
+        print(tuple(parameter))
 
-            if (date_upper):
-                query += " and T.transaction_date <= %s"
-                parameter.append(date_upper)
+        output = self.cursor.fetchone()
+        return output[0] if output[0] is not None else 0
 
-            self.cursor.execute(query, tuple(parameter))
-
-            output = self.cursor.fetchone()
-            return output[0] if output[0] is not None else 0
-        except:
-            print("important arguments (max_toggle or transfer_toggle missing)")
 
     # Selects the last day of the given date range (month)
     def return_last_month(self, datetime_input):
