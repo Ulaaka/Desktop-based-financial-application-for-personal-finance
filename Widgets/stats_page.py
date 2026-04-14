@@ -1,8 +1,7 @@
-import sys, shutil
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QWidget, QPushButton, QSizePolicy, QLabel, QDateEdit, QVBoxLayout
+from PyQt5.QtWidgets import QPushButton, QSizePolicy
 from PyQt5.QtCore import QDate, Qt
 from PyQt5.QtGui import QPainter
-from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QPieSeries, QLineSeries, QValueAxis
+from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis
 from queries import query_processor
 
 class Stats_page():
@@ -33,30 +32,33 @@ class Stats_page():
         self.max_toggle_dic = {
             False: {
                 "Highest" : False,
-                "Lowest" : True            },
+                "Lowest" : True
+                },
             True: {
                 "Highest" : True,
-                "Lowest" : False            }
+                "Lowest" : False
+                }
         }
         self.stats_signals_connect()
         self.show_graph(self.graph_name)
 
     def stats_signals_connect(self):
         parent_window = self._parent
-        parent_window.ui.dateEdit_2.setCalendarPopup(True)
-        parent_window.ui.dateEdit.setCalendarPopup(True)
-        parent_window.ui.transaction_type_box.currentTextChanged.connect(self.update_graph)
-        parent_window.ui.value_box.currentTextChanged.connect(self.update_graph)
-
         parent_window.ui.dateEdit.setDate(QDate(parent_window.start_date.year, parent_window.start_date.month, parent_window.start_date.day))
         parent_window.ui.dateEdit_2.setDate(QDate(parent_window.end_date.year, parent_window.end_date.month, parent_window.end_date.day))
+        parent_window.ui.scrollAreaWidgetContents.setStyleSheet("background-color: #fff;")
 
+        parent_window.ui.dateEdit_2.setCalendarPopup(True)
+        parent_window.ui.dateEdit.setCalendarPopup(True)
+
+        parent_window.ui.transaction_type_box.currentTextChanged.connect(self.update_graph)
+        parent_window.ui.value_box.currentTextChanged.connect(self.update_graph)
         parent_window.ui.dateEdit.dateChanged.connect(self.update_graph)
         parent_window.ui.dateEdit_2.dateChanged.connect(self.update_graph)
         parent_window.ui.download_chart_button.clicked.connect(self.download_graph)
-        parent_window.ui.scrollAreaWidgetContents.setStyleSheet("background-color: #fff;")
 
         self.wipe_out_layout(parent_window.ui.scrollAreaWidgetContents.layout())
+
         for graph in list(self.func_mapping.keys()):
             opt_button = QPushButton(graph)
             opt_button.setStyleSheet("background-color: #313a46;")
@@ -69,31 +71,33 @@ class Stats_page():
     def show_graph(self, graph):
         parent_window = self._parent
         self.graph_name = graph
-        state = True if graph == "Summary" else False
-        # only active for Summary graph
-        parent_window.ui.value_box.setEnabled(state)
+        if graph != "Summary":
+            parent_window.ui.value_box.setEnabled(False)
+            parent_window.ui.value_box.setCurrentIndex(0)
+            parent_window.ui.value_box.setStyleSheet("background-color: rgba(86, 101, 115, 0.1);")
+        else:
+            parent_window.ui.value_box.setEnabled(True)
+            parent_window.ui.value_box.setStyleSheet("background-color: transparent")
         self.update_graph()
 
     #Source - https://stackoverflow.com/a/70248114
-    def wipe_out_layout(self, layout, graph=None):
+    def wipe_out_layout(self, layout):
         for i in reversed(range(layout.count())):
             if layout.itemAt(i).widget():
                 layout.itemAt(i).widget().setParent(None)
             else:
                 layout.removeItem(layout.itemAt(i))
-        if graph:
-            self.set_graph_view = None
 
     def update_graph(self):
         parent_window = self._parent
-        self.wipe_out_layout(parent_window.ui.charts_widget.layout(), graph=True)
+        self.wipe_out_layout(parent_window.ui.charts_widget.layout())
+        self.set_graph_view = None
 
         if self.graph_name in self.func_mapping:
             graph_func = self.func_mapping[self.graph_name]()
         else:
             return
 
-        # create display widget
         self.set_graph_view = QChartView(graph_func)
         self.set_graph_view.setRenderHint(QPainter.Antialiasing)
         self.set_graph_view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -104,7 +108,6 @@ class Stats_page():
         date_low_str = parent_window.ui.dateEdit.date().toPyDate().strftime("%Y-%m-%d")
         date_up_str = parent_window.ui.dateEdit_2.date().toPyDate().strftime("%Y-%m-%d")
         return date_low_str, date_up_str
-
 
     def get_combo_text(self):
         parent_window = self._parent
@@ -123,8 +126,6 @@ class Stats_page():
         result= self.get_date()
 
         graph = QChart()
-        graph_series = QBarSeries()
-        graph.addSeries(graph_series) 
         if transaction_type_txt == "All":
             bar_names = ["Income", "Expense"]
             try:
@@ -143,20 +144,15 @@ class Stats_page():
             int_bar.append(int(income))
             out_bar.append(int(expense))
 
-            graph_series.append([int_bar, out_bar])
+            graph_series.append(int_bar)
+            graph_series.append(out_bar)
 
             graph.addSeries(graph_series)
 
-            x_axis = QBarCategoryAxis()
-            x_axis.append(bar_names)
-            graph.addAxis(x_axis, Qt.AlignBottom)
+            x_axis = self.add_to_x_axis(bar_names, graph)
             graph_series.attachAxis(x_axis)
 
-            y_axis = QValueAxis()
-            y_axis.setRange(0, max(int(income), int(expense)))
-            y_axis.setLabelFormat("%d")
-            y_axis.setTickCount(5)
-            graph.addAxis(y_axis, Qt.AlignLeft)
+            y_axis = self.add_to_y_axis(max(int(income), int(expense)), graph)
             graph_series.attachAxis(y_axis)
 
             graph.setTitle("Income vs Expense")
@@ -169,28 +165,37 @@ class Stats_page():
 
             going = self.query.total_transfer_or_extreme_value(parent_window.userID, accountID=parent_window.accountID, transfer_toggle=transfer_toggle, max_toggle=max_toggle, date_lower=result[0], date_upper=result[1])
             name = "Income" if transfer_toggle is True else "Expense"
+
+            graph_series = QBarSeries()
             going_bar = QBarSet(name)
             going_bar.append(int(going))
             graph_series.append(going_bar)
+
             graph.addSeries(graph_series)
 
-            x_axis = QBarCategoryAxis()
-            x_axis.append(name)
+            x_axis = self.add_to_x_axis(name)
+            y_axis = self.add_to_y_axis(going)
 
-            y_axis = QValueAxis() 
-            y_axis.setRange(0, going)
-            y_axis.setLabelFormat("%d")
-            y_axis.setTickCount(5)
-
-            graph.addAxis(x_axis, Qt.AlignBottom)
-            graph.addAxis(y_axis, Qt.AlignLeft)
             graph_series.attachAxis(x_axis)
             graph_series.attachAxis(y_axis)
 
             graph.setTitle(name)
-
         return graph
 
+    def add_to_y_axis(self, value, graph, tick=5):
+        y_axis = QValueAxis() 
+        y_axis.setRange(0, value)
+        y_axis.setLabelFormat("%d")
+        y_axis.setTickCount(tick)
+        graph.addAxis(y_axis, Qt.AlignLeft)
+        return y_axis
+
+    def add_to_x_axis(self, value, graph):
+        x_axis = QBarCategoryAxis()
+        x_axis.append(value)
+        graph.addAxis(x_axis, Qt.AlignBottom)
+        return x_axis
+        
     def create_weekly_graph(self):
         pass
 
