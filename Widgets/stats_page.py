@@ -99,27 +99,52 @@ class Stats_page():
         date_up_str = parent_window.ui.dateEdit_2.date().toPyDate().strftime("%Y-%m-%d")
         return date_low_str, date_up_str
 
-    def summary_arguments(self):
+
+    def get_combo_text(self):
         parent_window = self._parent
         transaction_type_text = parent_window.ui.transaction_type_box.currentText()
         mode_text = parent_window.ui.value_box.currentText()
-        result= self.get_date()
+        return transaction_type_text, mode_text
 
-        max_toggle = None
-        if transaction_type_text in self.transfer_toggle_dic:
-            transfer_toggle = self.transfer_toggle_dic[transaction_type_text]
-
-        if transfer_toggle in self.max_toggle_dic:
-            max_toggle = self.max_toggle_dic[transfer_toggle][mode_text]
-
-        return transfer_toggle, max_toggle, result[0], result[1]
 
     def download_graph(self):
         pass
 
     def create_summary_graph(self):
-        pass
+        parent_window = self._parent
 
+        transaction_type_txt, value_txt = self.get_combo_text()
+        result= self.get_date()
+
+        graph = QChart()
+        graph.legend().hide()
+        graph_series = QBarSeries()
+        if transaction_type_txt == "All":
+            try:
+                in_max_toggle = self.max_toggle_dic[True][value_txt]
+                out_max_toggle = self.max_toggle_dic[False][value_txt]
+            except:
+                in_max_toggle = None
+                out_max_toggle = None
+
+            income = self.query.total_transfer_or_extreme_value(parent_window.userID, transfer_toggle=True, max_toggle=in_max_toggle, accountID=parent_window.accountID, date_lower=result[0], date_upper=result[1])
+            expense = self.query.total_transfer_or_extreme_value( parent_window.userID, transfer_toggle=False, max_toggle=out_max_toggle, accountID=parent_window.accountID, date_lower=result[0], date_upper=result[1])
+
+            int_bar = QBarSet("Income")
+            out_bar = QBarSet("Expense")
+            int_bar.append(float(income))
+            out_bar.append(float(expense))
+
+            graph_series.append(int_bar)
+            graph_series.append(out_bar)
+
+            graph.setTitle("Income vs Expense")
+        else:
+            transfer_toggle = self.transfer_toggle_dic[transaction_type_txt]
+            max_toggle = self.max_toggle_dic[transfer_toggle]
+            
+            going = self.query.total_transfer_or_extreme_value(parent_window.userID, transfer_toggle=transfer_toggle, max_toggle=max_toggle, accountID=parent_window.accountID, date_lower=result[0], date_upper=result[1])
+            going
     def create_weekly_graph(self):
         pass
 
