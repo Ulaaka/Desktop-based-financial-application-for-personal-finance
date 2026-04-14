@@ -9,14 +9,22 @@ from decouple import config
 from queries import query_processor
 from Widgets.home_page import Home_page
 from datetime import date
-class Upload_page():
+class Stats_page():
     def __init__(self, parent):
         self._parent = parent
         self.set_chart_view = None
-        self.chart_name = None
-        self.set_filter = None
-        self.graphs_buttons = []
 
+        # active chart name
+        self.chart_name = None
+        # graph to filters
+        self.active_filters = None
+        # active graph buttons
+        self.active_buttons = []
+        # dates
+        self.upper_date = None
+        self.lower_date = None
+
+        # filter (labels, names)
         self.filters_map = {
             "transaction_type": { 
                 "Transaction Type", ["All", "Income", "Expense"]
@@ -29,6 +37,14 @@ class Upload_page():
             }
         }
 
+        # graph to filter
         self.graph_to_filter = {
-            "Summary" : ["transaction_type", "measure_type", "date_type"]
+            "Summary" : ["transaction_type", "measure_type", "date_type"],
+            "Monthly Trend": ["measure_type", "date_type"],
+            "Weekly Trend": ["measure_type", "date_type"],
+            "Yearly Trend": ["measure_type", "date_type"],
+            "Distribution": ["transaction_type", "date_type"]
         }
+
+    def stats_signals_connect(self):
+        pass
