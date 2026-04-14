@@ -70,7 +70,7 @@ class Profile_page(QWidget):
             value.setEnabled(flag)
             if flag:
                 button.setText("save")
-                value.setStyleSheet("border: 2px solid blue;")
+                value.setStyleSheet("border: 2px solid #70B9FE;background-color = #f0f8ff;")
             else:
                 button.setText("edit")
                 value.setStyleSheet("border: 2px solid black;")

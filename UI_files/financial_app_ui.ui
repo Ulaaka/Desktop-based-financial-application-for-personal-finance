@@ -891,7 +891,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>6</number>
             </property>
             <widget class="QWidget" name="home_page">
              <property name="sizePolicy">
@@ -1081,7 +1081,7 @@
                         <item>
                          <widget class="QLabel" name="end_date_label">
                           <property name="text">
-                           <string>Select End Date</string>
+                           <string>Select End Date:</string>
                           </property>
                          </widget>
                         </item>
@@ -1107,27 +1107,110 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="2,6">
+             <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="6">
               <item>
-               <widget class="QScrollArea" name="scrollArea">
-                <property name="widgetResizable">
-                 <bool>true</bool>
-                </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>203</width>
-                   <height>470</height>
-                  </rect>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_29"/>
-                </widget>
+               <widget class="QWidget" name="widget_40" native="true">
+                <layout class="QHBoxLayout" name="horizontalLayout_33" stretch="2,6">
+                 <item>
+                  <widget class="QFrame" name="frame">
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Shadow::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_29">
+                    <property name="spacing">
+                     <number>8</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>4</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>4</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>4</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>4</number>
+                    </property>
+                    <item>
+                     <widget class="QLabel" name="graphs_label">
+                      <property name="text">
+                       <string>Options</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QScrollArea" name="scrollArea">
+                      <property name="widgetResizable">
+                       <bool>true</bool>
+                      </property>
+                      <widget class="QWidget" name="scrollAreaWidgetContents">
+                       <property name="geometry">
+                        <rect>
+                         <x>0</x>
+                         <y>0</y>
+                         <width>185</width>
+                         <height>412</height>
+                        </rect>
+                       </property>
+                      </widget>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QFrame" name="frame_2">
+                   <property name="frameShape">
+                    <enum>QFrame::Shape::StyledPanel</enum>
+                   </property>
+                   <property name="frameShadow">
+                    <enum>QFrame::Shadow::Raised</enum>
+                   </property>
+                   <layout class="QVBoxLayout" name="verticalLayout_30" stretch="0,0,1">
+                    <item>
+                     <widget class="QLabel" name="charts_label">
+                      <property name="text">
+                       <string>Charts</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QWidget" name="widget_41" native="true">
+                      <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="1,0">
+                       <property name="leftMargin">
+                        <number>12</number>
+                       </property>
+                       <item>
+                        <widget class="QWidget" name="filter_buttons_widget" native="true"/>
+                       </item>
+                       <item>
+                        <widget class="QPushButton" name="download_chart_button">
+                         <property name="text">
+                          <string>Download</string>
+                         </property>
+                        </widget>
+                       </item>
+                      </layout>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QWidget" name="charts_widget" native="true"/>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
                </widget>
-              </item>
-              <item>
-               <widget class="QWidget" name="widget_40" native="true"/>
               </item>
              </layout>
             </widget>
@@ -2302,7 +2385,7 @@
                          <property name="minimumSize">
                           <size>
                            <width>100</width>
-                           <height>0</height>
+                           <height>30</height>
                           </size>
                          </property>
                          <property name="maximumSize">
@@ -2411,7 +2494,7 @@
                          <property name="minimumSize">
                           <size>
                            <width>100</width>
-                           <height>0</height>
+                           <height>30</height>
                           </size>
                          </property>
                          <property name="maximumSize">

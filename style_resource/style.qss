@@ -153,7 +153,7 @@ QLineEdit#category_line,
 QTextEdit#description_text,
 QLineEdit#amount_transaction_line,
 QLineEdit#balance_transaction_line{
-    border: 1px solid #e0e0e0;
+    border: 1px solid black;
     border-radius: 4px;
     padding: 5px 10px;
     margin-right: 5px;
@@ -190,7 +190,7 @@ QLineEdit#email_change_value,
 QLineEdit#confirmation_line{
     background-color: transparent;
     color: black;
-    border: 2px solid black;
+    border: 1px solid black;
     border-radius: 4px;
     padding: 4px;
 }
@@ -224,7 +224,7 @@ QLineEdit#digit_box:focus {
 QComboBox#transaction_type_combo{
     background-color: transparent;
     color: black;
-    border: 1px solid #e0e0e0;
+    border: 1px solid black;
     border-radius: 4px;
     padding: 5px;
 }
@@ -234,7 +234,7 @@ QComboBox#account_type_combo,
 QComboBox#account_currency_change_combo {
     background-color: transparent;
     color: black;
-    border: 2px solid black;
+    border: 1px black;
     border-radius: 30px;
     padding: 5px 10px;
 }
@@ -243,7 +243,7 @@ QComboBox#download_df_combo{
     background-color: #313a46;
     color: white;
     border: 2px solid white;
-    border-radius: 30px;
+    border-radius: 15px;
     padding: 5px;
 }
 
@@ -251,6 +251,7 @@ QComboBox#download_df_combo QAbstractItemView{
     background-color:  #313a46;
     color: white;
     border: 2px solid white;
+    border-radius: 15px;
 }
 
 QComboBox#transaction_type_combo QAbstractItemView{
@@ -277,9 +278,21 @@ QPushButton#upload_file_button:hover {
     color: black;
 }
 
-QPushButton#change_button,
 QPushButton#username_change_button,
-QPushButton#email_change_button,
+QPushButton#email_change_button{
+    background-color: #313a46;
+    color: white;
+    border: 2px solid black;
+    border-radius: 7px;
+}
+QPushButton#username_change_button:hover,
+QPushButton#email_change_button:hover{
+    background-color: rgba(86, 101, 115, 0.1);
+    color: black;
+    border-radius: 7px;
+}
+
+QPushButton#change_button,
 QPushButton#code_submit_button,
 QPushButton#delete_user_button,
 QPushButton#change_password_button,
@@ -292,12 +305,10 @@ QPushButton#add_transaction_button{
     background-color: #313a46;
     color: white;
     border: 2px solid black;
-    border-radius: 4px;
+    border-radius: 15px;
 }
 
 QPushButton#change_button:hover,
-QPushButton#username_change_button:hover,
-QPushButton#email_change_button:hover,
 QPushButton#code_submit_button:hover,
 QPushButton#delete_user_button:hover,
 QPushButton#change_password_button:hover,
@@ -309,6 +320,7 @@ QPushButton#delete_user_button_2:hover,
 QPushButton#add_transaction_button:hover{
     background-color: rgba(86, 101, 115, 0.1);
     color: black;
+    border-radius: 15px;
 }
 
 
@@ -330,7 +342,7 @@ QPushButton#delete_account{
     background-color: #313a46;
     color: white;
     border: 2px solid black;
-    border-radius: 4px;
+    border-radius: 15px;
 }
 
 QPushButton#item_button:hover,
@@ -391,6 +403,7 @@ QDateEdit#end_date_edit,
 QDateEdit#transaction_date_edit{
     background-color: transparent;
     color: black;
+    border: 1px solid black;
 }
 
 QDateEdit#start_date_edit:focus,

@@ -64,10 +64,10 @@ class Account_control_page(QWidget):
         parent_window = self._parent
         color = "black"
         if activate:
-            color = "blue"
+            color = "#70B9FE"
         parent_window.ui.account_name_change_line.setStyleSheet(f"border: 2px solid {color};")
         parent_window.ui.account_type_combo.setStyleSheet(f"border: 2px solid {color};")
-        parent_window.ui.account_currency_change_combo.setStyleSheet(f"border: 2px solid {color};")
+        parent_window.ui.account_currency_change_combo.setStyleSheet(f"border: 2px solid {color}")
 
     def delete_acc(self):
         disclaimer_window = Deletion_disclaimer_window(self)
