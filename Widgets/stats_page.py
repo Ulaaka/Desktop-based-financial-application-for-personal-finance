@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QPushButton, QSizePolicy
+from PyQt5.QtWidgets import QPushButton, QSizePolicy, QWidget, QVBoxLayout, QLabel, QComboBox, QDateEdit, QLineEdit
 from PyQt5.QtCore import QDate, Qt, QMargins
 from PyQt5.QtGui import QPainter
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QHorizontalBarSeries
@@ -189,10 +189,21 @@ class Stats_page():
         self.set_graph_view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         chart_layout.addWidget(self.set_graph_view)
 
-    def create_filter(self):
-        slot = QWidget()
-        vbox = QVBoxLayout(slot)
-        vbox.addWidget(QLabel(defn["name"]))
+    def create_filter(self, widget_desc):
+        widget = QWidget()
+        vertical = QVBoxLayout(widget)
+        vertical.addWidget(QLabel(widget_desc["name"]))
+
+        if widget_desc["type"] == "comboBox":
+            add = QComboBox()
+            add.addItems(widget_desc["value"])
+        elif widget_desc["type"] == "dateEdit":
+            add = QDateEdit()
+            add.setDate("value")
+            add.setCalendarPopup(True)
+        vertical.addWidget(add)
+        self.active_filters[widget_desc["name"]] = add
+        return widget
 
     def get_date(self):
         parent_window = self._parent
