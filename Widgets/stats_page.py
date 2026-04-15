@@ -14,6 +14,11 @@ class Stats_page():
         self.graph_name = "Summary"
         self.copy_list = []
 
+        self.active_filters = {}
+
+        self.widget_layout = parent.ui.filters_widget.layout()
+        self.scroll_layout = parent.ui.scrollAreaWidgetContents.layout()
+
         self.button_to_filers_dic = {
             "Summary" : [{
                 "name" : "Transaction Type",
@@ -36,14 +41,43 @@ class Stats_page():
             "value": self._parent.end_date
             }
             ],
-            "Weekly Trend" : [
+            "Trend" : [
+            {
+            "name" : "Transaction Type",
+            "type" : "comboBox",
+            "value": ["All", "Income", "Expense"]
+            },
             {
             "name" : "Mode",
             "type" : "comboBox",
             "value": ["Total", "Highest", "Lowest"]
             }
-
-
+            ],
+            "Type Distribution" : [
+            {
+            "name" : "From",
+            "type" : "dateEdit",
+            "value": self._parent.start_date
+            },
+            {
+            "name" : "To",
+            "type" : "dateEdit",
+            "value": self._parent.end_date
+            }
+            ],
+            "Category Distribution" : [
+            {
+            "name" : "From",
+            "type" : "dateEdit",
+            "value": self._parent.start_date
+            },
+            {
+            "name" : "To",
+            "type" : "dateEdit",
+            "value": self._parent.end_date
+            }
+            ],
+            "Possible Subscriptions" : [
             ]
         }
 
@@ -52,7 +86,8 @@ class Stats_page():
             "Weekly Trend" : self.create_weekly_graph,
             "Monthly Trend" : self.create_monthly_graph,
             "Yearly Trend" : self.create_yearly_graph,
-            "Distribution" : self.create_distribution_graph,
+            "Type Distribution" : self.create_type_distribution_graph,
+            "Category Distribution": self.create_category_distribution_graph,
             "Possible Subscriptions": self.create_subscription_graph
         }
 
@@ -102,28 +137,22 @@ class Stats_page():
         parent_window.ui.dateEdit_2.dateChanged.connect(self.update_graph)
         parent_window.ui.download_chart_button.clicked.connect(self.download_graph)
 
-        self.wipe_out_layout(parent_window.ui.scrollAreaWidgetContents.layout())
+        self.wipe_out_layout(self.scroll_layout)
 
+        # populate buttons 
         for graph in list(self.func_mapping.keys()):
             opt_button = QPushButton(graph)
             opt_button.setStyleSheet("background-color: #313a46;")
             opt_button.setObjectName("email_change_button")
             opt_button.setFixedHeight(30)
             opt_button.clicked.connect(lambda clicked, graph_name=graph: self.show_graph(graph_name))
-            parent_window.ui.scrollAreaWidgetContents.layout().addWidget(opt_button)
-        parent_window.ui.scrollAreaWidgetContents.layout().addStretch()
+            self.scroll_layout.addWidget(opt_button)
+        self.scroll_layout.addStretch()
 
     def show_graph(self, graph):
         parent_window = self._parent
         self.graph_name = graph
-
-        if graph != "Summary":
-            parent_window.ui.value_box.setEnabled(False)
-            parent_window.ui.value_box.setCurrentIndex(0)
-            parent_window.ui.value_box.setStyleSheet("background-color: rgba(86, 101, 115, 0.1);")
-        else:
-            parent_window.ui.value_box.setEnabled(True)
-            parent_window.ui.value_box.setStyleSheet("background-color: transparent")
+        self.update_filters(graph)
         self.update_graph()
 
     #Source - https://stackoverflow.com/a/70248114
@@ -133,12 +162,23 @@ class Stats_page():
                 layout.itemAt(i).widget().setParent(None)
             else:
                 layout.removeItem(layout.itemAt(i))
+    
+    def update_filters(self, graph_name):
+        self.wipe_out_layout(self.widget_layout)
+
+        if graph_name in ["Weekly Trend", "Monthly Trend", "Yearly Trend"]:
+            graph_name = "Trend"
+
+        for widget_desc in self.button_to_filers_dic[graph_name]:
+            self.widget_layout.addWidget(self.create_filter(widget_desc))
 
     def update_graph(self):
         parent_window = self._parent
-        self.wipe_out_layout(parent_window.ui.charts_widget.layout())
+        chart_layout = parent_window.ui.charts_widget.layout()
+        self.wipe_out_layout(chart_layout)
         #self.set_graph_view = None
 
+        # create the graph
         if self.graph_name in self.func_mapping:
             graph_func = self.func_mapping[self.graph_name]()
         else:
@@ -147,7 +187,12 @@ class Stats_page():
         self.set_graph_view = QChartView(graph_func)
         self.set_graph_view.setRenderHint(QPainter.Antialiasing)
         self.set_graph_view.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        parent_window.ui.charts_widget.layout().addWidget(self.set_graph_view)
+        chart_layout.addWidget(self.set_graph_view)
+
+    def create_filter(self):
+        slot = QWidget()
+        vbox = QVBoxLayout(slot)
+        vbox.addWidget(QLabel(defn["name"]))
 
     def get_date(self):
         parent_window = self._parent
@@ -194,7 +239,6 @@ class Stats_page():
 
     def create_summary_graph(self):
         parent_window = self._parent
-
         transaction_type_txt, value_txt = self.get_combo_text()
         result= self.get_date()
 
@@ -278,5 +322,8 @@ class Stats_page():
     def create_yearly_graph(self):
         pass
 
-    def create_distribution_graph(self):
+    def create_type_distribution_graph(self):
+        pass
+
+    def create_category_distribution_graph(self):
         pass
