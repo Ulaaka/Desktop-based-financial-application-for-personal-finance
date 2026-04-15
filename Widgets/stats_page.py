@@ -14,6 +14,39 @@ class Stats_page():
         self.graph_name = "Summary"
         self.copy_list = []
 
+        self.button_to_filers_dic = {
+            "Summary" : [{
+                "name" : "Transaction Type",
+                "type" : "comboBox",
+                "value": ["All", "Income", "Expense"]
+            },
+            {
+            "name" : "Mode",
+            "type" : "comboBox",
+            "value": ["Total", "Highest", "Lowest"]
+            },
+            {
+            "name" : "From",
+            "type" : "dateEdit",
+            "value": self._parent.start_date
+            },
+            {
+            "name" : "To",
+            "type" : "dateEdit",
+            "value": self._parent.end_date
+            }
+            ],
+            "Weekly Trend" : [
+            {
+            "name" : "Mode",
+            "type" : "comboBox",
+            "value": ["Total", "Highest", "Lowest"]
+            }
+
+
+            ]
+        }
+
         self.func_mapping = {
             "Summary" : self.create_summary_graph,
             "Weekly Trend" : self.create_weekly_graph,
@@ -41,6 +74,18 @@ class Stats_page():
         }
         self.stats_signals_connect()
         self.show_graph(self.graph_name)
+
+    def get_accounts_names(self):
+        parent_window = self._parent
+        account_names = self.query.compute_account_options(parent_window.userID)
+        new_list = []
+        for account in account_names:
+            if account != parent_window.account_name:
+                new_list.append(account)
+        new_list.insert(0, parent_window.account_name)
+        new_list.append("All")
+        return new_list
+
 
     def stats_signals_connect(self):
         parent_window = self._parent
