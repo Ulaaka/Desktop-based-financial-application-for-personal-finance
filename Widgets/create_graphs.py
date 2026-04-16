@@ -5,7 +5,14 @@ from PyQt5.QtChart import QChart, QBarSeries, QBarSet, QBarCategoryAxis, QValueA
 from graph_db_queries import GraphQueries
 from datetime import datetime, timedelta, date
 class CreateGraph:
+    """
+    Contains graph returning functions for each of the graphs
+    Gets called from graphs_page.py
+    """
     def __init__(self, parent, active_filters, account_currency):
+        """
+        Constructor for graph creation class
+        """
         self._parent = parent
         self.query = GraphQueries()
         self.account_currency = account_currency
@@ -29,8 +36,27 @@ class CreateGraph:
             },
         }
 
-
     def create_summary_graph(self):
+        """
+        Creates BAR chart graph for transaction summary
+        Constrains 1:
+        "Transaction Type" Widget
+            If transaction type is All, both income/expense bars are shown, else each individual
+
+        Constraint 2:
+        "Mode" Widget
+            If "mode" == total, finds total amount
+            If "mode" == Highest, finds the highest amount transaction
+            If "mode" == Lowest, finds the lowest amount transaction
+
+        Constraint 3:
+        "From", "To" Widgets
+            "From" defines lower boundary to search in database
+            "To" defines upper boundary to search in database
+
+        Each combination these filters produce different graphs.
+
+        """
         parent_window = self._parent
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
@@ -91,7 +117,6 @@ class CreateGraph:
             x_axis = self.add_to_x_axis(name, graph)
             y_axis = self.add_to_y_axis(going, graph, y_column_name)
 
-
             graph_series.attachAxis(x_axis)
             graph_series.attachAxis(y_axis)
 
@@ -99,6 +124,13 @@ class CreateGraph:
         return graph
 
     def add_to_y_axis(self, value, graph , title_text=None, horizontal=None):
+        """
+        Helper function for adding values to y-axis of the graph
+        :param graph: graph of the y-axis to be added to
+        :param value: values to add to the y-axis
+
+        :return: populated y-axis
+        """
         y_axis = QValueAxis()
         if title_text:
             y_axis.setTitleText(title_text)
@@ -109,18 +141,43 @@ class CreateGraph:
         return y_axis
 
     def add_to_x_axis(self, value, graph):
+        """
+        Helper function for adding values to x-axis of the graph
+        :param graph: graph of the x-axis to be added to
+        :param value: values to add to the x-axis
+
+        :return: populated x-axis
+        """
         x_axis = QBarCategoryAxis()
         x_axis.append(value)
         graph.addAxis(x_axis, Qt.AlignBottom)
         return x_axis
 
     def create_weekly_graph(self):
+        """
+        Creates Line Series/s graph for weekly trend
+        Constrains 1:
+        "Transaction Type" Widget
+            If transaction type is All, both income/expense bars are shown, else each individual
+
+        Constraint 2:
+        "Mode" Widget
+            If "mode" == total, finds total amount
+            If "mode" == Highest, finds the highest amount transaction
+            If "mode" == Lowest, finds the lowest amount transaction
+
+        Each combination these filters produce different graphs.
+
+        """
         parent_window = self._parent
 
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
         graph = QChart()
+
+        # finds the day of the week in number form
         week_day = self.current_date.weekday()
+
         if transaction_type_txt == "All":
             try:
                 in_max_toggle = self.max_toggle_dic[True][value_txt]
@@ -128,9 +185,10 @@ class CreateGraph:
             except:
                 in_max_toggle = None
                 out_max_toggle = None
-    
+
             in_result_list = []
             out_result_list = []
+            # loops from start of the week until current day
             for idx,  i in enumerate(range(week_day + 1)):
                 day = self.current_date - timedelta(days=week_day - i)
                 date_str = day.strftime("%Y-%m-%d")
@@ -196,6 +254,7 @@ class CreateGraph:
             graph_series.setName(name)
 
             result_list = []
+            # loops from start of the week until current day
             for idx,  i in enumerate(range(week_day + 1)):
                 day = self.current_date - timedelta(days=week_day - i)
                 date_str = day.strftime("%Y-%m-%d")
@@ -224,13 +283,30 @@ class CreateGraph:
         return graph
 
     def create_monthly_graph(self):
+        """
+        Creates Line Series/s graph for monthly trend
+        Constrains 1:
+        "Transaction Type" Widget
+            If transaction type is All, both income/expense bars are shown, else each individual
 
+        Constraint 2:
+        "Mode" Widget
+            If "mode" == total, finds total amount
+            If "mode" == Highest, finds the highest amount transaction
+            If "mode" == Lowest, finds the lowest amount transaction
+
+        Each combination these filters produce different graphs.
+
+        """
         parent_window = self._parent
 
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
 
+        # Total number of days in current month
         result = calendar.monthrange(self.current_date.year, self.current_date.month)[1]
+
+        # The first day of the month
         first_day = date(self.current_date.year, self.current_date.month, 1)
 
         graph = QChart()
@@ -244,6 +320,7 @@ class CreateGraph:
 
             in_result_list = []
             out_result_list = []
+            # loops from 1s day of the current month until current day/today
             for idx,  i in enumerate(range(int(self.current_date.day))):
                 day = first_day + timedelta(days=i)
                 date_str = day.strftime("%Y-%m-%d")
@@ -331,7 +408,24 @@ class CreateGraph:
         return graph
 
     def create_yearly_graph(self):
+        """
+        Creates Line Series/s graph for yearly trend
+        Constrains 1:
+        "Transaction Type" Widget
+            If transaction type is All, both income/expense bars are shown, else each individual
+
+        Constraint 2:
+        "Mode" Widget
+            If "mode" == total, finds total amount
+            If "mode" == Highest, finds the highest amount transaction
+            If "mode" == Lowest, finds the lowest amount transaction
+
+        Each combination these filters produce different graphs.
+
+        """
         parent_window = self._parent
+
+        # Tuples consisting of first and last day of each month from jan to current month
         months_list = self.get_month_ranges()
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
@@ -436,6 +530,21 @@ class CreateGraph:
         return graph
 
     def create_type_distribution_graph(self):
+        """
+        Creates pie chart for each type distribution among transactions
+
+        Constraint 1:
+        "Accounts" widget
+            If "Accounts" = "All": Result from all accounts
+            else: each individual account
+
+        Constraint 2:
+        "From", "To" Widgets
+            "From" defines lower boundary to search in database
+            "To" defines upper boundary to search in database
+
+        Each combination of filters result in different graphs
+        """
         account_name = self.active_filters["Accounts"].currentText()
         date_low_str = self.active_filters["From"].date().toString("yyyy-MM-dd")
         date_up_str = self.active_filters["To"].date().toString("yyyy-MM-dd")
@@ -455,6 +564,21 @@ class CreateGraph:
         return graph
 
     def create_category_distribution_graph(self):
+        """
+        Creates pie chart for each category distribution among transactions
+
+        Constraint 1:
+        "Accounts" widget
+            If "Accounts" = "All": Result from all accounts
+            else: each individual account
+
+        Constraint 2:
+        "From", "To" Widgets
+            "From" defines lower boundary to search in database
+            "To" defines upper boundary to search in database
+
+        Each combination of filters result in different graphs
+        """
         account_name = self.active_filters["Accounts"].currentText()
         date_low_str = self.active_filters["From"].date().toString("yyyy-MM-dd")
         date_up_str = self.active_filters["To"].date().toString("yyyy-MM-dd")
@@ -474,13 +598,22 @@ class CreateGraph:
         return graph
 
     def create_top_income_sources(self):
+        LIMIT = 5
+        X_AXIS_TICK = 6
+        """
+        Creates bar charts showing top 5 income sources
+        Constraint:
+        "From", "To" Widgets
+            "From" defines lower boundary to search in database
+            "To" defines upper boundary to search in database
+        """
         parent_window = self._parent
         date_low_str = self.active_filters["From"].date().toString("yyyy-MM-dd")
         date_up_str = self.active_filters["To"].date().toString("yyyy-MM-dd")
         graph = QChart()
         graph_series = QHorizontalBarSeries()
         graph.setTitle("Top Income Sources")
-        top_sources = self.query.common_transactions(parent_window.userID, 5, parent_window.accountID,
+        top_sources = self.query.common_transactions(parent_window.userID, LIMIT, parent_window.accountID,
         transfer_toggle=True, date_lower=date_low_str, date_upper=date_up_str)
 
         for sub in top_sources:
@@ -498,20 +631,29 @@ class CreateGraph:
         if top_sources:
             x_axis.setRange(0, max([int(sub[1]) for sub in top_sources]))
         x_axis.setLabelFormat("%d")
-        x_axis.setTickCount(6)
+        x_axis.setTickCount(X_AXIS_TICK)
         graph.addAxis(x_axis, Qt.AlignBottom)
         graph_series.attachAxis(x_axis)
         return graph
 
 
     def create_top_expense_sources(self):
+        LIMIT = 5
+        X_AXIS_TICK = 6
+        """
+        Creates bar charts showing top 5 income sources
+        Constraint:
+        "From", "To" Widgets
+            "From" defines lower boundary to search in database
+            "To" defines upper boundary to search in database
+        """
         parent_window = self._parent
         date_low_str = self.active_filters["From"].date().toString("yyyy-MM-dd")
         date_up_str = self.active_filters["To"].date().toString("yyyy-MM-dd")
         graph = QChart()
         graph_series = QHorizontalBarSeries()
         graph.setTitle("Top Expense Sources")
-        top_sources = self.query.common_transactions(parent_window.userID, 5, parent_window.accountID,
+        top_sources = self.query.common_transactions(parent_window.userID, LIMIT, parent_window.accountID,
         transfer_toggle=False, date_lower=date_low_str, date_upper=date_up_str)
         for sub in top_sources:
             sub_bar = QBarSet(sub[0])
@@ -528,18 +670,27 @@ class CreateGraph:
         if top_sources:
             x_axis.setRange(0, max([int(sub[1]) for sub in top_sources]))
         x_axis.setLabelFormat("%d")
-        x_axis.setTickCount(6)
+        x_axis.setTickCount(X_AXIS_TICK)
         graph.addAxis(x_axis, Qt.AlignBottom)
         graph_series.attachAxis(x_axis)
         return graph
-    
+
     def create_subscription_graph(self):
+        """
+        Creates a graph showing possible subscriptions
+
+        Constraint:
+        "Accounts" widget
+            If "Accounts" = "All": Result from all accounts
+            else: each individual account
+        """
         parent_window = self._parent
         account_text = self.active_filters["Accounts"].currentText()
         if account_text == "All":
             result = self.query.find_subscriptions(parent_window.userID)
         else:
             result = self.query.find_subscriptions(parent_window.userID, account_text)
+
         graph = QChart()
         graph_series = QHorizontalBarSeries()
         for sub in result:
@@ -564,6 +715,10 @@ class CreateGraph:
         return graph
 
     def get_month_ranges(self):
+        """
+        Helper function which returns list of element (first day, last day) for each month until current month
+        if current month is april (4), return tuples of list for Jan, Feb, March, April (1-4)
+        """
         months_list = []
         for month in range(self.current_date.month):
             first_day = date(self.current_date.year, month+1, 1)

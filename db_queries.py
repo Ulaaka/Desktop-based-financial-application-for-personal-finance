@@ -10,41 +10,52 @@ class QueryProcessor:
 
     """
     Contains the functions for querying the database
-
     """
 
     def __init__(self):
+        """
+        Constructor for database querying class
+        """
+
+        # database connection
         self.connection = Database()
         connection = self.connection
         self.db = connection.db
         self.cursor = connection.cursor
-        # Stopwords in english dictionary
+
+
+        # Stop words in english language + custom
+        # Later used to distinguish key words from description
         self.stop_words = set(stopwords.words('english'))
+        new_stop_words = {'ltd', 'limited', 'inc', 'stores', 'gb', 'uk'}
+        self.stop_words.update(new_stop_words)
 
-        # https://stackoverflow.com/a/51534662
-        # Identified stopwords
-        new_stopwords = {'ltd', 'limited', 'inc', 'stores', 'gb', 'uk'}
+    # ==========================   INSERT INTO QUERIES    =========================
 
-        # Add the new identified stopwords
-        self.stop_words.update(new_stopwords)
-
-    """
-    QUERIES FOR MANAGING DATABASE
-        INSERT-QUERIES
-        GET-QUERIES
-        UPDATE-QUERIES
-        DELETE-QUERIES
-    """
-    # Creates new user, and inserts information into the database
     def insert_into_users(self, username, hashed_password, email, encrypted_data_key, salt):
+        """
+        Creates new user, and inserts user information into the database
+        :param encrypted_data_key: encrypted version of data key used for cryptography of files
+        :param salt: salt used for getting wrapping key for encrypt/decrypting data key
+
+        :return: unique user ID
+        """
         sql = "INSERT INTO users (username, hashed_password, email_address, enc_data_key, salt) VALUES (%s, %s, %s, %s, %s)"
         self.cursor.execute(sql, (username, hashed_password, email, encrypted_data_key, salt))
+        # Unique user ID
         userID = self.cursor.lastrowid
         self.db.commit()
         return userID
 
-    # Creates new account, and inserts information into the database
     def insert_into_accounts(self, userID, acc_name, acc_type, acc_currency):
+        """
+        Creates new account, and inserts information into the database
+        :param acc_name: name of the account
+        :param acc_type: type of the account (fast payment, card etc)
+        :param acc_currency: currency of the account
+        :return: unique account ID
+        """
+
         sql = "INSERT INTO accounts (userID, account_name, account_type, account_currency) VALUES (%s, %s, %s, %s)"
         self.cursor = self.connection.cursor
         self.cursor.execute(sql, ( userID, acc_name, acc_type, acc_currency))
@@ -52,14 +63,26 @@ class QueryProcessor:
         self.db.commit()
         return accountID
 
-    # Inserts new transaction into the database
     def insert_into_transactions(self, transaction_list):
+        """
+        Inserts transaction into the database
+        To get a better querying runtime, transactions are given as a list to allow for executemany
+        It ignores duplicate transactions (already exist in the database) by "INSERT IGNORE INTO"
+        :param transaction_list: list of transactions to be inserted
+        """
+
         sql = """INSERT IGNORE INTO transactions (accountID, file_ID, transaction_date, transaction_type, description, category, amount, balance) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         self.cursor.executemany(sql, transaction_list)
         self.db.commit()
 
-    # Inserts new category into the database
     def insert_into_categories(self, userID, accountID, category_sentence, category_list, category_name):
+        """
+        Creates new category, and inserts information into the database
+        :param category_sentence: description of the category
+        :param category_list: unique key-word list of the category
+        :param category_name: name of the category
+        :return: unique category ID
+        """
         query = "INSERT INTO categories (userID, accountID, category_sentence, category_list, category_name) VALUES (%s, %s, %s, %s, %s)"
         self.cursor.execute(query, (userID, accountID, category_sentence, json.dumps(category_list), category_name))
         categoryID = self.cursor.lastrowid
@@ -67,14 +90,25 @@ class QueryProcessor:
         return categoryID
 
     def insert_into_files(self, accountID,  filename, new_filename, size_file, file_type):
+        """
+        Creates new file, and inserts information into the database
+        :param filename: name of the file
+        :param new_filename: hashed name of the file
+        :param size_file: the size of the file (B, KB etc)
+        :param file_type: PDF or CSV
+        :return: unique file ID
+        """
         new_query = "INSERT INTO files (accountID, file_name, hashed_name, file_size, file_type) VALUES (%s, %s, %s, %s, %s)"
         self.cursor.execute(new_query, (accountID,  filename, new_filename, size_file, file_type))
         file_ID = self.cursor.lastrowid
         self.db.commit()
         return file_ID
 
-    # New user insertion with check of if the user already exists
     def insert_user(self, username, hashed_password, email, encrypted_data_key, salt):
+        """
+        New user insertion with check of if the user already exists 
+        :return: unique user ID
+        """
         userID = self.get_userID(username)
         if userID is None:
             try:
@@ -83,14 +117,21 @@ class QueryProcessor:
                 print("could not insert the user")
         return userID
 
-    # New account insertion with check of if the account already exists
     def insert_account(self, userID, acc_name, acc_type, acc_currency):
+        """
+        New account insertion with check of if the account already exists 
+        :return: unique account ID
+        """
         accountID = self.get_accountID(acc_name, userID)
         if accountID is None:
             accountID = self.insert_into_accounts(userID, acc_name, acc_type, acc_currency)
         return accountID
 
     def insert_category(self, userID, accountID, category_sentence, category_list, category_name):
+        """
+        New category insertion with check of if the category already exists 
+        :return: unique category ID
+        """
         exist = True
         categoryID = self.get_matching_category(accountID, category_list)
         if categoryID is None:
@@ -99,7 +140,11 @@ class QueryProcessor:
         return categoryID, exist
 
     def get_category_info(self, userID, accountID, asDF=None):
-        # categoryID, category_list, category_name
+        """
+        Returns key category information
+        If return as a dataframe, it is used for category table creation for the app
+        :return: category information as a dataframe or list of tuples
+        """
         sql_categories  = "SELECT categoryID, category_list, category_sentence, category_name FROM categories WHERE userID = %s and accountID = %s ORDER BY categoryID"
         self.cursor.execute(sql_categories, (userID, accountID))
         result = self.cursor.fetchall()
@@ -110,14 +155,21 @@ class QueryProcessor:
             df = pd.DataFrame(result, columns=header_columns)
             return df
 
-    # after category is deleted, finds the next best category to replace it
     def get_next_best_category(self, userID, accountID, category_list):
-        # https://stackoverflow.com/a/37662298
-        # https://dev.mysql.com/doc/refman/8.4/en/json-search-functions.html
+        """
+        After category is deleted, finds the next best category to replace category names of related transactions
+
+        :param category_list: given key-words list, it goes through existing categories to find the next best match
+        :return: next best category or None if not successful
+        """
         try:
             result = self.get_category_info(userID, accountID)
+
             category_dictionary = {tuple(json.loads(category_list)): (categoryID, category_name) for categoryID, category_list, _, category_name in result}
+
             priority_list = [(len([item for item in category_list if item in i]), len(i)) for i in category_dictionary]
+
+            # the best next match
             max_category = max(priority_list, key=lambda x: (x[0], -x[1]))
             if max_category[0] == 0:
                 return None
@@ -126,33 +178,41 @@ class QueryProcessor:
             key = list(category_dictionary)[position]
 
             output = category_dictionary[key]
-            # (categoryID, category_name)
             return output
         except:
             return None
-    # get marching category
+
     def get_matching_category(self, accountID,  word_list):
+        """
+        Returns category ID given key-word list
+        """
         query = "SELECT categoryID from categories WHERE category_list = %s and accountID = %s"
         self.cursor.execute(query, (json.dumps(word_list), accountID))
         output = self.cursor.fetchone()
         return output[0] if output else None
 
-    # Returns userID
     def get_userID(self, username):
+        """
+        Returns user ID given username
+        """
         sql = "SELECT userID FROM users WHERE username = %s"
         self.cursor.execute(sql, (username,))
         output = self.cursor.fetchone()
         return output[0] if output else None
 
-    # Returns accountID
     def get_accountID(self, account_name, userID):
+        """
+        Returns account ID given account name and user ID
+        """
         sql = "SELECT accountID FROM accounts WHERE account_name = %s and userID = %s"
         self.cursor.execute(sql, (account_name, userID))
         output = self.cursor.fetchone()
         return output[0] if output else None
 
-    # Returns the hashed name of the encrypted file
     def get_hashed_name(self, accountID, name_file=None, fileID=None):
+        """
+        Returns hashed name of the encrypted file by name of the file or file ID
+        """
         if name_file:
             new_sql = "SELECT hashed_name FROM files WHERE accountID = %s and file_name = %s"
             selected = name_file
@@ -164,8 +224,10 @@ class QueryProcessor:
         output = self.cursor.fetchone()
         return output[0] if output else None
 
-    # return total transactions made by the account
     def get_transactions(self, accountID):
+        """
+        Returns total transactions made by the account given account ID
+        """
         query = """SELECT * FROM transactions WHERE accountID = %s"""
         self.cursor = self.connection.cursor
         self.cursor.execute(query, (accountID,))
@@ -175,6 +237,9 @@ class QueryProcessor:
         return df
 
     def get_hashed_password(self, username=None, userID=None):
+        """
+        Returns hashed password of the user given username or ID
+        """
         if username:
             sql = "SELECT hashed_password FROM users WHERE username = %s"
             select = username
@@ -186,8 +251,10 @@ class QueryProcessor:
         result = self.cursor.fetchone()
         return result if result else None
 
-    # Returns the original name of the file from the hashed
     def get_file_name(self, accountID, hashed_name=None, fileID=None):
+        """
+        Returns name of the file given hashed name or ID
+        """
         if hashed_name:
             new_sql = "SELECT file_name FROM files WHERE accountID = %s and hashed_name = %s"
             select = hashed_name
@@ -200,13 +267,20 @@ class QueryProcessor:
 
     # Returns accountID
     def get_file_ID(self, accountID, filename):
+        """
+        Returns ID of the file given corresponding account ID name and name of the file
+        """
+
         sql = "SELECT file_ID FROM files WHERE accountID = %s AND file_name = %s"
         self.cursor.execute(sql, (accountID, filename))
         output = self.cursor.fetchone()
         return output[0] if output else None
-    
-    # Shows existing files IDs and filename submitted in the account
+
     def get_files(self, accountID):
+        """
+        Returns information of the files associated with account ID
+        """
+
         query = """
         SELECT file_ID, file_name, file_size, file_type, added_at
         FROM files
@@ -219,37 +293,56 @@ class QueryProcessor:
         return result if result else None
 
     def get_type_account_currency(self, account_name, userID):
+        """
+        Returns type and currency of the account given name of the account and user ID
+        """
+
         query = "SELECT account_type, account_currency FROM accounts WHERE account_name = %s AND userID = %s"
         self.cursor.execute(query, (account_name, userID))
         result = self.cursor.fetchone()
         return result if result else None
 
     def get_type_with_id(self, id):
+        """
+        Returns type of the account given file ID
+        """
         query = "SELECT account_type FROM accounts WHERE file_ID = %s"
         self.cursor.execute(query, (id, ))
         result = self.cursor.fetchone()
         return result if result else None
 
     def get_create_update_account(self,  account_name, userID):
+        """
+        Returns timestamps of account given name of the account and user ID
+        """
         query = "SELECT created_at, updated_at FROM accounts WHERE account_name = %s AND userID = %s"
         self.cursor.execute(query, (account_name, userID))
         result = self.cursor.fetchone()
         return result if result else None
 
     def get_user_info(self, userID):
+        """
+        Returns user information given user ID
+        """
         query = "SELECT username, email_address, created_at FROM users WHERE userID = %s"
         self.cursor.execute(query, (userID,))
         result = self.cursor.fetchone()
         return result if result else None
 
     def get_number_of_accounts(self, userID):
+        """
+        Returns a list containing the names of the accounts associated with user ID
+        """
         query = "SELECT account_name FROM accounts WHERE userID = %s"
         self.cursor.execute(query, (userID,))
         result = self.cursor.fetchall()
         return [account[0] for account in result] if result else []
 
-    # Returns the most used category names
     def get_categories(self, userID):
+        """
+        Returns the most used category names given userID
+        :return: description and name of the account
+        """
         query = """
             SELECT COUNT(categoryID) AS total_descriptions, category_name
             FROM categories
@@ -263,6 +356,9 @@ class QueryProcessor:
         return result if result else None
 
     def get_data_key_salt(self, userID):
+        """
+        Returns encrypted data key and salt of the user given ID
+        """
         query = """
             SELECT enc_data_key, salt
             FROM users
@@ -272,7 +368,13 @@ class QueryProcessor:
         result = self.cursor.fetchone()
         return result if result else None
 
+    # ==========================   UPDATE QUERIES    =============================
+
     def update_account(self, accountID, account_name, account_type=None, account_currency=None):
+        """
+        Updates account information fields
+        """
+
         parameter = [account_name]
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         top_query = "UPDATE accounts SET account_name = %s"
@@ -293,6 +395,10 @@ class QueryProcessor:
         self.db.commit()
 
     def update_user(self, userID, new_username=None, new_email=None):
+        """
+        Updates user information (username and email)
+        """
+
         parameter = []
         top_query = "UPDATE users SET"
         bottom_query = " WHERE userID = %s"
@@ -318,24 +424,34 @@ class QueryProcessor:
 
 
     def update_category_name(self, category_name, categoryID):
-            query = """
-                UPDATE categories
-                SET category_name = %s
-                WHERE categoryID = %s
-            """
-            self.cursor.execute(query, (category_name, categoryID))
-            self.db.commit()
+        """
+        Updates the name of the category given category ID
+        """
+
+        query = """
+            UPDATE categories
+            SET category_name = %s
+            WHERE categoryID = %s
+        """
+        self.cursor.execute(query, (category_name, categoryID))
+        self.db.commit()
 
     def update_category_description(self, category_sentence, category_list, category_name, categoryID):
-            query = """
-                UPDATE categories
-                SET category_sentence = %s, category_list = %s, category_name = %s
-                WHERE categoryID = %s
-            """
-            self.cursor.execute(query, (category_sentence, json.dumps(category_list), category_name, categoryID))
-            self.db.commit()
+        """
+        Updates description, key-words list and name of the category
+        """
+        query = """
+            UPDATE categories
+            SET category_sentence = %s, category_list = %s, category_name = %s
+            WHERE categoryID = %s
+        """
+        self.cursor.execute(query, (category_sentence, json.dumps(category_list), category_name, categoryID))
+        self.db.commit()
 
     def update_key_salt(self, enc_data_key, salt, userID):
+        """
+        Updates encrypted data key and salt with new ones given user ID
+        """
         query = """
             UPDATE users
             SET enc_data_key = %s, salt = %s
@@ -344,18 +460,29 @@ class QueryProcessor:
         self.cursor.execute(query, (enc_data_key, salt, userID))
         self.db.commit()
 
-    # Deleted the file, associating transactions
+    # ==========================   DELETE QUERIES    =============================
+
+
     def delete_file(self, file_ID):
+        """
+        Delete the file from database given file ID, resulting in cascading effect of deletion of associated transactions
+        """
         query = "DELETE FROM files WHERE file_ID = %s"
         self.cursor.execute(query, (file_ID, ))
         self.db.commit()
 
     def delete_account(self, accountID):
+        """
+        Delete the account from database given account ID, resulting in cascading effect of deletion of associated transactions
+        """
         query = "DELETE FROM accounts WHERE accountID = %s"
         self.cursor.execute(query, (accountID, ))
         self.db.commit()
     
     def delete_transaction(self, transactionID):
+        """
+        Delete transaction from database given transaction ID
+        """
         query = "DELETE FROM transactions WHERE transactionID = %s"
         self.cursor.execute(query, (transactionID, ))
         self.db.commit()
@@ -370,15 +497,22 @@ class QueryProcessor:
         self.db.commit()
 
     def delete_user_files(self, userID):
+        """
+        Delete all related encrypted files associated with user given user ID
+        """
         sql = "DELETE FROM files WHERE accountID IN (SELECT accountID FROM accounts WHERE userID = %s)"
         self.cursor.execute(sql, (userID,))
         self.db.commit()
 
+    # ==========================   CATEGORY FEATURE RELATED QUERIES    =============================
 
-    # Returns the list of words from the description of the selected transaction
-    # plus_list = words to be used to identify close transactions
-    # word_list = the list of the words passed
+
     def return_word_list(self, description):
+        """
+            Returns the list of words from the description of the selected transaction
+            plus_list = words to be used to identify close transactions
+            word_list = the list of the words passed
+        """
         # removing words with length of 2-3 and extra white space between words in the description
         clean_description = re.sub(r'\b\w{2,3}\b', '', " ".join(description.lower().split()))
         places = (GeoText(clean_description.title()).cities + GeoText(clean_description.title()).countries)
@@ -397,9 +531,13 @@ class QueryProcessor:
 
         return plus_list, word_list
 
-    # Returns transaction ids of close transactions given the user selected description
     def find_close_transactions(self, description, accountID):
-        # https://stackoverflow.com/questions/6259647/mysql-match-against-order-by-relevance-and-column
+        """
+        Returns transaction IDs of close transactions given the user selected description
+        :param description: description of the transaction
+        :param accountID: account ID
+        :return: transaction IDs of close transactions in the account
+        """
         parameters = [accountID]
 
         plus_list, word_list = self.return_word_list(description)
@@ -412,8 +550,10 @@ class QueryProcessor:
 
         return selective_ids, word_list
 
-    # Returns the description of the transaction given the transaction ID
     def return_description_given_transactionID(self, transactionID):
+        """
+        Returns the description of the transaction given the transaction ID
+        """
         description_query =  """
             SELECT description
             FROM transactions
@@ -421,12 +561,16 @@ class QueryProcessor:
         """
         self.cursor.execute(description_query, (transactionID, ))
 
-        # the description of the transaction
         description = self.cursor.fetchone()[0]
         return description if description else None
 
 
     def update_category(self, category, transactionID):
+        """
+        Updates the category name of the transaction/s 
+        :param category: category name
+        :param transactionID: transaction ID/s in a list
+        """
         if not isinstance(transactionID, list):
             transactionID = [transactionID]
 
@@ -449,9 +593,11 @@ class QueryProcessor:
         self.cursor.execute(query, parameters)
         self.db.commit()
 
-    # needs to search for similar description to apply the same category in the database
-    # Updates the category of the selected transaction and its close transactions
+
     def change_category_transaction(self, userID, accountID, category, transactionID):
+        """
+        Updates category name of the given transaction by its transaction ID and its close transactions
+        """
         self.update_category(category, transactionID)
         description = self.return_description_given_transactionID(transactionID)
         close_transaction_ids, world_list = self.find_close_transactions(description, accountID)
@@ -460,10 +606,12 @@ class QueryProcessor:
             self.update_category_name(category, categoryID)
         self.update_category(category, close_transaction_ids)
 
-
-    # Returns the updated category for new transactions
-    # finds the closest matching category
     def return_updated_category(self, userID, accountID,  description):
+        """
+        Returns the updated category for new incoming transactions by
+        finding finds the closest matching category
+        :return: best matching category or "Undefined
+        """
         word_list = self.return_word_list(description)[1]
         output = self.get_next_best_category(userID, accountID, word_list)
         if (output is None):
@@ -474,6 +622,10 @@ class QueryProcessor:
 
     # Returns corresponding unique descriptions and categoryIDs of each category names
     def show_description_list_by_category_name(self, userID, category_name):
+        """
+        Returns corresponding unique descriptions and categoryIDs of each category 
+        given category name and user ID in ascending order
+        """
         query = """
             SELECT category_sentence, categoryID
             FROM categories
@@ -484,8 +636,10 @@ class QueryProcessor:
         result = self.cursor.fetchall()
         return result if result else None
 
-    # add new category and update
     def add_category_update(self, userID, accountID, description, category_name):
+        """
+        Adds new category and update matching transactions' category name
+        """
         close_transaction_ids, word_list = self.find_close_transactions(description, accountID)
         categoryID, exist = self.insert_category(userID, accountID, description, word_list, category_name)
         if exist:
@@ -494,8 +648,10 @@ class QueryProcessor:
         self.update_category(category_name, close_transaction_ids)
         return categoryID if categoryID else None
 
-    # after the description list is shown, the user can remove category
     def delete_category(self, categoryID):
+        """
+        Delete category from database given category ID
+        """
         query_delete = """
             DELETE FROM categories
             WHERE categoryID = %s"""
@@ -503,9 +659,12 @@ class QueryProcessor:
         self.cursor.execute(query_delete, (categoryID, ))
         self.db.commit()
 
-    # use the category name of the removed description of the category
-    # when category is deleted, updates the transactions
     def update_transaction_after_deletion_description(self, userID, accountID, category_name):
+        """
+        Finds next matching category of the transactions after category is deleted
+        :param category_name: name of the category to be deleted
+        :param accountID: account ID
+        """
         query = """
             SELECT transactionID, description
             FROM transactions
@@ -519,8 +678,10 @@ class QueryProcessor:
                 new_category = self.return_updated_category(userID, accountID, j)
                 self.update_category(new_category, i)
 
-    # Changes the description of the transaction, needs to change the category after that
     def change_transaction_description_and_update(self, userID, accountID,  new_description, transactionID):
+        """
+        Changes the description of the transaction and update the category
+        """
         query = """
             UPDATE transactions
             SET description = %s
@@ -533,6 +694,9 @@ class QueryProcessor:
         self.update_category(new_category, transactionID)
 
     def return_accounts_given_userID(self, userID):
+        """
+        Return account information of the related accounts given user ID
+        """
         query = """
             SELECT accountID, account_name
             FROM accounts
@@ -544,6 +708,9 @@ class QueryProcessor:
         return result if result else None
 
     def compute_account_options(self, userID):
+        """
+        Return list containing names of the accounts associated with user ID
+        """
         accounts = self.return_accounts_given_userID(userID)
         options_list = [account[1] for account in accounts] if accounts else []
         return options_list if options_list else None
