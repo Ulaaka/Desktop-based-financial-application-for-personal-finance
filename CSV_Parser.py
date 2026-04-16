@@ -22,7 +22,7 @@ class ParsingCSV:
             df = df[mat2]
 
             date_column = df[df.columns[0]]
-            parser.change_type(df.loc[0, df.columns[0]], date_column, df)
+            parser.change_date_type(df.loc[0, df.columns[0]], date_column, df)
 
             new_df = parser.order_dataframe(df, selected_columns)
 

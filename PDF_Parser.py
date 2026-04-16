@@ -140,7 +140,7 @@ class ParsingPDF:
 
         if not df.empty:
             test_value = df.loc[0, df.columns[0]]
-            self.parser.change_type(test_value, df[df.columns[0]], df)
+            self.parser.change_date_type(test_value, df[df.columns[0]], df)
             dataframe_list.append(df)
             # return dataframe_list
 

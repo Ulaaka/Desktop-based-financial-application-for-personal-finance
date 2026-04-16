@@ -5,7 +5,10 @@ from base_classes import ParsingHelper
 class ParsingPdfHSBC:
 
     """
-    Manages the parsing of the HSBC bank pdf
+    Handles the processing of HSBC bank pdf file financial statement
+
+    Input: The name of the file
+    Output: Dataframe populated with extracted transactions
     """
 
     def __init__(self, pdf_name):
@@ -17,7 +20,7 @@ class ParsingPdfHSBC:
 
         df = pd.DataFrame(self.classified_transactions)
         date_column = df[df.columns[0]]
-        parser.change_type(df.loc[0, df.columns[0]] , date_column, df)
+        parser.change_date_type(df.loc[0, df.columns[0]] , date_column, df)
 
         df = parser.unify_amount_columns(df)
         self.df = df
