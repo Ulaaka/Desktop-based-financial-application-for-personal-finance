@@ -10,11 +10,12 @@ from Widgets.main_app_generated import Ui_MainWindow
 from Widgets.account_control_page import AccountControlPage
 from Widgets.account_selection_window import AccountSelectionPage
 from Widgets.profile_page import ProfilePage
-from Widgets.upload_Page import UploadPage
+from Widgets.upload_page import UploadPage
 from Widgets.files_page import FilePage
 from Widgets.home_page import HomePage
 from Widgets.settings_page import Change_password_page, Delete_user_account, Change_category
 from Widgets.graphs_page import GraphPage
+
 class MainWindow(QMainWindow):
     def __init__(self, controller , key, userID):
         super(MainWindow, self).__init__()

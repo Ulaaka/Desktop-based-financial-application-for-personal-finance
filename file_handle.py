@@ -1,6 +1,7 @@
 
-from decouple import config
 import os, tempfile, shutil
+from decouple import config
+
 from base_classes import CryptoHelper
 from csv_parser import ParsingCSV
 from df_processor import ProcessingDF

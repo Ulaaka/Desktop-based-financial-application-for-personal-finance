@@ -1,12 +1,12 @@
-from PyQt5.QtWidgets import QPushButton, QHeaderView, QFileDialog
+from pathlib import Path
+from datetime import datetime
+from PyQt5.QtWidgets import QPushButton, QHeaderView
 from PyQt5.QtCore import Qt, QDate, QSortFilterProxyModel
 from db_queries import QueryProcessor
 from Widgets.app_table_helper import TransactionTable
 from system_functions import SystemHelpers
 from Widgets.thread_worker import ThreadWorker
-from pathlib import Path
-from datetime import datetime
-import os
+
 
 class HomePage():
     def __init__(self, parent):

@@ -1,9 +1,10 @@
 import re, pandas as pd, json
-from db_connection import Database
 from datetime import datetime
 from nltk.corpus import stopwords
 from geotext import GeoText
 from datetime import datetime
+
+from db_connection import Database
 
 class QueryProcessor:
 

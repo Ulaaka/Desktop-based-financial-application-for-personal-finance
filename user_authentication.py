@@ -1,6 +1,5 @@
 import os, sys, certifi, django, secrets,  base64
 from decouple import config
-from qtwidgets import PasswordEdit
 
 from PyQt5.QtWidgets import  (QWidget, QMainWindow, QApplication, QStackedWidget,
 QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox)
@@ -14,7 +13,7 @@ from db_queries import QueryProcessor
 from mainwindow import MainWindow
 from ui_helper import UserInterfaceHelper
 
-class login_page(QWidget):
+class LoginWindow(QWidget):
     def __init__(self, controller, db, cursor):
         super().__init__()
         self.controller = controller
@@ -143,7 +142,7 @@ class login_page(QWidget):
             QMessageBox.warning(self, 'Error', 'The user Does Not Exist')
             return
 
-class sign_up_page(QWidget):
+class SignUpWindow(QWidget):
 
     # https://doc.qt.io/qt-6/stylesheet-reference.html
     def __init__(self, controller, db, cursor):
@@ -184,7 +183,8 @@ class sign_up_page(QWidget):
         self.username.setFont(QFont('Arial', 15))
 
         # Password input
-        self.password = PasswordEdit()
+        self.password = QLineEdit()
+        self.password.setEchoMode(QLineEdit.Password)
         self.password.setPlaceholderText('Password')
         self.password.setObjectName("input_field")
         self.password.setFont(QFont('Arial', 15))
@@ -267,7 +267,7 @@ class sign_up_page(QWidget):
         self.query.insert_user(username_local, hashed_password, email_local, encrypted_data_key, salt)
         self.controller.show_login()
 
-class validation_page(QWidget):
+class ValidationWindow(QWidget):
     def __init__(self, controller, login_page,  db, cursor):
         super().__init__()
         self.duration = 90
@@ -376,7 +376,7 @@ class validation_page(QWidget):
     def start_time(self):
         self.timer_manager.begin_timer()
 
-class reset_password(QWidget):
+class PasswordResetWindow(QWidget):
     def __init__(self, controller, login_page, db, cursor):
         super().__init__()
         self.controller = controller
@@ -410,14 +410,16 @@ class reset_password(QWidget):
         title.setPalette(title_color)
 
         # New Password input
-        self.password_1 = PasswordEdit()
+        self.password_1 = QLineEdit()
+        self.password_1.setEchoMode(QLineEdit.Password)
         self.password_1.setPlaceholderText('New Password')
         self.password_1.setObjectName("input_field")
 
         self.password_1.setFont(QFont('Arial', 15))
 
         # Retype New Password
-        self.password_2 = PasswordEdit()
+        self.password_2 = QLineEdit()
+        self.password_2.setEchoMode(QLineEdit.Password)
         self.password_2.setPlaceholderText('Re-type New Password')
         self.password_2.setObjectName("input_field")
         self.password_2.setFont(QFont('Arial', 15))
@@ -489,7 +491,7 @@ class reset_password(QWidget):
             query.delete_user_files(userID)
             self.controller.show_login()
 
-class User_authentication(QMainWindow):
+class UserAuthentication(QMainWindow):
     def __init__(self):
         super().__init__()
 
@@ -505,12 +507,12 @@ class User_authentication(QMainWindow):
         self.stacked_widget = QStackedWidget()
         self.setCentralWidget(self.stacked_widget)
 
-        self.login_page = login_page(self, self.db, self.cursor) 
-        self.sign_up_page = sign_up_page(self, self.db, self.cursor)
+        self.login_page = LoginWindow(self, self.db, self.cursor) 
+        self.sign_up_page = SignUpWindow(self, self.db, self.cursor)
 
         # adding reset form page
-        self.validation_page = validation_page(self, self.login_page, self.db, self.cursor)
-        self.reset_password = reset_password(self, self.login_page, self.db, self.cursor)
+        self.validation_page = ValidationWindow(self, self.login_page, self.db, self.cursor)
+        self.reset_password = PasswordResetWindow(self, self.login_page, self.db, self.cursor)
         self.dashboard_page = QWidget()
 
         self.stacked_widget.addWidget(self.login_page)
@@ -550,7 +552,7 @@ class User_authentication(QMainWindow):
         django.setup()
 
     def start_login(self):
-        self.login = User_authentication()
+        self.login = UserAuthentication()
         self.login.show()
 
 if __name__ == "__main__":
@@ -562,7 +564,7 @@ if __name__ == "__main__":
         style = styling.read()
 
     app.setStyleSheet(style)
-    window = User_authentication()
+    window = UserAuthentication()
     window.show()
 
     sys.exit(app.exec())

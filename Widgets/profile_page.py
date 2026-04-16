@@ -4,7 +4,7 @@ from db_queries import QueryProcessor
 from PyQt5.QtGui import QStandardItemModel, QStandardItem
 from Widgets.account_control_page import AccountControlPage
 from Widgets.change_confirmation_window import ChangeConfirmationPage
-from base_classes import password_class
+from base_classes import PasswordHelper
 
 class ProfilePage(QWidget):
     def __init__(self, current_account, parent):
@@ -14,7 +14,7 @@ class ProfilePage(QWidget):
         self._parent = parent
         self.username_button_state = False
         self.mail_button_state = False
-        self.password_manager = password_class()
+        self.password_manager = PasswordHelper()
         self.profile_signals_connect()
         self.show_profile_page()
 

@@ -1,17 +1,20 @@
+import os, base64, secrets
+
 from PyQt5.QtWidgets import QMessageBox, QLineEdit, QPushButton, QHeaderView
 from PyQt5.QtCore import QPoint, QSortFilterProxyModel, Qt
 
-from db_queries import QueryProcessor
-from base_classes import password_class, CryptoHelper
 from Widgets.change_confirmation_window import ChangeConfirmationPage
 from Widgets.app_table_helper import CategoryTable
 from Widgets.home_page import HomePage
+
+from db_queries import QueryProcessor
+from base_classes import PasswordHelper, CryptoHelper
 from system_functions import SystemHelpers
-import os, base64, secrets
+
 class Change_password_page():
     def __init__(self, parent):
         self._parent = parent
-        self.password_manager = password_class()
+        self.password_manager = PasswordHelper()
         self.query = QueryProcessor()
         self.objective = 0
         self.change_password_signals_connect()
@@ -120,7 +123,7 @@ class Delete_user_account():
     def __init__(self, parent):
         self._parent = parent
         self.query = QueryProcessor()
-        self.password_manager = password_class()
+        self.password_manager = PasswordHelper()
         self.delete_user_signals_connect()
 
     def delete_user_signals_connect(self):
