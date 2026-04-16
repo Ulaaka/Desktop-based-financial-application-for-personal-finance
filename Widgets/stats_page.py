@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QPushButton, QSizePolicy, QWidget, QVBoxLayout, QLabel, QComboBox, QDateEdit, QLineEdit
-from PyQt5.QtCore import QDate, Qt, QMargins, QPointF
+from PyQt5.QtWidgets import QPushButton, QSizePolicy, QWidget, QVBoxLayout, QLabel, QComboBox, QDateEdit, QApplication, QFileDialog
+from PyQt5.QtCore import QDate, Qt, QPointF
 from PyQt5.QtGui import QPainter
 from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QHorizontalBarSeries, QPieSeries, QLineSeries, QCategoryAxis
 from queries import query_processor
-from Widgets.account_control_page import Account_control_page
 from datetime import datetime, timedelta, date
-import calendar
+from pathlib import Path
+import calendar, os
 class Stats_page():
     def __init__(self, parent):
         self._parent = parent
@@ -14,8 +14,9 @@ class Stats_page():
         self.set_graph_view = None
         self.graph_name = "Summary"
         self.account_currency = None
-        self.copy_list = []
         self.active_filters = {}
+        self.current_date = datetime.today().date()
+        self.download_folder_path = Path.home() / "Downloads"
 
         self.widget_layout = parent.ui.filters_widget.layout()
         self.scroll_layout = parent.ui.scrollAreaWidgetContents.layout()
@@ -210,7 +211,7 @@ class Stats_page():
         parent_window = self._parent
         chart_layout = parent_window.ui.charts_widget.layout()
         self.wipe_out_layout(chart_layout)
-        #self.set_graph_view = None
+        self.set_graph_view = None
 
         # create the graph
         if self.graph_name in self.func_mapping:
@@ -248,7 +249,14 @@ class Stats_page():
         return widget
 
     def download_graph(self):
-        pass
+        filename = f"{self.graph_name}_{self.current_date}.png"
+
+        self.set_graph_view.repaint()
+        QApplication.processEvents() 
+        file_path = os.path.join(self.download_folder_path, filename)
+        grabbed = self.set_graph_view.grab()
+        grabbed.save(file_path)
+
 
     def create_subscription_graph(self):
         parent_window = self._parent
@@ -370,8 +378,7 @@ class Stats_page():
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
         graph = QChart()
-        current_date = datetime.today().date()
-        week_day = current_date.weekday()
+        week_day = self.current_date.weekday()
         if transaction_type_txt == "All":
             try:
                 in_max_toggle = self.max_toggle_dic[True][value_txt]
@@ -383,7 +390,7 @@ class Stats_page():
             in_result_list = []
             out_result_list = []
             for idx,  i in enumerate(range(week_day + 1)):
-                day = current_date - timedelta(days=week_day - i)
+                day = self.current_date - timedelta(days=week_day - i)
                 date_str = day.strftime("%Y-%m-%d")
                 result_in = self.query.total_transfer_or_extreme_value(parent_window.userID, parent_window.accountID, transfer_toggle=True,
                                                         max_toggle=in_max_toggle, date_lower=date_str, date_upper=date_str)
@@ -448,7 +455,7 @@ class Stats_page():
 
             result_list = []
             for idx,  i in enumerate(range(week_day + 1)):
-                day = current_date - timedelta(days=week_day - i)
+                day = self.current_date - timedelta(days=week_day - i)
                 date_str = day.strftime("%Y-%m-%d")
                 result = self.query.total_transfer_or_extreme_value(parent_window.userID, parent_window.accountID, transfer_toggle=transfer_toggle,
                                                         max_toggle=max_toggle, date_lower=date_str, date_upper=date_str)
@@ -481,9 +488,8 @@ class Stats_page():
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
 
-        current_date = datetime.today().date()
-        result = calendar.monthrange(current_date.year, current_date.month)[1]
-        first_day = date(current_date.year, current_date.month, 1)
+        result = calendar.monthrange(self.current_date.year, self.current_date.month)[1]
+        first_day = date(self.current_date.year, self.current_date.month, 1)
 
         graph = QChart()
         if transaction_type_txt == "All":
@@ -496,7 +502,7 @@ class Stats_page():
 
             in_result_list = []
             out_result_list = []
-            for idx,  i in enumerate(range(int(current_date.day))):
+            for idx,  i in enumerate(range(int(self.current_date.day))):
                 day = first_day + timedelta(days=i)
                 date_str = day.strftime("%Y-%m-%d")
                 result_in = self.query.total_transfer_or_extreme_value(parent_window.userID, parent_window.accountID, transfer_toggle=True,
@@ -551,15 +557,15 @@ class Stats_page():
             transfer_toggle = self.transfer_toggle_dic[transaction_type_txt]
             if transfer_toggle is not None and value_txt != "Total":
                 max_toggle = self.max_toggle_dic[transfer_toggle][value_txt]
-    
+
             name = "Income" if transfer_toggle is True else "Expense"
             graph_series.setName(name)
 
             result_list = []
-            for idx, i in enumerate(range(int(current_date.day))):
+            for idx, i in enumerate(range(int(self.current_date.day))):
                 day = first_day + timedelta(days=i)
                 date_str = day.strftime("%Y-%m-%d")
-                if (day == current_date):
+                if (day == self.current_date):
                     break
                 result = self.query.total_transfer_or_extreme_value(parent_window.userID, parent_window.accountID, transfer_toggle=transfer_toggle,
                                                 max_toggle=max_toggle, date_lower=date_str, date_upper=date_str)
@@ -584,8 +590,7 @@ class Stats_page():
 
     def create_yearly_graph(self):
         parent_window = self._parent
-        current_date = datetime.today().date()
-        months_list = self.get_month_ranges(current_date)
+        months_list = self.get_month_ranges()
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
         graph = QChart()
@@ -656,7 +661,7 @@ class Stats_page():
             transfer_toggle = self.transfer_toggle_dic[transaction_type_txt]
             if transfer_toggle is not None and value_txt != "Total":
                 max_toggle = self.max_toggle_dic[transfer_toggle][value_txt]
-    
+
             name = "Income" if transfer_toggle is True else "Expense"
             graph_series.setName(name)
 
@@ -786,15 +791,13 @@ class Stats_page():
         graph_series.attachAxis(x_axis)
         return graph
 
-
-    def get_month_ranges(self, current_date):
+    def get_month_ranges(self):
         months_list = []
-        for month in range(current_date.month):
-            first_day = date(current_date.year, month+1, 1)
-            last_day = date(current_date.year, month+2, 1) - timedelta(days=1)
-
-            if month == current_date.month:
-                last_day = current_date
+        for month in range(self.current_date.month):
+            first_day = date(self.current_date.year, month+1, 1)
+            last_day = date(self.current_date.year, month+2, 1) - timedelta(days=1)
+            if month == self.current_date.month:
+                last_day = self.current_date
 
             months_list.append((first_day.strftime("%Y-%m-%d"), last_day.strftime("%Y-%m-%d")))
         return months_list
