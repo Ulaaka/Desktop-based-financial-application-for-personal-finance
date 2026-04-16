@@ -120,6 +120,7 @@ class Delete_user_account():
     def __init__(self, parent):
         self._parent = parent
         self.query = query_processor()
+        self.password_manager = password_class()
         self.delete_user_signals_connect()
 
     def delete_user_signals_connect(self):
@@ -135,8 +136,8 @@ class Delete_user_account():
         hash_password = self.query.get_hashed_password(userID=parent_window.userID)[0]
         compare = self.password_manager.check_password(current_password, hash_password)
         if compare:
-            self.query.delete_user(parent_window.userID)
             parent_window.log_out()
+            self.query.delete_user(parent_window.userID)
 
 class Change_category():
     def __init__(self, parent):
