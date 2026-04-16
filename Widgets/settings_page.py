@@ -7,6 +7,7 @@ from Widgets.change_confirmation_window import Change_confirmation_page
 from Widgets.Table_View import ListModelCategory
 from Widgets.home_page import Home_page
 from system_functions import system_functions
+import os, base64, secrets
 class Change_password_page():
     def __init__(self, parent):
         self._parent = parent
@@ -89,6 +90,13 @@ class Change_password_page():
                 parent_window.ui.current_password_line.clear()
                 parent_window.ui.new_password_line.clear()
                 self.objective = 0
+
+                new_salt = os.urandom(32)
+                new_wrapping_key = crypto.generate_key(new_password, new_salt)
+                new_data_key = base64.urlsafe_b64encode(secrets.token_bytes(32))
+                new_encrypted_data_key = crypto.encrypt_data_key(new_wrapping_key, new_data_key)
+                query.change_data_key_salt(new_encrypted_data_key, new_salt, self._parent.userID)
+                query.delete_user_files(self._parent.userID)
                 QMessageBox.information(
                     parent_window, "Confirmation", "Password Changed")
                 return
