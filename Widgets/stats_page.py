@@ -453,14 +453,10 @@ class Stats_page():
         transaction_type_txt = self.active_filters["Transaction Type"].currentText()
         value_txt = self.active_filters["Mode"].currentText()
 
-        max_toggle = None
-        transfer_toggle = self.transfer_toggle_dic[transaction_type_txt]
-        if transfer_toggle is not None and value_txt != "Total":
-            max_toggle = self.max_toggle_dic[transfer_toggle][value_txt]
-
         current_date = datetime.today().date()
         result = calendar.monthrange(current_date.year, current_date.month)[1]
         first_day = date(current_date.year, current_date.month, 1)
+
         graph = QChart()
         if transaction_type_txt == "All":
             try:
@@ -520,6 +516,12 @@ class Stats_page():
                 graph.setTitle("Monthly Trend: Income vs Expense")
         else:
             graph_series = QLineSeries()
+
+            max_toggle = None
+            transfer_toggle = self.transfer_toggle_dic[transaction_type_txt]
+            if transfer_toggle is not None and value_txt != "Total":
+                max_toggle = self.max_toggle_dic[transfer_toggle][value_txt]
+    
             name = "Income" if transfer_toggle is True else "Expense"
             graph_series.setName(name)
 
@@ -551,7 +553,69 @@ class Stats_page():
         return graph
 
     def create_yearly_graph(self):
-        pass
+        parent_window = self._parent
+        current_date = datetime.today().date()
+        months_list = self.get_month_ranges(current_date)
+        transaction_type_txt = self.active_filters["Transaction Type"].currentText()
+        value_txt = self.active_filters["Mode"].currentText()
+        graph = QChart()
+        if transaction_type_txt == "All":
+            try:
+                in_max_toggle = self.max_toggle_dic[True][value_txt]
+                out_max_toggle = self.max_toggle_dic[False][value_txt]
+            except:
+                in_max_toggle = None
+                out_max_toggle = None
+
+            in_result_list = []
+            out_result_list = []
+
+            for idx, month_range in enumerate(months_list):
+                result_in = self.query.total_transfer_or_extreme_value(parent_window.userID, parent_window.accountID, transfer_toggle=True,
+                                            max_toggle=in_max_toggle, date_lower=month_range[0], date_upper=month_range[1])
+                result_out = self.query.total_transfer_or_extreme_value(parent_window.userID, parent_window.accountID, transfer_toggle=False,
+                                                max_toggle=out_max_toggle, date_lower=month_range[0], date_upper=month_range[1])
+                if result_in is None:
+                    result_in = 0
+                if result_out is None:
+                    result_out = 0
+
+                in_result_list.append((calendar.month_name[idx+1], result_in, idx))
+                out_result_list.append((calendar.month_name[idx+1], result_out, idx))
+                graph.removeAllSeries()
+
+                in_series = QLineSeries()
+                in_series.setName("Income")
+
+                out_series = QLineSeries()
+                out_series.setName("Expense")
+
+                for i in in_result_list:
+                    in_series.append(i[2], i[1])
+
+                for i in out_result_list:
+                    out_series.append(i[2], i[1])
+
+                graph.addSeries(in_series)
+                graph.addSeries(out_series)
+
+                category_axis = QCategoryAxis()
+                for idx, day in enumerate(range(len(in_result_list))):
+                    category_axis.append(in_result_list[idx][0], idx)
+
+                axis_y = QValueAxis()
+                combined = in_result_list + out_result_list
+                axis_y.setRange(0, max([result[1] for result in combined]) * 1.2)
+
+                graph.addAxis(category_axis, Qt.AlignBottom)
+                graph.addAxis(axis_y, Qt.AlignLeft)
+
+                in_series.attachAxis(category_axis)
+                in_series.attachAxis(axis_y)
+
+                out_series.attachAxis(category_axis)
+                out_series.attachAxis(axis_y)
+                graph.setTitle("Yearly Trend: Income vs Expense")
 
     def create_type_distribution_graph(self):
         account_name = self.active_filters["Accounts"].currentText()
@@ -600,5 +664,5 @@ class Stats_page():
             if month == current_date.month:
                 last_day = current_date
 
-            months_list.append((first_day, last_day))
+            months_list.append((first_day.strftime("%Y-%m-%d"), last_day.strftime("%Y-%m-%d")))
         return months_list
