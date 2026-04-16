@@ -119,8 +119,7 @@ class login_page(QWidget):
         if result and password_manager.check_password(password_local, result[0]):
                 userID = query.get_userID(username_local)
                 enc_data_key, salt = query.get_data_key_salt(userID)
-                original_salt = bytes.fromhex(salt)
-                wrapping_key = crypto.generate_key(password_local, original_salt)
+                wrapping_key = crypto.generate_key(password_local, salt)
                 data_key = crypto.decrypt_data_key(wrapping_key, enc_data_key)
                 self.controller.show_dashboard(data_key, userID)
         else:
@@ -261,10 +260,12 @@ class sign_up_page(QWidget):
 
         # random salt
         crypto = cryptography()
+
         salt = os.urandom(32)
         wrapping_key = crypto.generate_key(password_local, salt)
         data_key = base64.urlsafe_b64encode(secrets.token_bytes(32))
         encrypted_data_key = crypto.encrypt_data_key(wrapping_key, data_key)
+
         hashed_password = password_manager.hash_password(password_local)
         self.query.insert_user(username_local, hashed_password, email_local, encrypted_data_key, salt)
         self.controller.show_login()

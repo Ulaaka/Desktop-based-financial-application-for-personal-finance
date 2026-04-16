@@ -436,7 +436,7 @@ class query_processor:
         """
         self.cursor.execute(query, (userID, ))
         result = self.cursor.fetchone()
-        return result[0] if result else None
+        return result if result else None
 
     # Returns the updated category for new transactions
     # finds the closest matching category
