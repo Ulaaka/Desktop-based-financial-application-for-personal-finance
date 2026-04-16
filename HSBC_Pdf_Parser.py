@@ -12,9 +12,15 @@ class ParsingPdfHSBC:
     """
 
     def __init__(self, pdf_name):
+        """
+        Constructor for hsbc pdf parsing class
+        Saves the resulting dataframe in self.df
+        """
+
         text = self.return_text(pdf_name)
         detected_transactions = self.detect_transactions(text)
         self.corrected_transaction = self.correct_transactions(detected_transactions)
+        print(self.corrected_transaction)
         self.classified_transactions = self.classify_transactions(self.corrected_transaction)
         parser = ParsingHelper()
 
@@ -25,16 +31,21 @@ class ParsingPdfHSBC:
         df = parser.unify_amount_columns(df)
         self.df = df
 
-    # Extracts text from pdf file
     def return_text(self, pdf_file):
+        """
+        Returns extracted text from pdf file
+        """
         with pdfplumber.open(pdf_file) as pdf:
             text_list = []
             for page in pdf.pages:
                 text_list.append(page.extract_text(x_tolerance=1))
             return " ".join(text_list)
 
-    # Identifies financial transactions section from the returned text
+
     def detect_transactions(self, text):
+        """
+        Returns/Identifies financial transactions section from the returned text
+        """
         lines = text.split("\n")
 
         first = None
@@ -59,18 +70,25 @@ class ParsingPdfHSBC:
 
         return transaction_lines
 
-    # Finds the beginning new transaction by detecting the date
     def new_transaction_func(self, i):
+        """
+        Returns the beginning new transaction by detecting the date
+        """
         regex_date = r"\b\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2}\b"
         return re.search(regex_date, i)
 
-    # Checks if the transaction line contains a balance, later being used to calculate absent balances
-    def has_balance_func(self, i):
+    def has_balance_func(self, transaction_line):
+        """
+        Checks if the transaction line contains a balance, later being used to calculate absent balances
+        Returns matched balance
+        """
         regex_float = r'\d+\.\d+'
-        return re.findall(regex_float, i)
+        return re.findall(regex_float, transaction_line)
 
-    # Returns individual lines of transaction found from transaction section
     def correct_transactions(self, detect):
+        """
+        Returns individual lines of transaction found from transaction section
+        """
         carry_balance = "None"
         carry_date = None
         entire_lines = []
@@ -113,14 +131,19 @@ class ParsingPdfHSBC:
 
         return entire_lines
 
-    # Finds the types of the transaction
     def transaction_type(self, transaction):
+        """
+        Finds the types of the transaction
+        :return: empty str or type
+        """
         if transaction[10:].split():
             return transaction[10:].split()[0]
         return ''
 
-    # Analyses the transaction line, returning dictionary with target columns values, if not found, set to default
     def parse_transaction(self, line):
+        """
+        Analyses the transaction line, returning dictionary with target columns values, if not found, set to default
+        """
 
         parts = line.rsplit(maxsplit=2)
         if len(parts) < 3:
@@ -138,8 +161,10 @@ class ParsingPdfHSBC:
             'balance': None if parts[2] == "None" else float(parts[2])
         }
 
-    # Classify transactions and create DataFrame with Credit/Debit columns
     def classify_transactions(self, transactions, initial_balance=89.78):
+        """
+        Classify transactions and create DataFrame with Credit/Debit columns
+        """
         parsed = []
         for i in transactions:
             result = self.parse_transaction(i)

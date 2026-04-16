@@ -17,7 +17,13 @@ from Widgets.settings_page import Change_password_page, Delete_user_account, Cha
 from Widgets.graphs_page import GraphPage
 
 class MainWindow(QMainWindow):
+    """
+    Manages main application widgets interaction
+    """
     def __init__(self, controller , key, userID):
+        """
+        Constructor for MainWindow
+        """
         super(MainWindow, self).__init__()
 
         self.controller = controller
@@ -28,6 +34,8 @@ class MainWindow(QMainWindow):
         self.status_panel = False
         self.start_date = None
         self.end_date = None
+
+        # list of currencies
         self.currency_list = [f"{currency.alpha_3} - {currency.name} " for currency in pycountry.currencies]
 
         self.ui = Ui_MainWindow()
@@ -41,13 +49,17 @@ class MainWindow(QMainWindow):
         self.category_change_manager = Change_category(self)
         self.account_control_manager = AccountControlPage(self.account_name, self)
         self.stats_manager = GraphPage(self)
-
         self.query = QueryProcessor()
 
         self.MainWindow_signals_connection()
+
+        # Show home page when first opened
         self.home_page_handler()
 
     def home_page_handler(self):
+        """
+        Handles the state of home page and corresponding visuals
+        """
         query = QueryProcessor()
         options = query.compute_account_options(self.userID)
 
@@ -63,11 +75,15 @@ class MainWindow(QMainWindow):
                 self.home_manager.show_table()
 
     def account_page_handler(self):
+        """
+        Opens or closes the account selection panel, showing it under the button
+        and connecting corresponding signals.
+        """
         if not self.status_panel:
-            # https://forum.qt.io/topic/116360/qwidget-maptoglobal-not-giving-right-result/2
             self.panel = AccountSelectionPage(self)
             self.panel.chose_account.connect(self.update_parent)
 
+            # Show the window directly down the button
             global_pos = self.ui.account_button.mapToGlobal(QPoint(0,0))
             self.panel.move(global_pos.x(), global_pos.y() +self.ui.account_button.height() + 20)
             self.panel.finished.connect(lambda: setattr(self, 'status_panel', False))
@@ -78,12 +94,18 @@ class MainWindow(QMainWindow):
             self.status_panel = False
 
     def update_parent(self, option, accountID):
+        """
+        Updates the main variables the app where the window/pages depend on
+        """
         self.account_name = option
         self.accountID = accountID
         self.ui.account_name_label.setText(option)
         self.update_current_widget()
 
     def update_current_widget(self):
+        """
+        Update the current widgets, to show updated information/state
+        """
         currentWidget = self.ui.stackedWidget.currentWidget()
 
         if currentWidget == self.ui.home_page:
@@ -99,6 +121,9 @@ class MainWindow(QMainWindow):
             self.stats_manager = GraphPage(self)
 
     def update_account(self, new_account_name, new_accountID):
+        """
+        Order of updates following the change of the account
+        """
         self.account_name = new_account_name
         self.accountID = new_accountID
         self.ui.account_name_label.setText(new_account_name)
@@ -107,7 +132,10 @@ class MainWindow(QMainWindow):
         self.home_manager.show_table()
 
     def MainWindow_signals_connection(self):
-        # Default connections
+        """
+        MainWindow signal connection
+        """
+        # Set the Home Page as the default page
         self.ui.stackedWidget.setCurrentWidget(self.ui.home_page)
         self.ui.full_menu_widget.hide()
 
@@ -144,26 +172,44 @@ class MainWindow(QMainWindow):
         self.ui.transaction_date_edit.setDate(QDate(current_date.year, current_date.month, current_date.day))
 
     def change_category_handle(self):
+        """
+        Opens/Updates category change table page
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.settings_page)
         self.ui.settings_stack.setCurrentWidget(self.ui.category_change_page)
         self.ui.stackedWidget_2.setCurrentWidget(self.ui.category_table_page)
         self.category_change_manager.show_category_table()
 
     def change_password_handle(self):
+        """
+        Opens/Updates password change page
+        """
         self.ui.settings_stack.setCurrentWidget(self.ui.change_password_page)
         self.change_password_handler = Change_password_page(self)
 
     def delete_user_handle(self):
+        """
+        Opens/Updates user delete page
+        """
         self.ui.settings_stack.setCurrentWidget(self.ui.delete_user_account_page)
         self.delete_user_handler = Delete_user_account(self)
 
     def logout_handle(self):
+        """
+        Triggered when logging out
+        """
         self.log_out()
 
     def privacy_note_handle(self):
+        """
+        Opens Privacy None page
+        """
         self.ui.settings_stack.setCurrentWidget(self.ui.privacy_note_page)
 
     def account_label_clicked(self, event):
+        """
+        Opens account selection window, manages its state
+        """
         current_account = self.ui.account_name_label.text()
         if current_account == "Not selected":
             return
@@ -171,36 +217,59 @@ class MainWindow(QMainWindow):
         self.account_control_manager.show_account_control_page()
 
     def home_page_show(self):
+        """
+        Opens home page, its corresponding widgets
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.home_page)
         self.home_manager.show_table()
 
     def upload_page_show(self):
+        """
+        Opens upload page, its corresponding widgets
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.upload_page)
         self.ui.upload_stack.setCurrentWidget(self.ui.upload_page_2)
 
     def file_page_show(self):
+        """
+        Opens file page, its corresponding widgets
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.files_page)
         self.file_manager.show_files()
 
     def stats_page_show(self):
+        """
+        Opens graphs page, its corresponding widgets
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.stats_page)
         self.stats_manager = GraphPage(self)
 
     def profile_page_show(self):
+        """
+        Opens profile page, its corresponding widgets
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.profile_page)
         self.profile_manager.show_profile_page()
 
     def settings_page_show(self):
+        """
+        Opens settings page, its corresponding widgets
+        """
         self.ui.stackedWidget.setCurrentWidget(self.ui.settings_page)
         self.ui.settings_stack.setCurrentWidget(self.ui.category_table_page)
 
-        # when the file window close
     def closeEvent(self, event):
+        """
+        Deleted temporary files created when the app closes
+        """
         for file in self.file_handle.temp_files:
             self.file_handle.delete_temp_file(file)
         event.accept()
 
     def log_out(self):
+        """
+        Log out the app
+        """
         self.controller.start_login()
         self.close()
 

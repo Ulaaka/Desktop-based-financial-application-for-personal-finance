@@ -34,33 +34,37 @@ class ParsingPDF:
 
                 self.df.append(new_dataframe)
 
-    # Selects the valid headers of the csv file dataframe
     def select_header(self, index, header_Values, size_columns):
-            string = True
-            unique = True
-            length = True
+        """
+        Selects the valid headers of the csv file dataframe
+        """
+        string = True
+        unique = True
+        length = True
 
-            length_count = 0
-            for item in header_Values:
-                if(item != ''):
-                    length_count+=1
+        length_count = 0
+        for item in header_Values:
+            if(item != ''):
+                length_count+=1
 
-            for j in header_Values:
-                if type(j) != str:
-                    string = False
+        for j in header_Values:
+            if type(j) != str:
+                string = False
 
-            if len(header_Values) > len(set(header_Values)):
-                unique = False
-            if (length_count != size_columns):
-                length = False
+        if len(header_Values) > len(set(header_Values)):
+            unique = False
+        if (length_count != size_columns):
+            length = False
 
-            if (string == True and unique == True and length == True):
-                return index
-            else:
-                return 0
+        if (string == True and unique == True and length == True):
+            return index
+        else:
+            return 0
 
-    # Selects the header of the dataframe
     def find_header(self, df):
+        """
+        Selects the header of the dataframe
+        """
         for i in range(min(15, len(df))):
             row = df.iloc[i]
 
@@ -87,8 +91,10 @@ class ParsingPDF:
                 return i
         return 0
 
-    # Cleans the returned dataframe after extraction of pdf file
     def pre_clean_up(self, value):
+        """
+        Cleans the returned dataframe after extraction of pdf file
+        """
         if value is None or not value or not isinstance(value, str):
             return value
 
@@ -106,12 +112,12 @@ class ParsingPDF:
 
         return value
 
-    # Cleans dataframe/s extracted from pdf pages, by checking the validity and requirements
     def clean_up(self, df, idx):
-
+        """
+        Cleans dataframe/s extracted from pdf pages, by checking the validity and requirements
+        """
         df = df.drop_duplicates()
 
-        # https://stackoverflow.com/questions/39475978/apply-function-to-each-cell-in-dataframe
         df = df.map(self.pre_clean_up)
 
         header = self.find_header(df)
@@ -142,12 +148,13 @@ class ParsingPDF:
             test_value = df.loc[0, df.columns[0]]
             self.parser.change_date_type(test_value, df[df.columns[0]], df)
             dataframe_list.append(df)
-            # return dataframe_list
 
         return dataframe_list
 
-    # Read pdf based on the given flavor
     def run_camelot(self, name, flavor_camelot):
+        """
+        Read pdf based on the given flavor
+        """
         if (flavor_camelot == "stream"):
             tables = camelot.read_pdf(name, flavor=flavor_camelot ,pages='all', row_tol = 20)
         else:
