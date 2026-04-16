@@ -11,6 +11,7 @@ import os
 from database_connection import database
 import base64
 from Crypto.Hash import SHA256
+from hashlib import pbkdf2_hmac
 import re
 
 class ParsingBase:
@@ -216,9 +217,8 @@ class cryptography:
         self.query = query_processor()
 
     # Produces the key used in encryption and decryption of the user files given  password
-    def generate_key(self, password):
-
-        hashed = SHA256.new(password.encode()).digest()
+    def generate_key(self, password, salt):
+        hashed = pbkdf2_hmac("sha256", password, salt, 10000, dklen=32)
         return base64.urlsafe_b64encode(hashed)
 
     # Encrypts the user file (filename) from folder_path to the save_folder

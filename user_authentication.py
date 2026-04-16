@@ -13,12 +13,13 @@ from system_functions import system_functions, manage_seconds_qt
 from queries import query_processor
 from MainWindow import MainWindow
 from ui_support_functions import ui_support_functions
+import secrets
 
 class login_page(QWidget):
     def __init__(self, controller, db, cursor):
         super().__init__()
         self.controller = controller
-        self.db = db
+        self.db = dbsalt = os.urandom(16)
         self.cursor = cursor
         self.system = system_functions()
         self.query = query_processor()
@@ -254,6 +255,12 @@ class sign_up_page(QWidget):
             return
 
         try:
+            # random salt
+            crypto = cryptography()
+            salt = os.urandom(32)
+            wrapping_key = crypto.generate_key(password_local, salt)
+            data_key = secrets.token_bytes(32)
+
             hashed_password = password_manager.hash_password(password_local)
             self.query.insert_user(username_local, hashed_password, email_local)
             self.controller.show_login()
@@ -445,7 +452,7 @@ class reset_password(QWidget):
         self.setLayout(layout)
 
     def compare_password(self):
-        password_manager = password_class()
+        password_manager = password_manager = password_class()()
         safety = password_manager.check_password_safety(self.password_1.text())
         same = self.password_1.text() == self.password_2.text()
         if not safety:
