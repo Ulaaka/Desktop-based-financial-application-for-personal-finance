@@ -1,8 +1,10 @@
 import ssl, certifi, os
 from decouple import config
+"""
+Enables templates for sending emails and templates
+"""
 
-
-SECRET_KEY = "Db(wSSn!7uftyhN_[P$:R(N$6ArNMi"
+SECRET_KEY = config("DJANGO_SECRET_KEY")
 
 DEBUG = True
 

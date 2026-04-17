@@ -43,7 +43,7 @@ class ParsingPDF:
         1. Unique
         2. All str
         3. Should be the same size as the rest of the columns
-        :return: 
+        :return: the position of the header in the original dataframe
         """
 
         # Check within the first 15 lines

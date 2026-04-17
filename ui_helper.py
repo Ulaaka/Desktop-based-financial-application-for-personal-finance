@@ -38,39 +38,42 @@ class UserInterfaceHelper:
             }
         }}
 
-    # if underline_button, button_color = "transparent"
     def handle_button_style(if_handle, button_color, hover_color, underline_flag=None):
-            handle_button_additional = """
-                border-radius: 25px;
-                padding: 15px;
+        """
+        Handles different styles of buttons
+        """
+
+        handle_button_additional = """
+            border-radius: 25px;
+            padding: 15px;
+        """
+
+        if underline_flag:
+            underline_button_additional = """
+                text-decoration: underline;
+                font-size: 15px;
+            """
+        else:
+            underline_button_additional = """
+                font-size: 15px;
             """
 
-            if underline_flag:
-                underline_button_additional = """
-                    text-decoration: underline;
-                    font-size: 15px;
-                """
-            else:
-                underline_button_additional = """
-                    font-size: 15px;
-                """
+        if if_handle:
+            add_text = handle_button_additional
+            add_color = "background-color"
+        else:
+            add_text = underline_button_additional
+            add_color = "color"
 
-            if if_handle:
-                add_text = handle_button_additional
-                add_color = "background-color"
-            else:
-                add_text = underline_button_additional
-                add_color = "color"
-
-            line = f'''
-                QPushButton {{
-                    background-color: {button_color};
-                    color: white;
-                    border: none;
-                    {add_text}
-                }}
-                QPushButton:hover {{
-                    {add_color}: {hover_color};
-                }}
-            '''
-            return line
+        line = f'''
+            QPushButton {{
+                background-color: {button_color};
+                color: white;
+                border: none;
+                {add_text}
+            }}
+            QPushButton:hover {{
+                {add_color}: {hover_color};
+            }}
+        '''
+        return line
