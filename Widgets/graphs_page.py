@@ -1,14 +1,13 @@
 from pathlib import Path
-import calendar, os
+import os
 
 from PyQt5.QtWidgets import QPushButton, QSizePolicy, QWidget, QVBoxLayout, QLabel, QComboBox, QDateEdit, QApplication
-from PyQt5.QtCore import QDate, Qt, QPointF
+from PyQt5.QtCore import QDate
 from PyQt5.QtGui import QPainter
-from PyQt5.QtChart import QChart, QChartView, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis, QHorizontalBarSeries, QPieSeries, QLineSeries, QCategoryAxis
+from PyQt5.QtChart import QChartView
 from Widgets.create_graphs import CreateGraph
-from graph_db_queries import GraphQueries
 from db_queries import QueryProcessor
-from datetime import datetime, timedelta, date
+from datetime import datetime
 class GraphPage():
     def __init__(self, parent):
         self._parent = parent

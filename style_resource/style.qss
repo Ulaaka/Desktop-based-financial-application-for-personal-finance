@@ -176,8 +176,7 @@ QLineEdit#balance_transaction_line:focus{
 }
 
 
-QLineEdit#input_field,
-QLineEdit#account_name_type {
+QLineEdit#input_field {
     background-color: dark;
     border: 2px solid black;
     border-radius: 1px;
@@ -197,8 +196,7 @@ QLineEdit#confirmation_line{
 }
 
 
-QLineEdit#input_field,
-QLineEdit#account_name_type:focus {
+QLineEdit#input_field{
     border: 1px solid white;
 }
 
@@ -231,15 +229,15 @@ QComboBox#transaction_type_combo{
 }
 
 QLineEdit#account_name_change_line,
-QComboBox#account_type_combo,
 QComboBox#account_currency_change_combo,
-QComboBox#stats_combo{
-    background-color: transparent;
+QComboBox#stats_combo,
+QComboBox#account_type_combo{
+    background-color: white;
     color: black;
-    border: 1px black;
     border-radius: 30px;
     padding: 5px 10px;
 }
+
 
 QComboBox#download_df_combo{
     background-color: #313a46;
@@ -256,6 +254,9 @@ QComboBox#download_df_combo QAbstractItemView{
     border-radius: 15px;
 }
 
+QComboBox#account_currency_change_combo QAbstractItemView,
+QComboBox#stats_combo QAbstractItemView,
+QComboBox#account_type_combo QAbstractItemView,
 QComboBox#transaction_type_combo QAbstractItemView{
     background-color:  white;
     color: black;

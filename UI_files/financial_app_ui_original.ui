@@ -891,7 +891,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>1</number>
+             <number>7</number>
             </property>
             <widget class="QWidget" name="home_page">
              <property name="sizePolicy">
@@ -3248,7 +3248,10 @@
                            <item>
                             <widget class="QLabel" name="privacy_label">
                              <property name="text">
-                              <string>Privacy Note</string>
+                              <string>Your data is stored securely, and it is only used within the app. Thaks for using the app</string>
+                             </property>
+                             <property name="alignment">
+                              <set>Qt::AlignmentFlag::AlignCenter</set>
                              </property>
                              <property name="wordWrap">
                               <bool>true</bool>

@@ -1,9 +1,10 @@
 
 class UserInterfaceHelper:
+
     color_dic = {
         "login_page": {
             "title_color" :"#32CD32",
-            "background_color":"#000000",
+            "background_color":"#313a46",
             "login_button_color":{
                 "normal":"#32CD32",
                 "focus":"#00FF7F"
@@ -15,7 +16,7 @@ class UserInterfaceHelper:
         },
         "sign_up_page":{
             "title_color":"#1877F2",
-            "background_color":"#000000",
+            "background_color":"#313a46",
             "submit_button_color":{
                 "normal":"#1877F2",
                 "focus":"#18d5F2"
@@ -23,7 +24,7 @@ class UserInterfaceHelper:
         },
         "validation_page":{
             "title_color":"#1877F2",
-            "background_color":"#000000",
+            "background_color":"#313a46",
             "submit_button_color":{
                 "normal":"#1877F2",
                 "focus":"#18d5F2"
@@ -31,7 +32,7 @@ class UserInterfaceHelper:
         },
         'reset_password':{
             "title_color":"#1877F2",
-            "background_color":"#000000",
+            "background_color":"#313a46",
             "submit_button_color":{
                 "normal":"#1877F2",
                 "focus":"#18d5F2"

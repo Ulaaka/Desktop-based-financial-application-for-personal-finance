@@ -1395,6 +1395,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_24 = QtWidgets.QVBoxLayout(self.widget_32)
         self.verticalLayout_24.setObjectName("verticalLayout_24")
         self.privacy_label = QtWidgets.QLabel(self.widget_32)
+        self.privacy_label.setAlignment(QtCore.Qt.AlignCenter)
         self.privacy_label.setWordWrap(True)
         self.privacy_label.setObjectName("privacy_label")
         self.verticalLayout_24.addWidget(self.privacy_label)
@@ -1489,7 +1490,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(7)
         self.home_stacked.setCurrentIndex(1)
         self.settings_stack.setCurrentIndex(3)
         self.home_button_1.toggled['bool'].connect(self.home_button_2.setChecked) # type: ignore
@@ -1579,7 +1580,7 @@ class Ui_MainWindow(object):
         self.delete_information_label.setText(_translate("MainWindow", "By deleting the user account, please note your data will be permanently deleted, resulting in not being able to recover lost data. Please be careful to proceed."))
         self.category_line.setPlaceholderText(_translate("MainWindow", "Search Categories"))
         self.no_categories_label.setText(_translate("MainWindow", "TextLabel"))
-        self.privacy_label.setText(_translate("MainWindow", "Privacy Note"))
+        self.privacy_label.setText(_translate("MainWindow", "Your data is stored securely, and it is only used within the app. Thanks for using the app"))
         self.current_password_line.setPlaceholderText(_translate("MainWindow", "Current Password"))
         self.new_password_line.setPlaceholderText(_translate("MainWindow", "New Password"))
         self.change_password_button_settings.setText(_translate("MainWindow", "submit"))
