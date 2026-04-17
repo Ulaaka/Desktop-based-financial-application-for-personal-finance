@@ -85,7 +85,6 @@ class UploadPage():
         # process the files
         files_process = FileHandling(parent_window.userID, parent_window.accountID, parent_window.key)
         self.worker = ThreadWorker(files_process.process_files_in_folder)
-        self.worker.done.connect(self.finished_upload)
         self.worker.start()
         self.print_output.input_text.connect(self.get_output)
         self.live_output.ui.textBrowser.adjustSize()
@@ -96,10 +95,6 @@ class UploadPage():
         stripped_list = [line for line in text.splitlines() if line.strip() != ""]
         lines = "\n".join(stripped_list)
         self.live_output.ui.textBrowser.append(lines)
-
-    def finished_upload(self):
-        self.home_page = HomePage(self._parent)
-        self.home_page.show_table() 
 
 # custom class for capturing print outputs
 class Stream(QObject):

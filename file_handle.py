@@ -124,7 +124,6 @@ class FileHandling():
         parsed_count = 0
         existing_file_output = []
         for filename in dir:
-            print(filename)
             if (filename.endswith(".csv") or filename.endswith(".pdf")): 
                 file_type = 'PDF Document'
                 if filename.endswith(".csv"):
@@ -153,7 +152,6 @@ class FileHandling():
                     parsed_count+=1
                     size_file = os.path.getsize(file_path)
                     file_ID = crypto.encrypt(sub_save_folder, config('FOLDER_PATH'), filename, self.key, self.accountID, size_file, file_type)
-                    print(parsing.df)
                     ProcessingDF(parsing.df, file_ID, self.userID, self.accountID)
                 else:
                     existing_file_output.append(output)

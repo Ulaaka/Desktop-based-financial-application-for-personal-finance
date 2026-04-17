@@ -97,7 +97,6 @@ class ParsingPDF:
         return value
 
     def clean_up(self, df, idx):
-        print(df)
         """
         Cleans dataframe/s extracted from pdf pages, by checking the validity and requirements
 

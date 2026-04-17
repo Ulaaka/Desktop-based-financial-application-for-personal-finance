@@ -18,6 +18,7 @@ class HomePage():
         self.current_time = datetime.now().strftime("%Y-%m-%d")
         self.download_folder_path = Path.home() / "Downloads"
         self.system = SystemHelpers()
+        self.proxy_model = QSortFilterProxyModel()
         self.home_signals_connect()
 
     def home_signals_connect(self):
@@ -31,7 +32,6 @@ class HomePage():
         parent_window.ui.start_date_edit.setCalendarPopup(True)
         parent_window.ui.end_date_edit.setCalendarPopup(True)
 
-
     def show_table(self):
             parent_window = self._parent
             query = QueryProcessor()
@@ -39,6 +39,7 @@ class HomePage():
                 return
 
             self.transactions = query.get_transactions(parent_window.accountID)
+            print(self.transactions)
             if len(self.transactions) == 0:
                 self.set_table(False)
                 parent_window.ui.no_account_label.setText(f"No transaction found for '{parent_window.account_name}'")
@@ -67,14 +68,13 @@ class HomePage():
                 # Set the search filter for the table
                 # inspired from:  https://www.youtube.com/watch?v=53bZSTSLUqI
 
-                proxy_model = QSortFilterProxyModel()
-                proxy_model.setSourceModel(self.model)
-                proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
-                proxy_model.setFilterKeyColumn(5)
-                parent_window.ui.search_transaction_line.textChanged.connect(lambda text: self.filtered_search(text, proxy_model))
-                parent_window.ui.tableView.setModel(proxy_model)
+                self.proxy_model.setSourceModel(self.model)
+                self.proxy_model.setFilterCaseSensitivity(Qt.CaseInsensitive)
+                self.proxy_model.setFilterKeyColumn(5)
+                parent_window.ui.search_transaction_line.textChanged.connect(lambda text: self.filtered_search(text, self.proxy_model))
+                parent_window.ui.tableView.setModel(self.proxy_model)
 
-                self.load_buttons(proxy_model)
+                self.load_buttons(self.proxy_model)
 
                 # Hides the ID columns of dataframe
                 hidden_columns = [0, 1, 2]

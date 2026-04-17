@@ -95,6 +95,7 @@ class SystemHelpers:
                 info.set_fontsize(30)
                 info.scale(1.2,2.5)
                 pdf.savefig()
+                plt.close()
 
     def create_csv(self, account_name, df):
         """
