@@ -137,7 +137,7 @@ class SystemHelpers:
         :param userID: user ID
         :return: new encrypted data key, and new salt
         """
-        enc_data_key, salt = self.query.get_data_key_salt(userID)
+        enc_data_key, salt, _ = self.query.get_data_key_salt(userID)
         wrapping_key = self.crypto.generate_key(prev_password, salt)
         data_key = self.crypto.decrypt_data_key(wrapping_key, enc_data_key)
 

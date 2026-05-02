@@ -130,6 +130,11 @@ class SignUpWindow(QWidget):
         data_key = base64.urlsafe_b64encode(secrets.token_bytes(32))
         encrypted_data_key = crypto.encrypt_data_key(wrapping_key, data_key)
 
+        # RSA
+        public_key, private_key = crypto.generate_pub_priv_keys()
+        crypto.generate_save_to_pems(public_key, private_key)
+        enc_data_key_public = crypto.encrypt_rsa(data_key, public_key)
+
         hashed_password = password_manager.hash_password(password_local)
-        self.query.insert_user(username_local, hashed_password, email_local, encrypted_data_key, salt)
+        self.query.insert_user(username_local, hashed_password, email_local, encrypted_data_key, enc_data_key_public, salt)
         self.controller.show_login()

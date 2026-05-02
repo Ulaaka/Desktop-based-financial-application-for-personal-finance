@@ -32,7 +32,7 @@ class QueryProcessor:
 
     # ==========================   INSERT INTO QUERIES    =========================
 
-    def insert_into_users(self, username, hashed_password, email, encrypted_data_key, salt):
+    def insert_into_users(self, username, hashed_password, email, encrypted_data_key, encrypted_data_key_server, salt):
         """
         Creates new user, and inserts user information into the database
         :param encrypted_data_key: encrypted version of data key used for cryptography of files
@@ -40,8 +40,8 @@ class QueryProcessor:
 
         :return: unique user ID
         """
-        sql = "INSERT INTO users (username, hashed_password, email_address, enc_data_key, salt) VALUES (%s, %s, %s, %s, %s)"
-        self.cursor.execute(sql, (username, hashed_password, email, encrypted_data_key, salt))
+        sql = "INSERT INTO users (username, hashed_password, email_address, enc_data_key, enc_data_key_server, salt) VALUES (%s, %s, %s, %s, %s, %s)"
+        self.cursor.execute(sql, (username, hashed_password, email, encrypted_data_key, encrypted_data_key_server, salt))
         # Unique user ID
         userID = self.cursor.lastrowid
         self.db.commit()
@@ -105,7 +105,7 @@ class QueryProcessor:
         self.db.commit()
         return file_ID
 
-    def insert_user(self, username, hashed_password, email, encrypted_data_key, salt):
+    def insert_user(self, username, hashed_password, email, encrypted_data_key, encrypted_data_key_server, salt):
         """
         New user insertion with check of if the user already exists 
         :return: unique user ID
@@ -113,7 +113,7 @@ class QueryProcessor:
         userID = self.get_userID(username)
         if userID is None:
             try:
-                userID = self.insert_into_users(username, hashed_password, email, encrypted_data_key, salt)
+                userID = self.insert_into_users(username, hashed_password, email, encrypted_data_key, encrypted_data_key_server, salt)
             except:
                 print("could not insert the user")
         return userID
@@ -358,10 +358,10 @@ class QueryProcessor:
 
     def get_data_key_salt(self, userID):
         """
-        Returns encrypted data key and salt of the user given ID
+        Returns encrypted data key, salt , and server encrypted data key of the user given ID
         """
         query = """
-            SELECT enc_data_key, salt
+            SELECT enc_data_key, salt, enc_data_key_server
             FROM users
             WHERE userID = %s
         """

@@ -3,7 +3,14 @@ from datetime import datetime
 from fuzzywuzzy import fuzz
 from cryptography.fernet import Fernet
 from hashlib import pbkdf2_hmac
+import base64
+from decouple import config
 
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 from db_connection import Database
 from db_queries import QueryProcessor
 
@@ -267,6 +274,68 @@ class CryptoHelper:
         self.db = connection.db
         self.cursor = connection.cursor
         self.query = QueryProcessor()
+        self.padding_enc  = padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None)
+
+    # RSA
+
+    def generate_pub_priv_keys(self):
+        """
+        Generate RSA public and private keys
+        """
+        private_key = rsa.generate_private_key(
+            public_exponent=config("PUBLIC_EXP"),
+            key_size=config("KEY_SIZE"),
+            backend=default_backend()
+        )
+        public_key = private_key.public_key()
+        return public_key, private_key
+
+    def generate_save_to_pems(self, public, private):
+        """
+        Writes the serialised keys to the the respective pem files
+        """
+
+        private_serial = private.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+
+        public_serial = public.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+
+        with open(config("PEM_PRIVATE"), 'wb') as file:
+            file.write(private_serial)
+
+        with open(config("PEM_PUBLIC"), 'wb') as file:
+            file.write(public_serial)
+
+    def retrieve_keys_pem(self):
+        with open(config("PEM_PRIVATE"), "rb") as key_file:
+            priv_k = serialization.load_pem_private_key(
+                key_file.read(),
+                password=None,
+                backend=default_backend()
+            )
+
+        with open(config("PEM_PUBLIC"), "rb") as key_file:
+            pub_k = serialization.load_pem_public_key(
+                key_file.read(),
+                backend=default_backend()
+            )
+        return pub_k, priv_k
+
+    def encrypt_rsa(self, data, public_key):
+        return public_key.encrypt(data, self.padding_enc)
+
+    def decrypt_rsa(self, enc_data, private_key):
+        return private_key.decrypt(enc_data,self.padding_enc)
+
 
     def generate_key(self, password, salt):
         """
@@ -277,6 +346,7 @@ class CryptoHelper:
         password = password.encode()
         hashed = pbkdf2_hmac("sha256", password, salt, 10000, dklen=32)
         return base64.urlsafe_b64encode(hashed)
+
 
     def encrypt(self, save_folder, folder_path, filename, key, accountID, size_file, file_type):
         """

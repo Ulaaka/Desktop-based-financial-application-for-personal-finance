@@ -96,10 +96,13 @@ class Change_password_page():
 
                 new_salt = os.urandom(32)
                 new_wrapping_key = crypto.generate_key(new_password, new_salt)
-                new_data_key = base64.urlsafe_b64encode(secrets.token_bytes(32))
-                new_encrypted_data_key = crypto.encrypt_data_key(new_wrapping_key, new_data_key)
-                query.update_key_salt(new_encrypted_data_key, new_salt, self._parent.userID)
-                query.delete_user_files(self._parent.userID)
+
+                _, _, encrypted_data_key_server = self.query.get_data_key_salt(parent_window.userID)
+                _, private_key = crypto.retrieve_keys_pem()
+                data_key = crypto.decrypt_rsa(encrypted_data_key_server, private_key)
+
+                new_encrypted_data_key = crypto.encrypt_data_key(new_wrapping_key, data_key)
+                query.update_key_salt(new_encrypted_data_key, new_salt, parent_window.userID)
                 QMessageBox.information(
                     parent_window, "Confirmation", "Password Changed")
                 return
