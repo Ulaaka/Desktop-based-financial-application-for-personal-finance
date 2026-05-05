@@ -180,8 +180,8 @@ class GraphPage():
         # populate buttons 
         for graph in list(self.func_mapping.keys()):
             opt_button = QPushButton(graph)
-            opt_button.setStyleSheet("background-color: #313a46;")
-            opt_button.setObjectName("email_change_button")
+            opt_button.setStyleSheet("background-color: #12355B;")
+            opt_button.setObjectName("graphButton")
             opt_button.setFixedHeight(50)
             opt_button.clicked.connect(lambda clicked, graph_name=graph: self.show_graph(graph_name))
             self.scroll_layout.addWidget(opt_button)

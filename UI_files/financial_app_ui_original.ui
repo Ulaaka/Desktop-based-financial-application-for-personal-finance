@@ -163,8 +163,8 @@
          </property>
          <property name="iconSize">
           <size>
-           <width>40</width>
-           <height>40</height>
+           <width>30</width>
+           <height>30</height>
           </size>
          </property>
         </widget>
@@ -263,8 +263,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -299,8 +299,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -335,8 +335,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -371,8 +371,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -407,8 +407,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -443,8 +443,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -479,8 +479,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -528,8 +528,8 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>27</width>
-              <height>30</height>
+              <width>25</width>
+              <height>25</height>
              </size>
             </property>
             <property name="checkable">
@@ -907,7 +907,7 @@
              </size>
             </property>
             <property name="currentIndex">
-             <number>2</number>
+             <number>0</number>
             </property>
             <widget class="QWidget" name="home_page">
              <property name="sizePolicy">
@@ -1048,12 +1048,12 @@
                           </property>
                           <item>
                            <property name="text">
-                            <string>Download CSV</string>
+                            <string>Export CSV</string>
                            </property>
                           </item>
                           <item>
                            <property name="text">
-                            <string>Download PDF</string>
+                            <string>Export PDF</string>
                            </property>
                           </item>
                          </widget>
@@ -1336,8 +1336,8 @@
                        </property>
                        <property name="iconSize">
                         <size>
-                         <width>25</width>
-                         <height>25</height>
+                         <width>23</width>
+                         <height>23</height>
                         </size>
                        </property>
                        <property name="checkable">
