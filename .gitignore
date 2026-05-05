@@ -7,3 +7,5 @@ Pub_Priv_keys/
 *.pem
 
 .env
+
+.vscode/
