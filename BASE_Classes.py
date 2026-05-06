@@ -455,5 +455,5 @@ class CryptoHelper:
 
         fernet = Fernet(key)
         decrypted = fernet.decrypt(data)
-
+        
         return decrypted
