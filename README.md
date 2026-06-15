@@ -18,11 +18,11 @@ python src/main.py
 
 Features:
 
-- Supports PDF and CSV bank statements from multiple UK banks (Lloyds, HSBC, Monzo, Santander)
+- Supports PDF and CSV bank statements from multiple UK banks (Lloyds, HSBC, Monzo, Santander etc.)
 - Automatically standardises transaction data across different bank formats
 - Searchable and filterable transaction table
 - Smart auto-categorisation that updates as changes are made
 - Nine types of interactive charts and graphs
 - Export everything as CSV, PDF, or PNG
-- Files are encrypted on disk and passwords are never stored as plain text
+- Files are encrypted on disk and passwords are hashed
 - Recovers the account including access to the uploaded files
