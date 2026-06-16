@@ -54,6 +54,12 @@ python src/main.py
 
 ### Some explanations of the development:
 
+The UI was first designed in Qt Designer. Each window, which includes its own pages and widgets, was designed separately, and saved as .ui files and then converted to their corresponding .py files using pyuic5.
+
+The converted .py files were then imported into separate logical classes, where the behaviours of the widgets and the connections of signals to the handler methods were defined. For example, the account selection window logic would be defined in the AccountSelectionWindow class in the account_selection_window.py file.
+
+The pages in the main window were split into separate .py files rather than handled in a single class, to allow for the organisation of files by logic and to prevent unmanageably long lines of code.
+
 **The Application Subsystems**
 
 <img width="672" height="517" alt="Screenshot 2026-06-16 at 18 33 05" src="https://github.com/user-attachments/assets/99b43ff3-dded-46bc-8aee-89644bd5d305" />
