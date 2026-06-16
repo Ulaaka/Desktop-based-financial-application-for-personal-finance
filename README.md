@@ -47,16 +47,38 @@ python src/main.py
 - Export everything as CSV, PDF, or PNG
 - Instant transaction stamtements processing
 - Files are encrypted on disk and passwords are hashed
-- Password can be updated (via Password-based key hierarchy with key wrapping)
-  
-  - Password-based key hierarchy (key wrapping)
-    - Password + salt → derives Key Encryption Key (KEK)
-    - KEK → encrypts (wraps) Data Encryption Key (DEK)
-    - DEK → encrypts files (data)
-      
+- Password can be updated (via Password-based key hierarchy with key wrapping / symmetric cryptography)  
 - Account recovery, including access to previously uploaded files (via RSA cryptography)
 - User verification via email
 - User information validity check (email validity, password requirement, username uniqueness)
+
+### Explanation of the Cryptographic Techniques Used
+
+- Symmetric Encryption
+  
+<img width="706" height="647" alt="Screenshot 2026-06-16 at 18 14 28" src="https://github.com/user-attachments/assets/d92f33b0-51b7-4a8b-bec7-291592913470" />
+
+- Symmetric Decryption
+  
+<img width="455" height="367" alt="Screenshot 2026-06-16 at 18 14 41" src="https://github.com/user-attachments/assets/800885a4-e69f-4557-9e8f-007ed8bd682c" />
+
+- Asymmetric Encryption
+
+<img width="639" height="552" alt="Screenshot 2026-06-16 at 18 15 03" src="https://github.com/user-attachments/assets/ec3ac829-20ea-4706-b4cb-360c915cb549" />
+
+- Asymmetric Decryption
+
+<img width="450" height="280" alt="Screenshot 2026-06-16 at 18 15 16" src="https://github.com/user-attachments/assets/129af835-1a0f-4574-bbb9-0babe3a2b247" />
+
+- Files Encryption
+
+<img width="530" height="550" alt="Screenshot 2026-06-16 at 18 15 26" src="https://github.com/user-attachments/assets/53a06249-1beb-4483-89f8-defe47a2ca4a" />
+
+- Files Decryption
+
+<img width="592" height="254" alt="Screenshot 2026-06-16 at 18 15 48" src="https://github.com/user-attachments/assets/15877f1e-4bcc-4bf9-a15c-24822d8338f3" />
+
+
 
 ### How to Use:
 
