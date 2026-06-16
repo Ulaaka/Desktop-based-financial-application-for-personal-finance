@@ -52,7 +52,9 @@ python src/main.py
 - User verification via email
 - User information validity check (email validity, password requirement, username uniqueness)
 
-### Explanation of the Cryptographic Techniques Used
+### Some explanation of the development:
+
+**Cryptography techniques**
 
 - Symmetric Encryption
   
@@ -78,7 +80,9 @@ python src/main.py
 
 <img width="592" height="254" alt="Screenshot 2026-06-16 at 18 15 48" src="https://github.com/user-attachments/assets/15877f1e-4bcc-4bf9-a15c-24822d8338f3" />
 
+**UI Navigation Flow**
 
+<img width="865" height="396" alt="Screenshot 2026-06-16 at 18 27 06" src="https://github.com/user-attachments/assets/6f8e45f9-1642-40e5-9b49-0d224ac3dfab" />
 
 ### How to Use:
 
