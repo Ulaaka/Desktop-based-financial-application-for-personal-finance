@@ -39,9 +39,12 @@ python src/main.py
 - Smart auto-categorisation that updates as changes are made
 - Nine types of interactive charts and graphs
 - Export everything as CSV, PDF, or PNG
+- Instant transaction stamtements processing
 - Files are encrypted on disk and passwords are hashed
 - Password can be updated (via Password-based key hierarchy with key wrapping)
 - Account recovery, including access to previously uploaded files (via RSA cryptography)
+- User verification via email
+- User information validity check (email validity, password requirement, username uniqueness)
 
 ### How to Use:
 
