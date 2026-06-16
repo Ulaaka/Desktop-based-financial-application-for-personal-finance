@@ -5,16 +5,24 @@ A personal finance app that reads the bank statements and turns them into clear,
 Setting up:
 
 - Install the dependencies:
+```bash
 pip install -r requirements.txt
+```
 
 - Set up the environment variables and fill the values in your env:
+```bash
 cp .env.example .env
+```
 
 - Set up the database:
+```bash
 mysql -u root -p < database_creation_query.sql
+```
 
 - Run the application:
+```bash
 python src/main.py
+```
 
 Features:
 
@@ -26,3 +34,5 @@ Features:
 - Export everything as CSV, PDF, or PNG
 - Files are encrypted on disk and passwords are hashed
 - Recovers the account including access to the uploaded files
+
+Login Page
