@@ -54,19 +54,33 @@ python src/main.py
 
 ### Some explanations of the development:
 
+**The Application Subsystems**
+
+<img width="672" height="517" alt="Screenshot 2026-06-16 at 18 33 05" src="https://github.com/user-attachments/assets/99b43ff3-dded-46bc-8aee-89644bd5d305" />
+
+**UI Design**
+
 The UI was designed using Qt Designer. Each window and its widgets were created separately and saved as  `.ui` files, which were then converted into  `.py` files using pyuic5.
 
 These Python files were imported into separate classes where the behaviour of the widgets was defined and signals were connected to their corresponding handler functions. For example, the account selection window logic is handled in the AccountSelectionWindow class inside account_selection_window.py.
 
 To keep the project organised, the main window pages were split into different .py files instead of being placed in a single class. This helped make the code easier to manage and more structured.
 
-**The Application Subsystems**
-
-<img width="672" height="517" alt="Screenshot 2026-06-16 at 18 33 05" src="https://github.com/user-attachments/assets/99b43ff3-dded-46bc-8aee-89644bd5d305" />
-
-**UI Navigation Flow**
-
+- UI Navigation Flow
 <img width="819" height="341" alt="Screenshot 2026-06-16 at 18 33 29" src="https://github.com/user-attachments/assets/127e6645-5121-4409-9c72-667dd7136313" />
+
+**Files Processing Techniques**
+
+File processing is used to convert uploaded bank statements into a clean, standard format so they can be stored in a database. It works with both PDF and CSV files and follows five steps: detecting the file type, extracting the data, matching columns, validating it, and cleaning the data.
+
+First, the system checks what type of file it is so it knows how to process it.
+
+For PDFs, there are two parsers. One is made for HSBC statements because their layout is more complex. The other is a general parser used for most other banks.
+
+The general parser uses two methods depending on how the table looks. If the table has clear lines and structure, it uses the lattice method. If the table is made using spaces instead of lines, it uses the stream method.
+
+<img width="678" height="349" alt="Screenshot 2026-06-16 at 19 02 02" src="https://github.com/user-attachments/assets/c880a0e0-0f4c-40f1-ac0d-1e4289322ea5" />
+
 
 **Cryptography techniques**
 
@@ -93,6 +107,12 @@ To keep the project organised, the main window pages were split into different .
 - Files Decryption
 
 <img width="592" height="254" alt="Screenshot 2026-06-16 at 18 15 48" src="https://github.com/user-attachments/assets/15877f1e-4bcc-4bf9-a15c-24822d8338f3" />
+
+**Database Design**
+
+<img width="1090" height="748" alt="Screenshot 2026-06-16 at 19 03 52" src="https://github.com/user-attachments/assets/8ab078de-eec5-4c37-9cbf-4d0c611f7b16" />
+
+
 
 ### How to Use:
 
