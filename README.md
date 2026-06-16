@@ -163,7 +163,7 @@ You can see the downloaded files in your downloads folder.
 [View CSV](./Export_exmaples/lloyds_financial_report_2026-06-16.csv)
 
 - Exported Transaction Table in PDF format.
-[PDF](./Export_exmaples/lloyds_financial_report_2026-06-16.pdf)
+[View PDF](./Export_exmaples/lloyds_financial_report_2026-06-16.pdf)
 
 - Exported Graph in PNG format (example).
 ![Top Expense Sources](./Export_exmaples/lloyds_Top%20Expense%20Sources_2026-06-16.png)
