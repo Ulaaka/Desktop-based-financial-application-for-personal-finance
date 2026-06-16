@@ -165,7 +165,7 @@ You can see the downloaded files in your downloads folder.
 - Exported Transaction Table in PDF format.
 [View report](./Export_exmaples/lloyds_financial_report_2026-06-16.pdf)
 
-- Exported Graph in PDF format (example).
+- Exported Graph in PNG format (example).
 ![Top Expense Sources](./Export_exmaples/lloyds_Top%20Expense%20Sources_2026-06-16.png)
 
 #### Categorisation
