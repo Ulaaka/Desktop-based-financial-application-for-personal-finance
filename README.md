@@ -54,6 +54,14 @@ python src/main.py
 
 ### Some explanations of the development:
 
+**The Application Subsystems**
+
+<img width="672" height="517" alt="Screenshot 2026-06-16 at 18 33 05" src="https://github.com/user-attachments/assets/99b43ff3-dded-46bc-8aee-89644bd5d305" />
+
+**UI Navigation Flow**
+
+<img width="819" height="341" alt="Screenshot 2026-06-16 at 18 33 29" src="https://github.com/user-attachments/assets/127e6645-5121-4409-9c72-667dd7136313" />
+
 **Cryptography techniques**
 
 - Symmetric Encryption
@@ -79,10 +87,6 @@ python src/main.py
 - Files Decryption
 
 <img width="592" height="254" alt="Screenshot 2026-06-16 at 18 15 48" src="https://github.com/user-attachments/assets/15877f1e-4bcc-4bf9-a15c-24822d8338f3" />
-
-**UI Navigation Flow**
-
-<img width="865" height="396" alt="Screenshot 2026-06-16 at 18 27 06" src="https://github.com/user-attachments/assets/6f8e45f9-1642-40e5-9b49-0d224ac3dfab" />
 
 ### How to Use:
 
