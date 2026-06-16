@@ -43,7 +43,7 @@ python src/main.py
 - Automatically standardises transaction data across different bank formats
 - Searchable and filterable transaction table
 - Smart auto-categorisation that updates as changes are made
-- Nine types of interactive charts and graphs
+- Nine types of interactive charts and graphs such as possible subscription, trends over different periods
 - Export everything as CSV, PDF, or PNG
 - Instant transaction stamtements processing
 - Files are encrypted on disk and passwords are hashed
