@@ -40,7 +40,8 @@ python src/main.py
 - Nine types of interactive charts and graphs
 - Export everything as CSV, PDF, or PNG
 - Files are encrypted on disk and passwords are hashed
-- Account recovery, including access to previously uploaded files
+- Password can be updated (via Password-based key hierarchy with key wrapping)
+- Account recovery, including access to previously uploaded files (via RSA cryptography)
 
 ### How to Use:
 
